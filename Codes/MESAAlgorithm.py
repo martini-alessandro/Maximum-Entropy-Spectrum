@@ -19,7 +19,7 @@ class optimizer:
         elif self.method == 'Fixed':
             return self._Fixed(args[3])
         else:
-            raise ValueError("{} is not a an available method! Valid choices are 'FPE', 'AIC', 'CAT', 'OBD' and 'Fixed'".format(self.method))
+            raise ValueError("{} is not a an available method! Valid choices are 'FPE', 'AIC', 'CAT', 'OBD' and 'Fixed'.".format(self.method))
     
     def _FPE(self, P, N, m):
         return P[-1] * (N + m + 1) / (N - m - 1)
