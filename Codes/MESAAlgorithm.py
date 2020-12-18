@@ -49,14 +49,13 @@ class MESA(object):
         
         self.data = data
         self.N    = len(self.data)
-
-    
+        
     def spectrum(self, dt, frequency):
-        N = self.a_k.shape[0]
-        den = sum([self.a_k[k] * np.exp(2 * np.pi * 1j * k * frequency * dt) for k in range(N)])
+        N = frequency.shape[0]
+        den = np.fft.fft(self.a_k,n=N)
         spec = dt * self.P / (np.abs(den) ** 2)
         return spec
-            
+
     def solve(self,
               m = None,
               optimisation_method = "FPE",
@@ -80,7 +79,7 @@ class MESA(object):
         self._optimizer = optimizer(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
         return self.P, self.a_k, self.optimization
-        
+    
     def _FastBurg(self):
         #Define autocorrelation
         c = np.zeros(self.mmax + 2)
@@ -91,13 +90,11 @@ class MESA(object):
         a = [np.array([1])]
         P = [c[0] / self.N]
         r = 2 * c[1]
-        g = np.array([2 * c[0] - self.data[0] * self.data[0].conj() - self.data[-1] * self.data[-1].conj(),
-                       r])
+        g = np.array([2 * c[0] - self.data[0] * self.data[0].conj() - self.data[-1] * self.data[-1].conj(), r])
         #Initialize lists to save arrays
         optimization = np.zeros(self.mmax)
         #Loop for the FastBurg Algorithm
         for i in range(self.mmax):
-            # sys.stdout.write('\r%2f Fast Burg ' %((i + 1) * 100/ (self.mmax)))
             #Update prediction error filter and reflection error coefficient
             k, new_a = self._updateCoefficients(a[-1], g)
             #Update variables. Check paper for indeces at j-th loop.
@@ -160,7 +157,6 @@ class MESA(object):
         optimization = np.zeros(self.mmax)
         #Burg's recursion
         for i in range(self.mmax):
-            sys.stdout.write('\r%f Normal Burg: ' %(100 * i / (self.mmax - 1)))
             f = _f[1:]
             b = _b[:-1]
             den = np.dot(f, f) + np.dot(b, b)
@@ -188,33 +184,73 @@ class MESA(object):
         coef = - self.a_k[1:][::-1]
         future = [] 
         for _ in range(number_of_simulations):
-            sys.stdout.write('\r%f' %((_ + 1)/number_of_simulations))
+            sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
             predictions = self.data[-p:]            
-            for i in range(length): 
+            for i in range(length):
+                sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
                 prediction = predictions[-p:] @ coef +\
                              np.random.normal(0, np.sqrt(P))
-                while prediction < 0: 
-                    prediction = predictions[-p:] @ coef +\
-                             np.random.normal(0, np.sqrt(P))
+#                while prediction < 0:
+#                    prediction = predictions[-p:] @ coef +\
+#                             np.random.normal(0, np.sqrt(P))
                 predictions = np.append(predictions, prediction)
             future.append(predictions[p:])
         return np.array(future)
     
 if __name__ == "__main__":
+    import time
     import matplotlib.pyplot as plt
-    dt = 1./4096.
-    f = np.arange(0,2048,step=1.)
-    data = np.loadtxt('../H-H1_GWOSC_4KHZ_R1-1126259447-32.txt.gz')
-#    print(int(2*len(data)/(2*np.log(len(data)))))
-#    exit()
+    from scipy.signal import decimate
+    
+    srate = 4096.
+    dt = 1./srate
+    bandpassing = 0
+    f_min_bp = 20.0
+    f_max_bp = (srate-20)/2.0
+    T  = 4
+    data = np.loadtxt('../../pyring/data/Real_data/GW150914/H-H1_GWOSC_4KHZ_R1-1126259447-32.txt')[:int(T*4096)]
+    if srate != 4096.:
+        data = decimate(data, int(4096/srate), zero_phase=True)
+    if bandpassing == 1:
+        from scipy.signal      import butter, filtfilt
+        bb, ab = butter(4, [f_min_bp/(0.5*srate), f_max_bp/(0.5*srate)], btype='band')
+        data = filtfilt(bb, ab, data)
+    
+    N = data.shape[0]
+    f = np.fft.fftfreq(N, d=dt)
+    t = np.arange(0,T,step=dt)
     M = MESA(data)
-    P, ak = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(data)/(2*np.log(len(data)))))
-    print('fast :',P, len(ak))
-    plt.loglog(f, M.spectrum(dt,f))
-    P, ak = M.solve(method = "Standard", optimisation_method = "FPE", m = int(2*len(data)/(2*np.log(len(data)))))
-    print('slow :',P, len(ak))
-#    exit()
-    plt.loglog(f, M.spectrum(dt,f), '--')
+    start = time.perf_counter()
+    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    elapsed = time.perf_counter()
+    elapsed = elapsed - start
+    print ("Time spent MESA: {0} s".format(elapsed))
+    start = time.perf_counter()
+    PSD      = M.spectrum(dt,f)[:N//2]
+    elapsed = time.perf_counter()
+    elapsed = elapsed - start
+    print ("Time spent PSD: {0} s".format(elapsed))
+
+    fig = plt.figure(1)
+    ax  = fig.add_subplot(111)
+    ax.loglog(f[:N//2], M.spectrum(dt,f)[:N//2],'-k')
+    ax.set_xlim(1,srate/2.)
+    ax.set_xlabel("frequency (Hz)")
+    ax.set_ylabel("PSD (Hz$^{-1}$)")
+    
+    M = MESA(data[:int(0.75*N)])
+    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    Np = 100
+    prediction = M.forecast(int(0.25*N), Np)
+    l, h = np.percentile(prediction,[5,95],axis=0)
+    fig = plt.figure(2)
+    ax  = fig.add_subplot(111)
+    ax.plot(t,data,linewidth=1.5,color='r',zorder=2)
+    for p in range(Np):
+        ax.plot(t[int(0.75*N):],prediction[p,:],linewidth=0.5, color='k', zorder = 0)
+    ax.fill_between(t[int(0.75*N):],l,h,facecolor='turquoise',alpha=0.5, zorder = 1)
+    ax.set_xlabel("time (s)")
+    ax.set_ylabel("strain")
     plt.show()
 
 def autocorrelation(x, norm = 'N'):
