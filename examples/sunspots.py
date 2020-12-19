@@ -19,8 +19,8 @@ if __name__ == "__main__":
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)
-    ax.plot(f[:N//2], M.spectrum(dt,f)[:N//2],'-k')
-    ax.set_xlim(1,srate/2.)
+    ax.loglog(f[:N//2], PSD[:N//2],'-k')
+    ax.set_xlim(1e-5,srate/2.)
     ax.set_xlabel("frequency (1/months)")
     ax.set_ylabel("PSD (months)")
     plt.show()
