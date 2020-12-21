@@ -68,7 +68,7 @@ class MESA(object):
 
             #doing the actual computation
         den = np.fft.fft(self.a_k,n=N)
-        spec = dt * self.P / (np.abs(den) ** 2)
+        spec = dt * self.P / np.multiply(den, den.conjugate())
         f_spec = np.fft.fftfreq(N,dt) #grid at which spec is evaluated
             #only real part of spec is used (PSD is a real function!)
             #only positive frequencies of the spectrum are computed
