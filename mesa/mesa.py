@@ -55,6 +55,28 @@ class MESA(object):
         spec = dt * self.P / (np.abs(den) ** 2)
         return spec
 
+    def spectrum_bis(self, frequencies, dt):
+        "Alternative to spectrum: takes in input a positive frequency grid and a dt and it evaluates the PSD on that grid."
+            # df = 1/(dt*N) --> N = 2 f_ny/df
+            #see https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html#numpy.fft.fftfreq
+        df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
+        f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
+        if np.max(frequencies) > f_ny:
+            #here we could also raise a warning and set a 0 PSD
+            raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
+        N = int(2.*f_ny/df)
+
+            #doing the actual computation
+        den = np.fft.fft(self.a_k,n=N)
+        spec = dt * self.P / (np.abs(den) ** 2)
+        f_spec = np.fft.fftfreq(N,dt) #grid at which spec is evaluated
+            #only real part of spec is used (PSD is a real function!)
+            #only positive frequencies of the spectrum are computed
+        f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.) 
+
+        return f_interp
+
+
     def solve(self,
               m = None,
               optimisation_method = "FPE",
