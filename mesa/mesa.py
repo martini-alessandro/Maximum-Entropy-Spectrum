@@ -104,6 +104,7 @@ class MESA(object):
     def _FastBurg(self):
         #Define autocorrelation
         c = np.zeros(self.mmax + 2)
+        #FIXME: use numpy functions
         for j in range(self.mmax + 1):
             c[j] = self.data[: self.N - j] @ self.data[j : ]
         c[0] *= self.regularisation
@@ -231,3 +232,6 @@ def autocorrelation(x, norm = 'N'):
         return R
     else:
         raise ValueError('this normalization is not available')
+
+#FIXME: methods to save and load psd and AR coefficients in various formats, depending on the necessary application
+#FIXME: save/load class as pickle

@@ -15,8 +15,8 @@ t = 2. #seconds of data
 	#loading data and preparing input to MESA
 rate, data = scipy.io.wavfile.read("waterfall_data/waterfall_noise.wav") #loading waterfall noise file
 	#data is (N,2): stereophonic sound
-data_MESA = data[:int(t*rate),0]
-data_MESA = data_MESA+1j*0. #why complex data?
+data_MESA = data[:int(t*rate),0].astype(np.float64)
+#data_MESA = data_MESA+1j*0. #why complex data?
 dt = 1./rate
 times_out = np.linspace(0., len(data_MESA)*dt, len(data_MESA))
 
@@ -52,7 +52,6 @@ P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(
 PSD_sim =  M.spectrum(dt,f)[:int(N_points/2)]
 
 print("All done: if you like to listen to the output file, type \"aplay waterfall_data/simulated_noise.wav\" ")
-
 #plotting some quantities
 
 #frequency series of the reconstructed data
