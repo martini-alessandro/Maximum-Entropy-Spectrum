@@ -135,7 +135,7 @@ class MESA(object):
             P.append(P[-1] * (1 - k * k.conj()))
             #Compute optimizer value for chosen method
             optimization[i] = self._optimizer(P, a[-1], self.N, i + 1)
-        if self._optimizer.method == "Fixed":
+        if self._optimizer.method == "Fixed": #Stefano: is there a way to remove the if and put everything together
             idx = self.mmax
         else:
             idx = optimization.argmin() + 1
