@@ -15,7 +15,7 @@ if __name__ == "__main__":
     M = MESA(data)
     P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("p = {0}".format(len(ak)))
-    PSD      = M.spectrum(dt,f)[:N//2]
+    PSD, _     = M.spectrum(dt,len(f))[:N//2]
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)

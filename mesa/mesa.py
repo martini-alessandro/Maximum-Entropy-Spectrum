@@ -3,30 +3,31 @@ import numpy as np
 
 #Stefano: put as everywhere as possible the dimensions of the variables we are using?
 #Stefano: make the help of every function?
-#Stefano: real and imaginary part of the data
-#Stefano: take care of the warning...
+#Stefano: real and imaginary part of the data; I did something on line 169 and it gives no issues. Is it fine now?
+#Stefano: should the sampling rate be given at initialization? Or is it fine like it is today?
 
 #############DEBUG LINE PROFILING
 try:
-	from line_profiler import LineProfiler
+    from line_profiler import LineProfiler
 
-	def do_profile(follow=[]):
-		def inner(func):
-			def profiled_func(*args, **kwargs):
-				try:
-					profiler = LineProfiler()
-					profiler.add_function(func)
-					for f in follow:
-						profiler.add_function(f)
-					profiler.enable_by_count()
-					return func(*args, **kwargs)
-				finally:
-					profiler.print_stats()
-			return profiled_func
-		return inner
+    def do_profile(follow=[]):
+        def inner(func):
+            def profiled_func(*args, **kwargs):
+                try:
+                    profiler = LineProfiler()
+                    profiler.add_function(func)
+                    for f in follow:
+                        profiler.add_function(f)
+                    profiler.enable_by_count()
+                    return func(*args, **kwargs)
+                finally:
+                    profiler.print_stats()
+            return profiled_func
+        return inner
 except:
-	pass
-	
+    pass
+
+#pip install line_profiler
 #add decorator @do_profile(follow=[]) before any function you need to track
 
 #################
@@ -81,7 +82,7 @@ class optimizer:
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
     
     def _Fixed(self, m):
-        return m
+        return 1./m
 
 class MESA(object):
     """
@@ -95,18 +96,36 @@ class MESA(object):
         self.data = data
         self.N    = len(self.data)
         
-    def spectrum(self, dt, frequency):
-        #FIXME: PASS N AND RETURN ALSO THE FREQUENCY ARRAY FROM FFTFREQ
-        N = frequency.shape[0]
-        den = np.fft.fft(self.a_k,n=N)
-        spec = dt * self.P / (np.abs(den) ** 2)
-        return spec
+    def spectrum(self, dt, N):
+        """
+        Computes the Power Spectral density of the model. The PSD is evaluated on a standard grid of frequency (as given by np.fft.fftfreq), without postprocessing.
+        
+        params:
+            dt: `np.float`      Sampling rate for the time series
+            N: `np.float`       Length of the frequency grid
+        
+        return
+            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
+            freq: `np.ndarray`       frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq)
+        
+        """
+        den = np.fft.fft(self.a_k, n=N)
+        spectrum = dt * self.P / (np.abs(den) ** 2)
+        return spectrum, np.fft.fftfreq(N,dt)
 
     def spectrum_bis(self, frequencies, dt):
-        #FIXME: CALL SPECTRUM
-        "Alternative to spectrum: takes in input a positive frequency grid and a dt and it evaluates the PSD on that grid."
+        #FIXME: find a different name for the function
+        """
+        Computes the Power Spectral density of the model. PSD is evaluated on a user-given frequency grid (only positive frequencies).
+        
+        params:
+            frequencies: `np.ndarray`   (Positive) frequencies to evaluate the spectrum at (shape (N,))
+            dt: `np.float`              Sampling rate for the time series
+        
+        return
+            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
+        """
             # df = 1/(dt*N) --> N = 2 f_ny/df
-            #see https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html#numpy.fft.fftfreq
         df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
         f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
         if np.max(frequencies) > f_ny:
@@ -114,16 +133,11 @@ class MESA(object):
             raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
         N = int(2.*f_ny/df)
 
-            #doing the actual computation
-        den = np.fft.fft(self.a_k,n=N)
-        spec = dt * self.P / np.multiply(den, den.conjugate())
-        f_spec = np.fft.fftfreq(N,dt) #grid at which spec is evaluated
+        spec, f_spec = self.spectrum(dt, N)
             #only real part of spec is used (PSD is a real function!)
             #only positive frequencies of the spectrum are computed
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.) 
-
         return f_interp
-
 
     def solve(self,
               m = None,
@@ -148,8 +162,56 @@ class MESA(object):
         self._optimizer = optimizer(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
         return self.P, self.a_k, self.optimization
-    
-    def _FastBurg(self):
+
+    #@do_profile(follow=[])
+    def _FastBurg(self, early_stop = True):
+        #FIXME: if we decide to keep the early stop option, it must be a parameter for function self.solve
+
+        #Define autocorrelation
+        c = np.zeros(self.mmax + 2, dtype = self.data.dtype) #here c has the same type of the data
+        #FIXME: use numpy functions (Stefano: not really simple to do this.. Now it is the bottleneck of the function)
+        for j in range(self.mmax + 1):
+            c[j] = self.data[: self.N - j] @ self.data[j : ]
+        c[0] *= self.regularisation
+        #Initialize variables
+        a = [np.array([1])]
+        P = [c[0] / self.N]
+        r = 2 * c[1]
+        g = np.array([2 * c[0] - self.data[0] * self.data[0].conj() - self.data[-1] * self.data[-1].conj(), r])
+        #Initialize lists to save arrays
+        optimization = []
+        idx = None
+        old_idx = 0
+        #Loop for the FastBurg Algorithm
+        for i in range(self.mmax):
+            #Update prediction error filter and reflection error coefficient
+            k, new_a = self._updateCoefficients(a[-1], g)
+            #Update variables. Check paper for indeces at j-th loop.
+            r = self._updateR(i, r, c[i + 2])
+            #Construct the array in two different, equivalent ways.
+            DrA = self._constructDr2(i, new_a)
+            #Update last coefficient
+            g = self._updateG(g, k, r, new_a, DrA)
+            #Append values to respective lists
+            a.append(new_a)
+            P.append(P[-1] * (1 - k * k.conj()))
+            #Compute optimizer value for chosen method
+            optimization.append( self._optimizer(P, a[-1], self.N, i + 1) )
+            
+            #checking if there is a minimum (every some iterations)
+            if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and early_stop:
+                idx = np.argmin(optimization) + 1
+                if old_idx < idx:
+                    old_idx = idx
+                else:
+                    old_idx = idx
+                    break
+        if not early_stop:
+            idx = np.argmin(optimization) + 1
+
+        return P[idx], a[idx], np.array(optimization)
+   
+    def _FastBurg_old(self):
         #Define autocorrelation
         c = np.zeros(self.mmax + 2)
         #FIXME: use numpy functions

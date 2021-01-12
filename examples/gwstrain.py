@@ -33,7 +33,7 @@ if __name__ == "__main__":
     elapsed = elapsed - start
     print ("Time spent MESA: {0} s".format(elapsed))
     start = time.perf_counter()
-    PSD      = M.spectrum(dt,f)[:N//2]
+    PSD, _     = M.spectrum(dt,len(f))[:N//2]
     elapsed = time.perf_counter()
     elapsed = elapsed - start
     print ("Time spent PSD: {0} s".format(elapsed))

@@ -10,7 +10,7 @@ sys.path.insert(0,'..')
 from mesa.mesa import *
 import mesa.GenerateTimeSeries
 
-t = 2. #seconds of data
+t = 4. #seconds of data
 
 	#loading data and preparing input to MESA
 rate, data = scipy.io.wavfile.read("waterfall_data/waterfall_noise.wav") #loading waterfall noise file
@@ -27,7 +27,7 @@ P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(
 	#evaluating the spectrum
 N_points = 100000
 f = np.linspace(0,10000,N_points) #Why this?? Is only employed for getting the N mesa.spectrum 
-PSD =  M.spectrum(dt,f)[:int(N_points/2)] #we want only positive frequencies...
+PSD =  M.spectrum(dt,len(f))[0][:int(N_points/2)] #we want only positive frequencies...
 f_PSD = np.fft.fftfreq(len(f),dt)[:int(N_points/2)] #this it the actual frequency grid that PSD is evaluated at
 
 	#evaluating the spectrum bis
@@ -44,12 +44,12 @@ scipy.io.wavfile.write("waterfall_data/simulated_noise.wav", rate, to_save.real.
 	#checking whether psd is correct in the simulated noise
 	#simulated noise is loaded and psd is estimated again
 rate, data = scipy.io.wavfile.read("waterfall_data/simulated_noise.wav") #loading waterfall noise file
-data_MESA = data[:int(t*rate),0]
+data_MESA = data[:int(t*rate),0].astype(np.float64)
 data_MESA = data_MESA+1j*0.
 dt = 1./rate
 M = MESA(data_MESA)
 P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
-PSD_sim =  M.spectrum(dt,f)[:int(N_points/2)]
+PSD_sim =  M.spectrum(dt,len(f))[0][:int(N_points/2)]
 
 print("All done: if you like to listen to the output file, type \"aplay waterfall_data/simulated_noise.wav\" ")
 #plotting some quantities
