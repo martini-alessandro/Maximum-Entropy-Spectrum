@@ -6,6 +6,31 @@ import numpy as np
 #Stefano: real and imaginary part of the data
 #Stefano: take care of the warning...
 
+#############DEBUG LINE PROFILING
+try:
+	from line_profiler import LineProfiler
+
+	def do_profile(follow=[]):
+		def inner(func):
+			def profiled_func(*args, **kwargs):
+				try:
+					profiler = LineProfiler()
+					profiler.add_function(func)
+					for f in follow:
+						profiler.add_function(f)
+					profiler.enable_by_count()
+					return func(*args, **kwargs)
+				finally:
+					profiler.print_stats()
+			return profiled_func
+		return inner
+except:
+	pass
+	
+#add decorator @do_profile(follow=[]) before any function you need to track
+
+#################
+
 class optimizer:
 
     def __init__(self, method):
