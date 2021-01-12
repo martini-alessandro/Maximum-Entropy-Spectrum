@@ -1,12 +1,17 @@
 import sys
 import numpy as np
 
+#Stefano: put as everywhere as possible the dimensions of the variables we are using?
+#Stefano: make the help of every function?
+#Stefano: real and imaginary part of the data
+#Stefano: take care of the warning...
+
 class optimizer:
 
     def __init__(self, method):
         self.method = method
 
-    def __call__(self, *args):
+    def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
         if self.method == 'FPE':
             return self._FPE(args[0], args[2], args[3])
         elif self.method == 'CAT':
