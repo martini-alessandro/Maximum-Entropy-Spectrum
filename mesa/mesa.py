@@ -29,6 +29,17 @@ class optimizer:
         return P[-1] * (N + m + 1) / (N - m - 1)
     
     def _AIC(self, P, N, m):
+        """
+        description
+        
+        params:
+        P: `np.float` power
+        ...
+        
+        return
+        the value returned
+        
+        """
         return np.log(P[-1]) + (2 * m) / N
     
     def _CAT(self, P, N, m):
@@ -48,19 +59,26 @@ class optimizer:
         return m
 
 class MESA(object):
-
+    """
+    description
+    
+    init: data: `np.ndarray` shape (N)
+    
+    """
     def __init__(self, data):
         
         self.data = data
         self.N    = len(self.data)
         
     def spectrum(self, dt, frequency):
+        #FIXME: PASS N AND RETURN ALSO THE FREQUENCY ARRAY FROM FFTFREQ
         N = frequency.shape[0]
         den = np.fft.fft(self.a_k,n=N)
         spec = dt * self.P / (np.abs(den) ** 2)
         return spec
 
     def spectrum_bis(self, frequencies, dt):
+        #FIXME: CALL SPECTRUM
         "Alternative to spectrum: takes in input a positive frequency grid and a dt and it evaluates the PSD on that grid."
             # df = 1/(dt*N) --> N = 2 f_ny/df
             #see https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html#numpy.fft.fftfreq
@@ -205,7 +223,8 @@ class MESA(object):
         new_x = np.concatenate((x, np.zeros(1)))
         return new_x + reflectionCoefficient * new_x[::-1]
     
-    def forecast(self, length, number_of_simulations, P = None): 
+    def forecast(self, length, number_of_simulations, P = None):
+        #FIXME: can this be vectorized?
         if P == None: P = self.P
         p = self.a_k.size - 1 
         coef = - self.a_k[1:][::-1]
@@ -213,7 +232,7 @@ class MESA(object):
         for _ in range(number_of_simulations):
             sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
             predictions = self.data[-p:]            
-            for i in range(length):
+            for i in range(length):#FIXME: progress bar?
                 sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
                 prediction = predictions[-p:] @ coef +\
                              np.random.normal(0, np.sqrt(P))
