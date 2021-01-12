@@ -212,8 +212,9 @@ class MESA(object):
         return P[idx], a[idx], np.array(optimization)
    
     def _FastBurg_old(self):
+        #FIXME: if we decide to keep the early stop option, it must be included here
         #Define autocorrelation
-        c = np.zeros(self.mmax + 2)
+        c = np.zeros(self.mmax + 2, dtype = self.data.dtype)
         #FIXME: use numpy functions
         for j in range(self.mmax + 1):
             c[j] = self.data[: self.N - j] @ self.data[j : ]
