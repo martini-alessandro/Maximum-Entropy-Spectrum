@@ -1,3 +1,12 @@
+"""
+mesa
+====
+
+A nice package for Maximum Entropy Spectral Analysis.
+Include short description here: it will appear when typing help(mesa)
+
+"""
+
 import sys
 import numpy as np
 import warnings
@@ -93,99 +102,83 @@ class MESA(object):
     
     """
     def __init__(self, data):
-        """ 
-        Class that implements Burg method to estimate power spectral densitiy of
-        time series. 
         
-        Parameters
-        ----------
-            data: 'np.ndarray'       
-                Time series with power spectral density to be computed 
-        """ 
         self.data = data
         self.N    = len(self.data)
         
-    def _spectrum(self, dt, N):
+    def spectrum(self, dt, N):
         """
-        Method that compted the spectrum of the time series on sampling 
-        frequencies 
-
-        Parameters
-        ----------
-        dt: `np.float`      
-            Sampling rate for the time series
-            
-        N: `np.float`       
-            Length of the frequency grid
-
-        Returns
-        -------
-        spectrum: `np.ndarray`   
-            PSD of the model, including both positive and negative frequencies (shape (N,))
-            
-        freq: `np.ndarray`       
-            Frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq) (shape (N,))
+        Computes the Power Spectral density of the model. The PSD is evaluated on a standard grid of frequency (as given by np.fft.fftfreq), without postprocessing.
+        
+        params:
+            dt: `np.float`      Sampling rate for the time series
+            N: `np.float`       Length of the frequency grid
+        
+        return
+            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
+            freq: `np.ndarray`       frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq)
+        
         """
-       
         den = np.fft.fft(self.a_k, n=N)
         spectrum = dt * self.P / (np.abs(den) ** 2)
         return spectrum, np.fft.fftfreq(N,dt)
 
-
-
-    def spectrum(self, dt, frequencies = None): 
+    def spectrum_bis(self, frequencies, dt):
+        #FIXME: find a different name for the function
         """
-        Computes the power spectral density of the model. Default returns power 
-        spectral density and frequency array automatically computed by sampling theory. 
-        It can also be computed on a user-given frequency grid passing proper frequency
-        array
+        Computes the Power Spectral density of the model. PSD is evaluated on a user-given frequency grid (only positive frequencies).
         
-        Parameters: 
-        ----------
-        dt: 'np.float'                   
-            Sampling rate for the time series 
-            
-        frequencies: 'np.ndarray'        
-            (positive) frequencies to evaluate the spectrum at (shape (N,))
-
+        params:
+            frequencies: `np.ndarray`   (Positive) frequencies to evaluate the spectrum at (shape (N,))
+            dt: `np.float`              Sampling rate for the time series
         
-
-        Returns: 
-        ----------
-        if no frequency array is given 
-            spectrum: 'np.ndarray'           
-                Two sided power spectral density (shape = (N,))
-            frequencies: 'np.ndaarray'      
-                Frequencies at which power spectral density is evaluated (shape = (N,))
-            
-        if frequency array is given:
-            spectrum: 'np.ndarray'           
-                Power spectral density interpolated on desidered frequencies (shape = (N,))
-    
-            
-        Raises: 
-        ----------
-            ValueError if frequencies greater then Nyquist frequencies are given 
-            
+        return
+            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
         """
+            # df = 1/(dt*N) --> N = 2 f_ny/df
+        df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
+        f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
+        if np.max(frequencies) > f_ny + 0.1:
+            warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned there.".format(f_ny))
+        N = int(2.*f_ny/df)
+
+        spec, f_spec = self.spectrum(dt, N)
+            #only real part of spec is used (PSD is a real function!)
+            #only positive frequencies of the spectrum are computed
+        f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.) 
+        return f_interp
+
+
+    def spectrum_joined(self, dt, frequencies = None): 
+        """
+        Computes the power spectral density of the model. PSD is evaluated on a frequency
+        grid whose default values are given by sampling theory and authomatically constructed. 
+        It can also be computed on a user-given frequency grid. 
+        
+        """
+        #I would cut the int / float option. One can chose to compute 
+        #on standard sampling frequencies or on a given array. Chosing length is 
+        #not such an important feature. 
         f_ny = .5 / dt 
-        
-        if type(frequencies) == np.ndarray: 
-            df = np.min(np.abs(np.diff(frequencies))) * 0.9
-            if np.max(frequencies) > f_ny: 
-                raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
+        df = np.min(np.abs(np.diff(frequencies))) * 0.9
+        if type(frequencies) == np.ndarray and np.max(frequencies) > f_ny: 
+            #here we could also raise a warning and set a 0 PSD
+            raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
         
         if frequencies == None: N = self.N
+        elif isinstance(frequencies, (np.int, np.float)):  N = frequencies 
         elif isinstance(frequencies, np.ndarray): N = int(2. * f_ny / df)
-        spec, f_spec = self._spectrum(dt, N)
         
-        if frequencies == None: 
-            return spec, f_spec   
+        spec, f_spec = self.spectrum(dt, N)
+        
+        #Insert positive frequencies again? 
+        if type(frequencies) != np.ndarray: frequencies = f_spec[:int(N/2+0.5)] 
 
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
         
-        return f_interp 
-
+        return f_interp, frequencies 
+    
+    #If else con due differenti returns 
         
     def solve(self,
               m = None,
@@ -193,50 +186,6 @@ class MESA(object):
               method              = "Fast",
               regularisation      = 1.0,
               early_stop = True ):
-        """
-        Computes the power spectral density of the attribute data for the class
-        using standard Burg method recursive and a Faster (but less stable) version. 
-        Default is Fast. 
-
-        Parameters
-        ----------
-        m : 'np.int'                   
-            Maximum number of recursions for the computation of the  power spectral density. 
-            Default is None, that means m = 2N / log(2N)
-                                 
-        optimisation_method: 'str'     
-            Method used to select the best recursive order. The order is chosen
-            minimizing the corresponding method. 
-            Available methods are "FPE", "OBD", "CAT", "AIC".
-            Deafult is "FPE".   
-        
-        method: 'str'                  
-            Can be "standard" or "Fast". Selects the algorithm  used to compute 
-            the power spectral density with. Default is "Fast"
-                                       
-        regularisation: 'np.float'     
-            Implement Tikhonov regularisation. Should be a number slightly larger than one. 
-            Default is 1, which means no regularisation 
-                                       
-        early_stop: 'boolean'          
-            Default is True. Breaks the iteration if there is no  no new global 
-            maximum after 200 iterations. 
-            Recommended for every optimisation method but CAT.
-        
-
-        Returns
-        -------
-        P: 'np.float'                  
-            Variance of white noise for the associated autoregressive process 
-                                       
-        a_k: 'np.ndarray'             
-            The coefficient used to compute the power spectral density (Shape (N,)) 
-            
-        optimization: 'np.ndarray'    
-            The values of the chosen optimisation_method at every iteration 
-            (Shape (N,))   
-
-        """
         
         self.regularisation = regularisation
         self.early_stop = early_stop
@@ -259,23 +208,8 @@ class MESA(object):
 
     #@do_profile(follow=[])
     def _FastBurg(self):
-        """
-        Uses the Fast version of Burg Algorithm to compute the power spectral
-        density. The order is selected by the minimization of the chosen method
+        #FIXME: if we decide to keep the early stop option, it must be a parameter for function self.solve
 
-        Returns
-        -------
-        P: 'np.float'                  
-            Variance of white noise for the associated autoregressive process
-                                       
-        a_k: 'np.ndarray'             
-            The coefficient used to compute the power spectral density (Shape (N,)) 
-            
-        optimization: 'np.ndarray'    
-            The values of the chosen optimisation_method at every iteration 
-            (Shape (N,))   
-        """
-        
         #Define autocorrelation
         c = np.zeros(self.mmax + 2, dtype = self.data.dtype) #here c has the same type of the data
         #FIXME: use numpy functions (Stefano: not really simple to do this.. Now it is the bottleneck of the function)
@@ -353,23 +287,6 @@ class MESA(object):
         return np.concatenate((gUp, gDown))
 
     def _Burg(self):
-        """
-        Uses the Standard version of Burg Algorithm to compute the power spectral
-        density. The order is selected by the minimization of the chosen method
-
-        Returns
-        -------
-        P: 'np.float'                  
-            Variance of white noise for the associated autoregressive process
-                                       
-        a_k: 'np.ndarray'             
-            The coefficient used to compute the power spectral density (Shape (N,)) 
-            
-        optimization: 'np.ndarray'    
-            The values of the chosen optimisation_method at every iteration 
-            (Shape (N,))   
-        """
-        
         #initialization of variables
         P_0 = (self.data ** 2).mean()
         P = [P_0]
@@ -431,43 +348,22 @@ class MESA(object):
         #sys.stderr.write('\n')
         return np.array(future)
     
-    def forecast_vectorized(self, length, number_of_simulations, P = None): 
-        """
-        Forecasting on the observed process for a total number of points given 
-        by length, to be performed as many times as number_of_simulations. 
-        This method can only be used if a_k coefficients have been computed 
-        already. Use solve method before forecasting. 
-
-        Parameters
-        ----------
-        length : 'np.int'
-            Number of future points to be predicted 
-            
-        number_of_simulations : 'np.int'
-            Total number of simulations of the process
-            
-        P : 'np.float'
-            Variance of white noise for the autoregressive process. 
-            Default is None and uses the estimate obtained with Burg's algorithm. 
-
-        Returns
-        -------
-        predictions : 'np.ndarray'
-            Array containing the forecasted points for every simulation of the
-            process (Shape (number_of_simulations, length))
-
-        """
-        if P == None: P = self.P 
+    def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = False): 
+        if not isinstance(P,float): P = self.P 
         p = self.a_k.size - 1 
-        #predictions = np.zeros((number_of_simulations, p + length))
         predictions = np.zeros((number_of_simulations, p + length))
+        print(predictions.shape,p, self.P)
         predictions[:,:p] = self.data[-p:]
         coef = self.a_k[1:][::-1]
         for i in range(length): 
             sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
             predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
                          np.random.normal(0, np.sqrt(P), size = number_of_simulations)
-        return predictions
+        sys.stderr.write('\n')
+        if include_data:
+            return predictions
+        else:
+            return predictions[:,p:]
 
 
 
