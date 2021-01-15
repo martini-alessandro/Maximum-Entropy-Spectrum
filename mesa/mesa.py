@@ -1,10 +1,11 @@
 import sys
 import numpy as np
+import warnings
 
 #Stefano: put as everywhere as possible the dimensions of the variables we are using?
 #Stefano: make the help of every function?
-#Stefano: real and imaginary part of the data; I did something on line 169 and it gives no issues. Is it fine now?
 #Stefano: should the sampling rate be given at initialization? Or is it fine like it is today?
+#Stefano: why don't we merge generate Time series in the mesa class? So we have a single file
 
 #############DEBUG LINE PROFILING
 try:
@@ -128,9 +129,8 @@ class MESA(object):
             # df = 1/(dt*N) --> N = 2 f_ny/df
         df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
         f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
-        if np.max(frequencies) > f_ny:
-            #here we could also raise a warning and set a 0 PSD
-            raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
+        if np.max(frequencies) > f_ny + 0.1:
+            warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned there.".format(f_ny))
         N = int(2.*f_ny/df)
 
         spec, f_spec = self.spectrum(dt, N)
@@ -173,14 +173,16 @@ class MESA(object):
               m = None,
               optimisation_method = "FPE",
               method              = "Fast",
-              regularisation      = 1.0):
+              regularisation      = 1.0,
+              early_stop = True ):
         
         self.regularisation = regularisation
+        self.early_stop = early_stop
         if m == None:
             self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
             self.mmax = m
-        
+           
         if method == "Fast":
             self._method = self._FastBurg
         elif method == "Standard":
@@ -194,7 +196,7 @@ class MESA(object):
         return self.P, self.a_k, self.optimization
 
     #@do_profile(follow=[])
-    def _FastBurg(self, early_stop = True):
+    def _FastBurg(self):
         #FIXME: if we decide to keep the early stop option, it must be a parameter for function self.solve
 
         #Define autocorrelation
@@ -228,55 +230,19 @@ class MESA(object):
             #Compute optimizer value for chosen method
             optimization.append( self._optimizer(P, a[-1], self.N, i + 1) )
             
-            #checking if there is a minimum (every some iterations)
-            if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and early_stop:
+            	#checking if there is a minimum (every some iterations) if early_stop option is on
+            if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) + 1
                 if old_idx < idx:
                     old_idx = idx
                 else:
                     old_idx = idx
                     break
-        if not early_stop:
+        if not self.early_stop:
             idx = np.argmin(optimization) + 1
 
         return P[idx], a[idx], np.array(optimization)
    
-    def _FastBurg_old(self):
-        #FIXME: if we decide to keep the early stop option, it must be included here
-        #Define autocorrelation
-        c = np.zeros(self.mmax + 2, dtype = self.data.dtype)
-        #FIXME: use numpy functions
-        for j in range(self.mmax + 1):
-            c[j] = self.data[: self.N - j] @ self.data[j : ]
-        c[0] *= self.regularisation
-        #Initialize variables
-        a = [np.array([1])]
-        P = [c[0] / self.N]
-        r = 2 * c[1]
-        g = np.array([2 * c[0] - self.data[0] * self.data[0].conj() - self.data[-1] * self.data[-1].conj(), r])
-        #Initialize lists to save arrays
-        optimization = np.zeros(self.mmax)
-        #Loop for the FastBurg Algorithm
-        for i in range(self.mmax):
-            #Update prediction error filter and reflection error coefficient
-            k, new_a = self._updateCoefficients(a[-1], g)
-            #Update variables. Check paper for indeces at j-th loop.
-            r = self._updateR(i, r, c[i + 2])
-            #Construct the array in two different, equivalent ways.
-            DrA = self._constructDr2(i, new_a)
-            #Update last coefficient
-            g = self._updateG(g, k, r, new_a, DrA)
-            #Append values to respective lists
-            a.append(new_a)
-            P.append(P[-1] * (1 - k * k.conj()))
-            #Compute optimizer value for chosen method
-            optimization[i] = self._optimizer(P, a[-1], self.N, i + 1)
-        if self._optimizer.method == "Fixed": #Stefano: is there a way to remove the if and put everything together
-            idx = self.mmax
-        else:
-            idx = optimization.argmin() + 1
-        return P[idx], a[idx], optimization
-        
     def _updateCoefficients(self, a, g):
         a = np.concatenate((a, np.zeros(1)))
         k = - (np.dot(a.conj(), g[::-1])) / (np.dot(a, g))
@@ -317,7 +283,10 @@ class MESA(object):
         a_k = [np.array([a_0])]
         _f = np.array(self.data)
         _b = np.array(self.data)
-        optimization = np.zeros(self.mmax)
+        optimization = []
+        early_stop_step = self.mmax/50
+        idx = None
+        old_idx = 0
         #Burg's recursion
         for i in range(self.mmax):
             f = _f[1:]
@@ -329,12 +298,18 @@ class MESA(object):
             _f = f + k * b
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
-            optimization[i] = self._optimizer(P, a_k[-1], self.N, i + 1)
-        #selecting the minimum for the optimizer and recording its position
-        if self._optimizer.method == "Fixed":
-            idx = self.mmax
-        else:
-            idx = optimization.argmin()+1
+            optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
+            	#checking if there is a minimum (every some iterations) if early_stop option is on
+            if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
+                idx = np.argmin(optimization) + 1
+                if old_idx < idx:
+                    old_idx = idx
+                else:
+                    old_idx = idx
+                    break
+        if not self.early_stop:
+            idx = np.argmin(optimization) + 1
+
         return P[idx], a_k[idx], optimization
     
     def _updatePredictionCoefficient(self, x, reflectionCoefficient):

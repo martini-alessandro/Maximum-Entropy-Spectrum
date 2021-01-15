@@ -36,7 +36,7 @@ f_bis = np.linspace(0,20000,10000)
 PSD_bis =  M.spectrum_bis(f_bis, dt)
 
 	#generate syntetic noise
-times, time_series, frequencies, frequency_series, psd_int = mesa.GenerateTimeSeries.generate_data(f_PSD, PSD.real, T=16., sampling_rate = rate, zero_noise = False)
+times, time_series, frequencies, frequency_series, psd_int = mesa.GenerateTimeSeries.generate_noise_mesa(M, T=16., sampling_rate = rate, N_series = 1)
 
 	#saving noise to file
 to_save = np.column_stack([time_series, time_series])
