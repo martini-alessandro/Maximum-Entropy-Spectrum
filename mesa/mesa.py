@@ -168,6 +168,8 @@ class MESA(object):
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
         
         return f_interp, frequencies 
+    
+    #If else con due differenti returns 
         
     def solve(self,
               m = None,
@@ -340,13 +342,13 @@ class MESA(object):
     def forecast_vectorized(self, length, number_of_simulations, P = None): 
         if P == None: P = self.P 
         p = self.a_k.size - 1 
-        predictions = np.array([self.data[-p:]] * number_of_simulations)
-        coef = self.a_k[1:][::-1].reshape(p, 1)
+        predictions = np.zeros((number_of_simulations, p + length))
+        predictions[:,:p] = self.data[-p:]
+        coef = self.a_k[1:][::-1]
         for i in range(length): 
             sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
-            prediction = predictions[:,-p:] @ coef +\
-                         np.random.normal(0, np.sqrt(P), size = (number_of_simulations, 1))
-            predictions = np.concatenate((predictions, prediction), axis = 1)
+            predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
+                         np.random.normal(0, np.sqrt(P), size = number_of_simulations)
         return predictions
 
 def autocorrelation(x, norm = 'N'):
