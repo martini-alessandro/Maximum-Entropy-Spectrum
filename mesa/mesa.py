@@ -129,8 +129,7 @@ class MESA(object):
             # df = 1/(dt*N) --> N = 2 f_ny/df
         df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
         f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
-        if np.max(frequencies) > f_ny:
-            #here we could also raise a warning and set a 0 PSD
+        if np.max(frequencies) > f_ny + 0.1:
             warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned there.".format(f_ny))
         N = int(2.*f_ny/df)
 
