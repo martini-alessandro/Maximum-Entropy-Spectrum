@@ -45,6 +45,16 @@ except:
 class optimizer:
 
     def __init__(self, method):
+        """
+        Various optimizers that can be used to infer the best recursive order
+        to estimate the power spectral density
+
+        Parameters
+        ----------
+        method : 'str'
+            Available methods are 'FPE', 'OBD', 'CAT', 'AIC' or 'Fixed'. 
+
+        """
         self.method = method
 
     def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
@@ -62,23 +72,68 @@ class optimizer:
             raise ValueError("{} is not a an available method! Valid choices are 'FPE', 'AIC', 'CAT', 'OBD' and 'Fixed'.".format(self.method))
     
     def _FPE(self, P, N, m):
+        """
+        Akaike method to choose the most representative recursive method. 
+
+        Parameters
+        ----------
+        P : 'np.float'
+            Current estimate value for the variance of the process.
+        N : 'np.int'
+            Length of the dataset.
+        m : 'np.int'
+            Current order of the recursion.
+
+        Returns
+        -------
+        'Float'
+            The value of Akaike's optimizer.
+
+        """
         return P[-1] * (N + m + 1) / (N - m - 1)
     
     def _AIC(self, P, N, m):
         """
-        description
-        
-        params:
-        P: `np.float` power
-        ...
-        
-        return
-        the value returned
-        
+        Second Akaike method to choose the most representative recursive method. 
+        It is asymptotically equivalent to "FPE"
+
+        Parameters
+        ----------
+        P : 'np.float'
+            Current estimate value for the variance of the process.
+        N : 'np.int'
+            Length of the dataset.
+        m : 'np.int'
+            Current order of the recursion.
+
+        Returns
+        -------
+        'Float'
+            The value of second Akaike's optimizer. 
+
         """
         return np.log(P[-1]) + (2 * m) / N
     
     def _CAT(self, P, N, m):
+        """
+        Parzen method to choose the most representative recursive method. 
+        It is asymptotically equivalent to "FPE"
+
+        Parameters
+        ----------
+        P : 'np.float'
+            Current estimate value for the variance of the process.
+        N : 'np.int'
+            Length of the dataset.
+        m : 'np.int'
+            Current order of the recursion.
+
+        Returns
+        -------
+        'Float'
+            The value of Parzen's optimizer. 
+
+        """
         if m == 0:
             return np.inf
         P = np.array(P[1:])
@@ -87,6 +142,27 @@ class optimizer:
         return 1 / (N * PW_k.sum())- (1 / PW_k[-1])
     
     def _OBD(self, P, a_k, N, m):
+        """
+        Rao method to choose the most representative recursive method. 
+        It is asymptotically equivalent to "FPE"
+
+        Parameters
+        ----------
+        P : 'np.float'
+            Current estimate value for the variance of the process.
+        a_k: 'np.ndarray'
+            Current estimate for the autoregressive coefficients. (Shape (N,))
+        N : 'np.int'
+            Length of the dataset.
+        m : 'np.int'
+            Current order of the recursion.
+
+        Returns
+        -------
+        'Float'
+            The value of second Akaike's optimizer. 
+
+        """
         P_m = P[-1]
         P = np.array(P[:-1])
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
@@ -96,7 +172,7 @@ class optimizer:
 
 class MESA(object):
     """
-    description
+    Class that implements Burg Method to compute the power spectral density
     
     init: data: `np.ndarray` shape (N)
     
@@ -106,79 +182,74 @@ class MESA(object):
         self.data = data
         self.N    = len(self.data)
         
-    def spectrum(self, dt, N):
+    def _spectrum(self, dt, N):
         """
         Computes the Power Spectral density of the model. The PSD is evaluated on a standard grid of frequency (as given by np.fft.fftfreq), without postprocessing.
         
-        params:
-            dt: `np.float`      Sampling rate for the time series
-            N: `np.float`       Length of the frequency grid
+        Parameters:
+        ----------
+        dt: `np.float`      
+            Sampling rate for the time series
+        N: `np.float`       
+            Length of the frequency grid
         
-        return
-            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
-            freq: `np.ndarray`       frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq)
+        Returns 
+        ----------
+        spectrum: `np.ndarray`   
+            PSD of the model, including both positive and negative frequencies (shape (N,))
+        freq: `np.ndarray`       
+            frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq) (shape (N,))
         
         """
         den = np.fft.fft(self.a_k, n=N)
         spectrum = dt * self.P / (np.abs(den) ** 2)
         return spectrum, np.fft.fftfreq(N,dt)
 
-    def spectrum_bis(self, frequencies, dt):
-        #FIXME: find a different name for the function
+
+    def spectrum(self, dt, frequencies = None): 
         """
-        Computes the Power Spectral density of the model. PSD is evaluated on a user-given frequency grid (only positive frequencies).
-        
-        params:
-            frequencies: `np.ndarray`   (Positive) frequencies to evaluate the spectrum at (shape (N,))
-            dt: `np.float`              Sampling rate for the time series
-        
-        return
-            spectrum: `np.ndarray`   PSD of the model, including both positive and negative frequencies (shape (N,))
+        Computes the power spectral density of the time series. It can be evaluated
+        on standard sampling frequencies interval or a chosen interval 
+
+        Parameters
+        ----------
+        dt :  'np.float'
+            The sampling rate of the time series 
+        frequencies : 'np.ndarray', optional
+            frequencies at which power spectral density has to be computed. 
+            The default is None and uses standard sampling frequencies. (shape (N,))
+
+
+
+        Returns
+        -------
+        If frequency is None: 
+            spectrum: 'np.ndarray'
+                The Power spectral density  (Shape (N,))
+            frequencies: 'np.ndarray'
+                The sampling frequencies (Shape (N,))
+                
+        If frequency is np.ndarray
+            spectrum: 
+                The spectrum computed on the passed frequencies (Shape (N,))
+
         """
-            # df = 1/(dt*N) --> N = 2 f_ny/df
-        df = np.min(np.abs(np.diff(frequencies))) *0.9 #minimum precision required by the user given grid (*0.9 to be safe)
-        f_ny = 0.5/dt #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
-        if np.max(frequencies) > f_ny + 0.1:
+
+        f_ny = .5 / dt    #Nyquist frequency (minimum frequency that can be resolved with a given sampling rate 1/dt)
+        
+        if type(frequencies) == np.ndarray and np.max(frequencies) > f_ny + 0.1:
             warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned there.".format(f_ny))
-        N = int(2.*f_ny/df)
-
-        spec, f_spec = self.spectrum(dt, N)
-            #only real part of spec is used (PSD is a real function!)
-            #only positive frequencies of the spectrum are computed
-        f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.) 
-        return f_interp
-
-
-    def spectrum_joined(self, dt, frequencies = None): 
-        """
-        Computes the power spectral density of the model. PSD is evaluated on a frequency
-        grid whose default values are given by sampling theory and authomatically constructed. 
-        It can also be computed on a user-given frequency grid. 
-        
-        """
-        #I would cut the int / float option. One can chose to compute 
-        #on standard sampling frequencies or on a given array. Chosing length is 
-        #not such an important feature. 
-        f_ny = .5 / dt 
-        df = np.min(np.abs(np.diff(frequencies))) * 0.9
-        if type(frequencies) == np.ndarray and np.max(frequencies) > f_ny: 
-            #here we could also raise a warning and set a 0 PSD
-            raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
-        
-        if frequencies == None: N = self.N
-        elif isinstance(frequencies, (np.int, np.float)):  N = frequencies 
-        elif isinstance(frequencies, np.ndarray): N = int(2. * f_ny / df)
-        
-        spec, f_spec = self.spectrum(dt, N)
-        
-        #Insert positive frequencies again? 
-        if type(frequencies) != np.ndarray: frequencies = f_spec[:int(N/2+0.5)] 
-
+        if frequencies == None: 
+            N = self.N
+        elif isinstance(frequencies, np.ndarray): 
+            df = np.min(np.abs(np.diff(frequencies))) * 0.9 #minimum precision required by the user given grid (*0.9 to be safe)
+            N = int(2. * f_ny / df)
+        spec, f_spec = self._spectrum(dt, N)    
+        if frequencies == None: 
+            return spec, f_spec 
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
-        
-        return f_interp, frequencies 
+        return f_interp
     
-    #If else con due differenti returns 
         
     def solve(self,
               m = None,
@@ -186,6 +257,45 @@ class MESA(object):
               method              = "Fast",
               regularisation      = 1.0,
               early_stop = True ):
+        """
+        
+
+        Parameters
+        ----------
+        m : 'np.int', optional
+            The maximum number of recursions to be performed by the algorithm.
+            If no argument is passed it is chosen to be m = 2N / log(2N). 
+            The default is None.
+            
+        optimisation_method : 'str', optional
+            Chose the optimizer to be minimized in order to select the best 
+            recursive order. Available methods are "FPE", "CAT", "OBD", "AIC" 
+            or "Fixed". If "Fixed" the order is equivalent to m. 
+            The default is "FPE".
+            
+        method : 'str', optional
+            Selects the algorithm for the computation of the power spectral density.
+            Available choices are: 'Fast', 'Standard'. The default is "Fast".
+            
+        regularisation : 'np.float', optional
+            Tikhonov regularisation, should be a number slightly larger than one
+            If nothing is passed, no regularisation is implemented. The default is 1.0.
+            
+        early_stop : 'Boolean', optional
+            When early stop, the recursion broke if no new global minimum is found
+            after 200 iterations. It is reccomended with every optimiser but CAT.
+            The default is True.
+
+        Returns
+        -------
+        P: 'np.float'
+            The variance of the white noise error of the associated AR process 
+        a_k: 'np.array'
+            The coefficients used to compute the power spectral density 
+        Optimization: 'np.array'
+            The value of the chosen optimizer for every iteration. (shape (N,))
+
+        """
         
         self.regularisation = regularisation
         self.early_stop = early_stop
@@ -208,6 +318,20 @@ class MESA(object):
 
     #@do_profile(follow=[])
     def _FastBurg(self):
+        """
+        Implement the Fast Burg algorithm for the computation of the power spectral
+        density
+
+        Returns
+        -------
+        P: 'np.float'
+            The variance of the white noise error of the associated AR process 
+        a_k: 'np.array'
+            The coefficients used to compute the power spectral density 
+        Optimization: 'np.array'
+            The value of the chosen optimizer for every iteration.
+
+        """
         #FIXME: if we decide to keep the early stop option, it must be a parameter for function self.solve
 
         #Define autocorrelation
@@ -287,6 +411,20 @@ class MESA(object):
         return np.concatenate((gUp, gDown))
 
     def _Burg(self):
+        """
+        Implement the Fast Burg algorithm for the computation of the power spectral
+        density
+
+        Returns
+        -------
+        P: 'np.float'
+            The variance of the white noise error of the associated AR process 
+        a_k: 'np.array'
+            The coefficients used to compute the power spectral density 
+        Optimization: 'np.array'
+            The value of the chosen optimizer for every iteration.
+
+        """
         #initialization of variables
         P_0 = (self.data ** 2).mean()
         P = [P_0]
@@ -349,6 +487,32 @@ class MESA(object):
         return np.array(future)
     
     def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = False): 
+        """
+        It uses the AR coefficients computed solving Burg's Algorithm to forecast
+        on the observed time series. It can only be used if solve method has been used
+        already. 
+
+        Parameters
+        ----------
+        length : 'np.int'
+            Number of points to be predicted 
+            
+        number_of_simulations : 'np.int'
+            Total number of simulation to be performed
+            
+        P : 'np.float', optional
+            The variance of white noise of the estiamted AR process. If None is 
+            passed P is the one computed solving the method. The default is None.
+            
+        include_data : 'Booelan', optional
+            Return the first p data used for forecasting. The default is False.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         if not isinstance(P,float): P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
