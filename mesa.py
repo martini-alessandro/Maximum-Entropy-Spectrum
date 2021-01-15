@@ -1,3 +1,12 @@
+"""
+mesa
+====
+
+A nice package for Maximum Entropy Spectral Analysis.
+Include short description here: it will appear when typing help(mesa)
+
+"""
+
 import sys
 import numpy as np
 import warnings
