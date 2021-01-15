@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
 
-    datafile = "../mesa/data/zuerich-monthly-sunspot-numbers-.tsv"
+    datafile = "data/zuerich-monthly-sunspot-numbers-.tsv"
     _, data = np.genfromtxt(datafile, unpack = True)
     T = len(data)
     dt = 1.
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     M = MESA(data)
     P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("p = {0}".format(len(ak)))
-    PSD, _     = M.spectrum(dt,len(f))[:N//2]
+    PSD, _     = M.spectrum(dt)[:N//2]
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)
