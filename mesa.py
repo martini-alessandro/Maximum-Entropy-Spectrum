@@ -348,17 +348,22 @@ class MESA(object):
         #sys.stderr.write('\n')
         return np.array(future)
     
-    def forecast_vectorized(self, length, number_of_simulations, P = None): 
-        if P == None: P = self.P 
+    def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = False): 
+        if not isinstance(P,float): P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
+        print(predictions.shape,p, self.P)
         predictions[:,:p] = self.data[-p:]
         coef = self.a_k[1:][::-1]
         for i in range(length): 
             sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
             predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
                          np.random.normal(0, np.sqrt(P), size = number_of_simulations)
-        return predictions
+        sys.stderr.write('\n')
+        if include_data:
+            return predictions
+        else:
+            return predictions[:,p:]
 
 
 

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.insert(0,'..')
-from mesa.mesa import *
+from mesa import *
 import mesa.GenerateTimeSeries
 
 t = 4. #seconds of data
