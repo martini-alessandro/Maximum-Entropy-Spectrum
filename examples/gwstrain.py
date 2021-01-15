@@ -13,7 +13,7 @@ if __name__ == "__main__":
     f_min_bp = 20.0
     f_max_bp = (srate-20)/2.0
     T  = 4
-    datafile = "../mesa/data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt"
+    datafile = "data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt"
     data = np.loadtxt(datafile)[:int(T*4096)]
     if srate != 4096.:
         data = decimate(data, int(4096/srate), zero_phase=True)
