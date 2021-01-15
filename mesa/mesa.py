@@ -139,6 +139,36 @@ class MESA(object):
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.) 
         return f_interp
 
+
+    def spectrum_joined(self, dt, frequencies = None): 
+        """
+        Computes the power spectral density of the model. PSD is evaluated on a frequency
+        grid whose default values are given by sampling theory and authomatically constructed. 
+        It can also be computed on a user-given frequency grid. 
+        
+        """
+        #I would cut the int / float option. One can chose to compute 
+        #on standard sampling frequencies or on a given array. Chosing length is 
+        #not such an important feature. 
+        f_ny = .5 / dt 
+        df = np.min(np.abs(np.diff(frequencies))) * 0.9
+        if type(frequencies) == np.ndarray and np.max(frequencies) > f_ny: 
+            #here we could also raise a warning and set a 0 PSD
+            raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
+        
+        if frequencies == None: N = self.N
+        elif isinstance(frequencies, (np.int, np.float)):  N = frequencies 
+        elif isinstance(frequencies, np.ndarray): N = int(2. * f_ny / df)
+        
+        spec, f_spec = self.spectrum(dt, N)
+        
+        #Insert positive frequencies again? 
+        if type(frequencies) != np.ndarray: frequencies = f_spec[:int(N/2+0.5)] 
+
+        f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
+        
+        return f_interp, frequencies 
+        
     def solve(self,
               m = None,
               optimisation_method = "FPE",
@@ -318,10 +348,10 @@ class MESA(object):
         coef = - self.a_k[1:][::-1]
         future = [] 
         for _ in range(number_of_simulations):
-            sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
+            #sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
             predictions = self.data[-p:]            
             for i in range(length):#FIXME: progress bar?
-                sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
+               # sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
                 prediction = predictions[-p:] @ coef +\
                              np.random.normal(0, np.sqrt(P))
 #                while prediction < 0:
@@ -329,8 +359,20 @@ class MESA(object):
 #                             np.random.normal(0, np.sqrt(P))
                 predictions = np.append(predictions, prediction)
             future.append(predictions[p:])
-        sys.stderr.write('\n')
+        #sys.stderr.write('\n')
         return np.array(future)
+    
+    def forecast_vectorized(self, length, number_of_simulations, P = None): 
+        if P == None: P = self.P 
+        p = self.a_k.size - 1 
+        predictions = np.array([self.data[-p:]] * number_of_simulations)
+        coef = self.a_k[1:][::-1].reshape(p, 1)
+        for i in range(length): 
+            sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
+            prediction = predictions[:,-p:] @ coef +\
+                         np.random.normal(0, np.sqrt(P), size = (number_of_simulations, 1))
+            predictions = np.concatenate((predictions, prediction), axis = 1)
+        return predictions
 
 def autocorrelation(x, norm = 'N'):
     N = len(x)
