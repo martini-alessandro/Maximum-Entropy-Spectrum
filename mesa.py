@@ -45,6 +45,18 @@ except:
 class optimizer:
 
     def __init__(self, method):
+        """
+        Implements various method to choose the best recursive order for Burg's Algorithm
+        Avilable methods are "FPE", "OBD", "CAT", "AIC". The most representative order is 
+        chosen to be the one that minimized the related function. 
+        Parameters
+        ----------
+        method : 'str'
+            Selects the method to be used to estimate the best order between "FPE",
+            "OBD", "CAT", "AIC"
+
+
+        """
         self.method = method
 
     def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
@@ -62,23 +74,66 @@ class optimizer:
             raise ValueError("{} is not a an available method! Valid choices are 'FPE', 'AIC', 'CAT', 'OBD' and 'Fixed'.".format(self.method))
     
     def _FPE(self, P, N, m):
+        """
+        
+
+        Parameters
+        ----------
+        P : TYPE
+            DESCRIPTION.
+        N : TYPE
+            DESCRIPTION.
+        m : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         return P[-1] * (N + m + 1) / (N - m - 1)
     
     def _AIC(self, P, N, m):
         """
-        description
         
-        params:
-        P: `np.float` power
-        ...
-        
-        return
-        the value returned
-        
+
+        Parameters
+        ----------
+        P : TYPE
+            DESCRIPTION.
+        N : TYPE
+            DESCRIPTION.
+        m : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
         """
         return np.log(P[-1]) + (2 * m) / N
     
     def _CAT(self, P, N, m):
+        """
+        
+
+        Parameters
+        ----------
+        P : TYPE
+            DESCRIPTION.
+        N : TYPE
+            DESCRIPTION.
+        m : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         if m == 0:
             return np.inf
         P = np.array(P[1:])
@@ -87,6 +142,26 @@ class optimizer:
         return 1 / (N * PW_k.sum())- (1 / PW_k[-1])
     
     def _OBD(self, P, a_k, N, m):
+        """
+        
+
+        Parameters
+        ----------
+        P : TYPE
+            DESCRIPTION.
+        a_k : TYPE
+            DESCRIPTION.
+        N : TYPE
+            DESCRIPTION.
+        m : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         P_m = P[-1]
         P = np.array(P[:-1])
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
@@ -96,10 +171,11 @@ class optimizer:
 
 class MESA(object):
     """
-    description
+    Class the implement the reproduces the Maximum Entropy Spectrum of a given 
+    time-series. 
     
-    init: data: `np.ndarray` shape (N)
-    
+    init: data: `np.ndarray` shape (N,)
+    solve(): 
     """
     def __init__(self, data):
         """ 
