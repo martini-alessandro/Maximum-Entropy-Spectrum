@@ -330,6 +330,26 @@ class MESA(object):
         return P[idx], a[idx], np.array(optimization)
    
     def _updateCoefficients(self, a, g):
+        """
+        Updates the forward prediction error coefficients (needed to compute 
+        to compute the spectrum) from order i to order i + 1 
+        i + 1
+
+        Parameters
+        ----------
+        a : 'np.ndarray'
+            The i'th order forward prediction error coefficients. (Shape (i,))
+        g : 'np.ndarray'
+            Array used to update the forward prediction error (Shape (i+1, )).
+
+        Returns
+        -------
+        k : 'np.float'
+            The reflection coefficient.
+        aUpd : 'np.ndarray'
+            The (i+1)'th order forward predicition error coefficients (Shape (i+1,)).
+
+        """
         a = np.concatenate((a, np.zeros(1)))
         k = - (np.dot(a.conj(), g[::-1])) / (np.dot(a, g))
         aUpd = a + k * a[::-1].conj()
@@ -416,6 +436,23 @@ class MESA(object):
         return P[idx], a_k[idx], optimization
     
     def _updatePredictionCoefficient(self, x, reflectionCoefficient):
+        """
+        Uses the Levinson recursion to update the prediction error coefficients
+
+        Parameters
+        ----------
+        x : 'np.ndarray'
+            The i'th order forward prediction error coefficients (Shape (i,)).
+        reflectionCoefficient : 'np.float'
+            The i'th order reflection coefficients, used to update the forward
+            prediction error coefficients via the solution of Levinson Recursion.
+
+        Returns
+        -------
+        'np.ndarray'
+            The updatet forward prediction error coefficients at order i + 1 (Shape (i + 1,)).
+
+        """
         new_x = np.concatenate((x, np.zeros(1)))
         return new_x + reflectionCoefficient * new_x[::-1]
     
