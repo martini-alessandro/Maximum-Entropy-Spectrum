@@ -6,18 +6,21 @@ import numpy as np
 import scipy.io.wavfile
 import matplotlib.pyplot as plt
 
-import sys
-sys.path.insert(0,'..')
-from mesa import *
-import mesa.GenerateTimeSeries
+try:
+	import sys
+	sys.path.insert(0,'..')
+	from mesa import *
+	import GenerateTimeSeries
+except:
+	from mesa import *
+	import mesa.GenerateTimeSeries as GenerateTimeSeries
 
 t = 4. #seconds of data
 
 	#loading data and preparing input to MESA
-rate, data = scipy.io.wavfile.read("waterfall_data/waterfall_noise.wav") #loading waterfall noise file
+rate, data = scipy.io.wavfile.read("data/waterfall_noise.wav") #loading waterfall noise file
 	#data is (N,2): stereophonic sound
 data_MESA = data[:int(t*rate),0].astype(np.float64)
-#data_MESA = data_MESA+1j*0. #why complex data?
 dt = 1./rate
 times_out = np.linspace(0., len(data_MESA)*dt, len(data_MESA))
 
@@ -27,32 +30,27 @@ P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(
 
 	#evaluating the spectrum
 N_points = 100000
-f = np.linspace(0,10000,N_points) #Why this?? Is only employed for getting the N mesa.spectrum 
-PSD =  M.spectrum(dt,len(f))[0][:int(N_points/2)] #we want only positive frequencies...
-f_PSD = np.fft.fftfreq(len(f),dt)[:int(N_points/2)] #this it the actual frequency grid that PSD is evaluated at
-
-	#evaluating the spectrum bis
-f_bis = np.linspace(0,20000,10000)
-PSD_bis =  M.spectrum_bis(f_bis, dt)
+f_PSD = np.linspace(0,20000,N_points) 
+PSD = M.spectrum(dt, f_PSD)
 
 	#generate syntetic noise
-times, time_series, frequencies, frequency_series, psd_int = mesa.GenerateTimeSeries.generate_noise_mesa(M, T=16., sampling_rate = rate, N_series = 1)
+times, time_series, frequencies, frequency_series, psd_int = GenerateTimeSeries.generate_noise_mesa(M, T=16., sampling_rate = rate, N_series = 1)
 
 	#saving noise to file
 to_save = np.column_stack([time_series, time_series])
-scipy.io.wavfile.write("waterfall_data/simulated_noise.wav", rate, to_save.real.astype(np.int16))
+scipy.io.wavfile.write("data/simulated_noise.wav", rate, to_save.real.astype(np.int16))
 
 	#checking whether psd is correct in the simulated noise
 	#simulated noise is loaded and psd is estimated again
-rate, data = scipy.io.wavfile.read("waterfall_data/simulated_noise.wav") #loading waterfall noise file
+rate, data = scipy.io.wavfile.read("data/simulated_noise.wav") #loading waterfall noise file
 data_MESA = data[:int(t*rate),0].astype(np.float64)
 data_MESA = data_MESA+1j*0.
 dt = 1./rate
 M = MESA(data_MESA)
 P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
-PSD_sim =  M.spectrum(dt,len(f))[0][:int(N_points/2)]
+PSD_sim =  M.spectrum(dt,f_PSD) #PSD computed on simulated data
 
-print("All done: if you like to listen to the output file, type \"aplay waterfall_data/simulated_noise.wav\" ")
+print("All done: if you like to listen to the output file, type \"aplay data/simulated_noise.wav\" ")
 #plotting some quantities
 
 #frequency series of the reconstructed data
@@ -72,17 +70,10 @@ plt.figure()
 plt.title("Comparison between PSD computed from original data (empirical)\nand simulated data (simulated and bis)")
 plt.plot(f_PSD, PSD.real, label = "empirical")
 plt.plot(f_PSD, PSD_sim.real, label = "simulated")
-plt.plot(f_bis, PSD_bis, label = "bis", ms = 100)
 plt.yscale('log')
 plt.xlabel("frequency (Hz)")
 plt.legend()
 
-#comparison between two methods for spectrum
-plt.figure()
-plt.title("Difference between spectrum and spectrum bis")
-PSD_std = np.interp(f_bis, f_PSD, PSD.real)
-plt.plot(f_bis, (PSD_bis - PSD_std)/PSD_std)
-plt.xlabel("frequency (Hz)")
 plt.show()
 
 

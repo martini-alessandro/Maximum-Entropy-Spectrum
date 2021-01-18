@@ -1,6 +1,15 @@
 import numpy as np
-from mesa.mesa import MESA
-from mesa.GenerateTimeSeries import generate_data
+
+try:
+	import sys
+	sys.path.insert(0,'..')
+	from mesa import MESA
+	from GenerateTimeSeries import generate_data
+except:
+	from mesa import MESA
+	from mesa.GenerateTimeSeries import generate_data
+
+
 import matplotlib.pyplot as plt
 
 def lisa_psd(f):
@@ -39,7 +48,7 @@ if __name__ == "__main__":
     M = MESA(time_series)
     P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("p = {0}".format(len(ak)))
-    PSD,_      = M.spectrum(dt,len(f))[:N//2]
+    PSD     = M.spectrum(dt,f)
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)

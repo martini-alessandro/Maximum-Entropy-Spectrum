@@ -1,5 +1,11 @@
+try:
+	import sys
+	sys.path.insert(0,'..')
+	from mesa import *
+except:
+	from mesa import *
+
 import numpy as np
-from mesa.mesa import MESA
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":

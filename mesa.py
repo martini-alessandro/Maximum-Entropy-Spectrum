@@ -189,6 +189,8 @@ class MESA(object):
         """ 
         self.data = data
         self.N    = len(self.data)
+        self.P = None
+        self.a_k = None #If a_k and P are None, the model is not already fitted
         
     def _spectrum(self, dt, N):
         """
@@ -255,16 +257,18 @@ class MESA(object):
         """
         f_ny = .5 / dt 
         
-        if type(frequencies) == np.ndarray: 
+        if isinstance(frequencies, np.ndarray): 
             df = np.min(np.abs(np.diff(frequencies))) * 0.9
-            if np.max(frequencies) > f_ny: 
-                raise ValueError("Some of the required frequencies are higher than the Nyquist frequency: unable to continue")
+            if np.max(frequencies) > f_ny *1.01: 
+                warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny))
         
-        if frequencies == None: N = self.N
+        if frequencies is None: N = self.N
         elif isinstance(frequencies, np.ndarray): N = int(2. * f_ny / df)
+        else: raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
+
         spec, f_spec = self._spectrum(dt, N)
         
-        if frequencies == None: 
+        if frequencies is None: 
             return spec, f_spec   
 
         f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
@@ -325,7 +329,7 @@ class MESA(object):
         
         self.regularisation = regularisation
         self.early_stop = early_stop
-        if m == None:
+        if m is None:
             self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
             self.mmax = m
@@ -534,7 +538,7 @@ class MESA(object):
     
     def forecast(self, length, number_of_simulations, P = None):
         #FIXME: can this be vectorized?
-        if P == None: P = self.P
+        if P is None: P = self.P
         p = self.a_k.size - 1 
         coef = - self.a_k[1:][::-1]
         future = [] 
@@ -553,10 +557,10 @@ class MESA(object):
         #sys.stderr.write('\n')
         return np.array(future)
     
-    def forecast_vectorized(self, length, number_of_simulations, P = None): 
+    def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = True): 
         """
         Forecasting on the observed process for a total number of points given 
-        by length, to be performed as many times as number_of_simulations. 
+        by length. It computes number_of_simulations realization of the forecast time series.
         This method can only be used if a_k coefficients have been computed 
         already. Use solve method before forecasting. 
 
@@ -570,7 +574,10 @@ class MESA(object):
             
         P : 'np.float'
             Variance of white noise for the autoregressive process. 
-            Default is None and uses the estimate obtained with Burg's algorithm. 
+            Default is None and uses the estimate obtained with Burg's algorithm.
+            
+        include_data: `bool`
+            Whether to prepend the inpust time series to the output
 
         Returns
         -------
@@ -579,7 +586,9 @@ class MESA(object):
             process (Shape (number_of_simulations, length))
 
         """
-        if P == None: P = self.P 
+        if self.P is None or self.a_k is None:
+            raise RuntimeError("PSD analysis is not performed yet: unable to forecast the data. You should call solve() before forecasting")
+        if P is None: P = self.P 
         p = self.a_k.size - 1 
         #predictions = np.zeros((number_of_simulations, p + length))
         predictions = np.zeros((number_of_simulations, p + length))
@@ -589,6 +598,9 @@ class MESA(object):
             sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
             predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
                          np.random.normal(0, np.sqrt(P), size = number_of_simulations)
+        sys.stderr.write('\n')
+        if not include_data:
+            return predictions[:,p:]
         return predictions
 
 

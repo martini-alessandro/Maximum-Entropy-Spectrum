@@ -78,7 +78,7 @@ def generate_noise_mesa(mesa_obj,
     
     # generate the FD noise
     frequencies = df * np.linspace(kmin, kmax, int(N / 2 + 1)) #(D,) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
-    psd = mesa_obj.spectrum_bis(frequencies, 1/sampling_rate)
+    psd = mesa_obj.spectrum(1/sampling_rate, frequencies)
 
     sigma = np.sqrt(psd /  df * .5) #(D,)
     phi = np.random.uniform(0, 2 * np.pi, len(sigma))
