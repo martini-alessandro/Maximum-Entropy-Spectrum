@@ -26,7 +26,7 @@ _________
 Call it as 
 ```Python
 M = MESA(data) 
-''' 
+```
 #### methods: 
 
 	mesa.solve() 
