@@ -23,6 +23,10 @@ _________
 
 	Implements the mesa algorithm, input: The time-series under study 
 
+Call it as 
+```Python
+M = MESA(data) 
+''' 
 #### methods: 
 
 	mesa.solve() 
@@ -70,7 +74,6 @@ time = np.arange(0, N) * dt 	#The time array
 data = np.sin(2 * np.pi * f * time) + np.random.normal(scale = 0.4,
                                                        size = 1000)
 ```
-INSERT PLOT FOR THE DATA 
 
 #### Solving the recursion: 
 ```Python
@@ -89,9 +92,8 @@ spectrum, frequencies = M.spectrum(dt)
 	
 #Computation of the spectrum on a user-given frequency grid: 
 user_frequencies = np.linspace(1.5, 2.5, 1000) 
-user_spectrum = M.spectrum(dt, frequencies) 
+user_spectrum = M.spectrum(dt, user_frequencies) 
 ```
-INSERT PLOT FOR BOTH SPECTRA 
 
 
 #### Forecasting and comparing result with real data 
