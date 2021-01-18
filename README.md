@@ -107,8 +107,9 @@ forecast = M.forecast(length = 100, number_of_simulations = 1000)
 
 # References 
 [J.P. Burg - Maximum Entropy Spectral Analysis](http://sepwww.stanford.edu/data/media/public/oldreports/sep06/)
+
 [V. Fastubrg - A Fast Implementation of Burg Method](
 https://svn.xiph.org/websites/opus-codec.org/docs/vos_fastburg.pdf)
 
 # License 
-[GNU General Public License
+[GNU General Public License v3.0](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/LICENSE)
