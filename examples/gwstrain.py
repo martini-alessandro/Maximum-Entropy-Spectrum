@@ -60,8 +60,7 @@ if __name__ == "__main__":
     ax  = fig.add_subplot(111)
     ax.plot(t,data,linewidth=1.5,color='r',zorder=2)
     ax.axvline(t[int(0.75*N)],linestyle='dashed',color='blue')
-    for p in range(Np):
-        ax.plot(t[int(0.75*N):],prediction[p,:],linewidth=0.5, color='k', zorder = 0)
+    ax.plot(t[int(0.75*N):],prediction.T,linewidth=0.5, color='k', zorder = 0)
     ax.fill_between(t[int(0.75*N):],l,h,facecolor='turquoise',alpha=0.5, zorder = 1)
     ax.set_xlabel("time (s)")
     ax.set_ylabel("strain")
