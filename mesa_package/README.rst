@@ -54,7 +54,7 @@ Generating the data:
 	#data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
 	#plt.plot(time, data, color = 'k') 
 	
-.. image:: 
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Data.jpeg
    :width: 700px
    
    
@@ -74,7 +74,7 @@ some given interval
 	#user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
 	
 Plotting the two the following is obtained: 
-.. image:: 
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Spectrum.jpeg
    :width: 700px
    
    
@@ -98,9 +98,9 @@ Real observed data are compared with median estimate and 90% Credibility regions
 	 
  
 
-The output is:
+The forecast result is: 
 
-.. image:: here a link to an image
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Forecast.jpeg
    :width: 700px
 
 
