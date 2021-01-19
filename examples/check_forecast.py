@@ -29,7 +29,7 @@ np.random.seed(0)
 old_f = m.forecast(5000,1)
 
 np.random.seed(0)
-vec_f = m.forecast_vectorized(5000,1, include_data=False)
+vec_f = m.forecast(5000,1, include_data=False)
 
 print("All close: ",np.allclose(vec_f,old_f, 1e-1))
 

@@ -11,10 +11,7 @@ import sys
 import numpy as np
 import warnings
 
-#Stefano: put as everywhere as possible the dimensions of the variables we are using?
-#Stefano: make the help of every function?
 #Stefano: should the sampling rate be given at initialization? Or is it fine like it is today?
-#Stefano: why don't we merge generate Time series in the mesa class? So we have a single file
 
 #############DEBUG LINE PROFILING
 try:
@@ -189,8 +186,8 @@ class MESA(object):
         
         Parameters
         ----------
-            data: 'np.ndarray'       
-                Time series with power spectral density to be computed 
+        data: 'np.ndarray'       
+            Time series with power spectral density to be computed 
         """ 
         self.data = data
         self.N    = len(self.data)
@@ -206,8 +203,8 @@ class MESA(object):
         
         Parameters
         ----------
-            filename: `string`      
-                Name of the file to save the data at
+        filename: `string`      
+            Name of the file to save the data at
         """
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
@@ -224,8 +221,8 @@ class MESA(object):
         
         Parameters
         ----------
-            filename: `string`      
-                Name of the file to load the data from
+        filename: `string`      
+            Name of the file to load the data from
         """
         data = np.loadtxt(filename)
         if data.ndim != 1:
@@ -248,7 +245,34 @@ class MESA(object):
         
         return
         
+    def save_spectrum(self, filename, dt, frequencies = None):
+        """
+        Saves the power spectral density computed by the model to a txt file. The PSD is evaluated on a user given grid of frequencies. If None, a standard grid is used (as computed by np.fft.fftfreq).
+        The spectrum is saved as a 2D array: [f, PSD(f)]
+        
+        Parameters
+        ----------
+        filename: `string`      
+            Name of the file to save the PSD at
 
+        dt: `np.float`      
+            Sampling rate for the time series
+
+        frequencies: `np.ndarray`      
+            Frequencies to compute the PSD at. If None, a standard grid will be computed
+                
+        """
+        if isinstance(frequencies, np.ndarray):
+            PSD = self.spectrum(dt,frequencies)
+        elif frequencies is None:
+            PSD, frequencies = self.spectrum(dt)
+        else:
+            raise ValueError("Wrong type for input frequencies: expected \`np.ndarray\` or None, got {} instead".format(type(frequencies)))
+         
+        to_save  = np.column_stack([frequencies, PSD])
+        np.savetxt(filename, to_save, header = "dt = {} s".format(dt))
+        return
+        
         
     def _spectrum(self, dt, N):
         """
@@ -594,28 +618,7 @@ class MESA(object):
         new_x = np.concatenate((x, np.zeros(1)))
         return new_x + reflectionCoefficient * new_x[::-1]
     
-    def forecast(self, length, number_of_simulations, P = None):
-        #FIXME: can this be vectorized?
-        if P is None: P = self.P
-        p = self.a_k.size - 1 
-        coef = - self.a_k[1:][::-1]
-        future = [] 
-        for _ in range(number_of_simulations):
-            #sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
-            predictions = self.data[-p:]            
-            for i in range(length):#FIXME: progress bar?
-               # sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
-                prediction = predictions[-p:] @ coef +\
-                             np.random.normal(0, np.sqrt(P))
-#                while prediction < 0:
-#                    prediction = predictions[-p:] @ coef +\
-#                             np.random.normal(0, np.sqrt(P))
-                predictions = np.append(predictions, prediction)
-            future.append(predictions[p:])
-        #sys.stderr.write('\n')
-        return np.array(future)
-    
-    def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = True): 
+    def forecast(self, length, number_of_simulations, P = None, include_data = False): 
         """
         Forecasting on the observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
@@ -660,7 +663,3 @@ class MESA(object):
             return predictions[:,p:]
         return predictions
 
-
-
-#FIXME: methods to save and load psd and AR coefficients in various formats, depending on the necessary application
-#FIXME: save/load class as pickle
