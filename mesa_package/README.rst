@@ -104,6 +104,18 @@ The output is:
    :width: 700px
 
 
+Generating data from PSD
+============================
+mesa.generateTimeSeries provides a function that construct a time-series with a user-given power 
+spectral density. It can be called as 
+
+:: 
+	#from mesa.generateTimeSerie import generate_data
+	#f, psd = import wanted psd and frequency array 
+	#time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
+	
+T represent the time length of the observation and sampling rate is equivalent to 1 / dt, with dt the sampling interval
+ 
 
 Installation & documentation
 ============================
