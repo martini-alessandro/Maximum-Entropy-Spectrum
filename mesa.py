@@ -618,28 +618,7 @@ class MESA(object):
         new_x = np.concatenate((x, np.zeros(1)))
         return new_x + reflectionCoefficient * new_x[::-1]
     
-    def forecast(self, length, number_of_simulations, P = None):
-        #FIXME: can this be vectorized?
-        if P is None: P = self.P
-        p = self.a_k.size - 1 
-        coef = - self.a_k[1:][::-1]
-        future = [] 
-        for _ in range(number_of_simulations):
-            #sys.stderr.write('\r%f' %((_ + 1)/number_of_simulations))
-            predictions = self.data[-p:]            
-            for i in range(length):#FIXME: progress bar?
-               # sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
-                prediction = predictions[-p:] @ coef +\
-                             np.random.normal(0, np.sqrt(P))
-#                while prediction < 0:
-#                    prediction = predictions[-p:] @ coef +\
-#                             np.random.normal(0, np.sqrt(P))
-                predictions = np.append(predictions, prediction)
-            future.append(predictions[p:])
-        #sys.stderr.write('\n')
-        return np.array(future)
-    
-    def forecast_vectorized(self, length, number_of_simulations, P = None, include_data = True): 
+    def forecast(self, length, number_of_simulations, P = None, include_data = False): 
         """
         Forecasting on the observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
@@ -684,6 +663,3 @@ class MESA(object):
             return predictions[:,p:]
         return predictions
 
-
-
-#FIXME: methods to save and load psd and AR coefficients in various formats, depending on the necessary application

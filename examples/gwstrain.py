@@ -54,7 +54,7 @@ if __name__ == "__main__":
     M = MESA(data[:int(0.75*N)])
     P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     Np = 100
-    prediction = M.forecast_vectorized(int(0.25*N), Np, include_data = False)
+    prediction = M.forecast(int(0.25*N), Np)
     l, h = np.percentile(prediction,[5,95],axis=0)
     fig = plt.figure(2)
     ax  = fig.add_subplot(111)
