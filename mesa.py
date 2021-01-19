@@ -191,6 +191,59 @@ class MESA(object):
         self.N    = len(self.data)
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
+        self.optimization = None
+
+    def save(self,filename):
+        """
+        Save the class to file (if the spectral density analysis is already performed).
+        The output file can be used to load the class with method load()
+        File is a 1D array with the format: [P, a_k, optimization, data]. The header holds the shapes for each array
+        
+        Parameters
+        ----------
+            filename: `string`      
+                Name of the file to save the data at
+        """
+        if self.P is None or self.a_k is None:
+            raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
+        
+        to_save = np.concatenate([[self.P], self.a_k, self.optimization, self.data])
+        header = "(1,{},{},{})".format(len(self.a_k), len(self.optimization), len(self.data))
+        print(header)
+        np.savetxt(filename, to_save, header = header)
+        return
+        
+    def load(self,filename):
+        """
+        Load the class from a given file. The file shall be the same format produced by save().
+        
+        Parameters
+        ----------
+            filename: `string`      
+                Name of the file to load the data from
+        """
+        data = np.loadtxt(filename)
+        if data.ndim != 1:
+            raise ValueError("Wrong format for the file: unable to load the model")
+        
+            #reading the first line
+        with open(filename) as f:
+            first_line = f.readline()
+
+        shapes = eval(first_line.translate({ord('#'): None, ord(' '): None}))
+            #checking for the header
+        if not isinstance(shapes, tuple):
+            if len(shapes) != 4 or not np.all([isinstance(s, int) for s in shapes]):
+                raise ValueError("Wrong format for the header: unable to load the model")
+
+            #assigning values
+        self.P, self.a_k, self.optimization, self.data = np.split(data, np.cumsum(shapes)[:-1])
+
+        self.N = shapes[3]
+        
+        return
+        
+
         
     def _spectrum(self, dt, N):
         """
