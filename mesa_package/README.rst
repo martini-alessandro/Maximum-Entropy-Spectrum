@@ -42,17 +42,17 @@ Sinusoid example
 To compute (and plot) a spectrum of a sinusoidal signal:
 ::
 
-	#from mesa import mesa 
-	#import numpy as np
+	from mesa import mesa 
+	import numpy as np
 
 Generating the data: 
 ::
 
-	#N, dt = 1000, .01  #Number of samples and sampling interval
-	#time = np.arange(0, N) * dt
-	#frequency = 2  
-	#data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
-	#plt.plot(time, data, color = 'k') 
+	N, dt = 1000, .01  #Number of samples and sampling interval
+	time = np.arange(0, N) * dt
+	frequency = 2  
+	data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
+	plt.plot(time, data, color = 'k') 
 	
 .. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Data.jpeg
    :width: 700px
@@ -62,16 +62,16 @@ Generating the data:
 Solving MESA is needed to compute PSD or forecast. 
 ::
 
-	#M = MESA(data) 
-	#M.solve() 
+	M = MESA(data) 
+	M.solve() 
 	
 The spectrum can be computed on sampling frequencies (automatically generated) or on 
 some given interval 
 ::
 
-	#spectrum, frequencies = M.spectrum(dt)  #Computes on sampling frequencies 
-	#user_frequencies = np.linspace(1.5, 2.5)
-	#user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
+	spectrum, frequencies = M.spectrum(dt)  #Computes on sampling frequencies 
+	user_frequencies = np.linspace(1.5, 2.5)
+	user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
 	
 Plotting the two the following is obtained: 
 
@@ -86,16 +86,16 @@ Real observed data are compared with median estimate and 90% Credibility regions
 ::
 
 
-	#M = MESA(data[:-100]) 
-	#M.solve() 
-	#forecast = M.forecast(length = 100, number_of_simulations = 1000, include_data = False) 
-	#median = np.median(forecast, axis = 0) #Ensemble median 
-	#p5, p95 = np.percentile(forecast, (5, 95), axis = 0) #90% credibility boundaries
+	M = MESA(data[:-100]) 
+	M.solve() 
+	forecast = M.forecast(length = 100, number_of_simulations = 1000, include_data = False) 
+	median = np.median(forecast, axis = 0) #Ensemble median 
+	p5, p95 = np.percentile(forecast, (5, 95), axis = 0) #90% credibility boundaries
 	
-	#plt.plot(time[:-100], data[:-100], color = 'k')
-	#plt.fill_between(time[-100:], p5, p95, color = 'b', alpha = .5, label = '90% Cr.') 
-	#plt.plot(time[-100:], data[-100:], color = 'k', linestyle = '-.', label = 'Observed data') 
-	#plt.plot(time[-100:], median, color = 'r', label = 'median estimate') 
+	plt.plot(time[:-100], data[:-100], color = 'k')
+	plt.fill_between(time[-100:], p5, p95, color = 'b', alpha = .5, label = '90% Cr.') 
+	plt.plot(time[-100:], data[-100:], color = 'k', linestyle = '-.', label = 'Observed data') 
+	plt.plot(time[-100:], median, color = 'r', label = 'median estimate') 
 	 
  
 
@@ -110,9 +110,9 @@ Generating data from PSD
 mesa.generateTimeSeries provides a function that construct a time-series with a user-given power 
 spectral density. It can be called as 
 :: 
-	#from mesa.generateTimeSerie import generate_data
-	#f, psd = import wanted psd and frequency array 
-	#time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
+	from mesa.generateTimeSerie import generate_data
+	f, psd = import wanted psd and frequency array 
+	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
 	
 T represent the time length of the observation and sampling rate is equivalent to 1 / dt, with dt the sampling interval
  
