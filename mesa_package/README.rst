@@ -108,7 +108,6 @@ Generating data from PSD
 ============================
 mesa.generateTimeSeries provides a function that construct a time-series with a user-given power 
 spectral density. It can be called as 
-
 :: 
 	#from mesa.generateTimeSerie import generate_data
 	#f, psd = import wanted psd and frequency array 
