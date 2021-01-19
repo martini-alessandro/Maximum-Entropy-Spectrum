@@ -75,63 +75,66 @@ class optimizer:
     
     def _FPE(self, P, N, m):
         """
+        Implements Akaike Final prediction Error to estimate the recursive 
+        order 
         
-
         Parameters
         ----------
-        P : TYPE
-            DESCRIPTION.
-        N : TYPE
-            DESCRIPTION.
-        m : TYPE
-            DESCRIPTION.
+        P : 'np.float'
+            The estimate of the variance for the white noise component.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        'np.float'
+            The value of FPE optimizer.
 
         """
         return P[-1] * (N + m + 1) / (N - m - 1)
     
     def _AIC(self, P, N, m):
         """
+        Implements Akaike information criterion to estimate the recursive 
+        order 
         
-
         Parameters
         ----------
-        P : TYPE
-            DESCRIPTION.
-        N : TYPE
-            DESCRIPTION.
-        m : TYPE
-            DESCRIPTION.
+        P : 'np.float'
+            The estimate of the variance for the white noise component.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        'np.float'
+            The value of AIC optimizer.
 
         """
         return np.log(P[-1]) + (2 * m) / N
     
     def _CAT(self, P, N, m):
         """
+        Implements Parzen's criterion on autoregressive transfer function
+        to estimate the recursive order 
         
-
         Parameters
         ----------
-        P : TYPE
-            DESCRIPTION.
-        N : TYPE
-            DESCRIPTION.
-        m : TYPE
-            DESCRIPTION.
+        P : 'np.float'
+            The estimate of the variance for the white noise component.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        'np.float'
+            The value of CAT optimizer.
 
         """
         if m == 0:
@@ -143,23 +146,25 @@ class optimizer:
     
     def _OBD(self, P, a_k, N, m):
         """
-        
+        Implement Rao's Optimum Bayes Decision rule to estimate the recursive
+        order
 
         Parameters
         ----------
-        P : TYPE
-            DESCRIPTION.
-        a_k : TYPE
-            DESCRIPTION.
-        N : TYPE
-            DESCRIPTION.
-        m : TYPE
-            DESCRIPTION.
+         P : 'np.float'
+            The estimate of the variance for the white noise component.
+        a_k : 'np.array'
+            The values for the final prediction error coefficients for the 
+            considered recursive order.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
 
         Returns
         -------
         TYPE
-            DESCRIPTION.
+            The value of OBD optimizer.
 
         """
         P_m = P[-1]
