@@ -1,4 +1,4 @@
-mlgw
+mesa
 ====
 
 **Author** Alessandro Martini
@@ -14,29 +14,91 @@ mlgw
 MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR FAST PSD COMPUTATION
 =============================================================
 
-``mesa`` is a beatful package
-
-To generate (and plot) a wave:
-::
-
-	#This is python code
-
-The output is:
-
-.. image:: here a link to an image
-   :width: 700px
-
-A section
-=========
-blablabla and a **bold** blabla and in *italic* blabla
+mesa is a package for the computation of power spectral densities of a given time series. 
+It implements a Fast verions of Burg method of Maximum Entropy Spectral Analysis. 
+The computation of the power spectral density requires solving the Levinson recursion for the 
+forward prediction error coefficients a_k.
+The computation of these coefficients allow to characterize the observed process in terms of 
+an autoregressive process of order p (AR(p)), being p + 1 the lenght of the a_k array. Together
+with a_k coefficients a P coefficient is estimated, and is to be interpreted as the variance of 
+white noise component for the process. 
+The computation of these quantities allow to perform high quality forecast for the time series.
+The estimate of the autoregressive order is via a second class, that implements several methods
+available in literature. 
 
 Usage of mesa
 =============
 
 A bullet point list.
 
-   * Point 1 ..
-   * Point 2
+   * Import the data
+   * Call mesa class passing data as argument 
+   * Compute the coefficients via the .solve() method: MANDATORY for further computations 
+   * At this point you can compute the spectrum and forecast 
+   
+
+Sinusoid example 
+============= 
+To compute (and plot) a spectrum of a sinusoidal signal:
+::
+
+	#from mesa import mesa 
+	#import numpy as np
+
+Generating the data: 
+
+	#N, dt = 1000, .01  #Number of samples and sampling interval
+	#time = np.arange(0, N) * dt
+	#frequency = 2  
+	#data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
+	#plt.plot(time, data, color = 'k') 
+	
+.. image:: 
+   :width: 700px
+   
+   
+   
+Solving MESA is needed to compute PSD or forecast. 
+
+	#M = MESA(data) 
+	#M.solve() 
+	
+The spectrum can be computed on sampling frequencies (automatically generated) or on 
+some given interval 
+
+	#spectrum, frequencies = M.spectrum(dt)  #Computes on sampling frequencies 
+	#user_frequencies = np.linspace(1.5, 2.5)
+	#user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
+	
+Plotting the two the following is obtained: 
+.. image:: 
+   :width: 700px
+   
+   
+   
+It can also be used to perform forecasting. For example, we consider the first 900 points 
+of the data and try to infer the upcoming signal. 1000 simulations of 100 points are performed.
+Real observed data are compared with median estimate and 90% Credibility regions 
+: 
+
+	#M = MESA(data[:-100]) 
+	#M.solve() 
+	#forecast = M.forecast(length = 100, number_of_simulations = 1000, include_data = False) 
+	#median = np.median(forecast, axis = 0) #Ensemble median 
+	#p5, p95 = np.percentile(forecast, (5, 95), axis = 0) #90% credibility boundaries
+	
+	#plt.plot(time[:-100], data[:-100], color = 'k')
+	#plt.fill_between(time[-100:], p5, p95, color = 'b', alpha = .5, label = '90% Cr.') 
+	#plt.plot(time[-100:], data[-100:], color = 'k', linestyle = '-.', label = 'Observed data') 
+	#plt.plot(time[-100:], median, color = 'r', label = 'median estimate') 
+	 
+ 
+
+The output is:
+
+.. image:: here a link to an image
+   :width: 700px
+
 
 
 Installation & documentation
@@ -48,16 +110,15 @@ To install the package: ::
 It requires ``numpy`` and ``scipy`` all available to PyPI.
 
 A number of examples are available to the interested user.
- 	* Example 1
- 	* Example 2
+ 	* gwstrain.py
+ 	* sunspots.py
+ 	* sound_mesa.py
 
 The tutorials above are intended only to present a basic usage.
 For more advanced use or for more information, please refer to the code documentation: ::
 
 	import mesa
 	help(mesa)
-	help(mlgw.<function_name>)
+	help(mesa.<function_name>)
 
 For full source code (and much more) see: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum
-
-
