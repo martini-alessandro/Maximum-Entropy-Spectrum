@@ -74,6 +74,7 @@ some given interval
 	#user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
 	
 Plotting the two the following is obtained: 
+
 .. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Spectrum.jpeg
    :width: 700px
    
