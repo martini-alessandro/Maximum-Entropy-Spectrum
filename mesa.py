@@ -11,10 +11,7 @@ import sys
 import numpy as np
 import warnings
 
-#Stefano: put as everywhere as possible the dimensions of the variables we are using?
-#Stefano: make the help of every function?
 #Stefano: should the sampling rate be given at initialization? Or is it fine like it is today?
-#Stefano: why don't we merge generate Time series in the mesa class? So we have a single file
 
 #############DEBUG LINE PROFILING
 try:
@@ -189,8 +186,8 @@ class MESA(object):
         
         Parameters
         ----------
-            data: 'np.ndarray'       
-                Time series with power spectral density to be computed 
+        data: 'np.ndarray'       
+            Time series with power spectral density to be computed 
         """ 
         self.data = data
         self.N    = len(self.data)
@@ -206,8 +203,8 @@ class MESA(object):
         
         Parameters
         ----------
-            filename: `string`      
-                Name of the file to save the data at
+        filename: `string`      
+            Name of the file to save the data at
         """
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
@@ -224,8 +221,8 @@ class MESA(object):
         
         Parameters
         ----------
-            filename: `string`      
-                Name of the file to load the data from
+        filename: `string`      
+            Name of the file to load the data from
         """
         data = np.loadtxt(filename)
         if data.ndim != 1:
@@ -248,7 +245,34 @@ class MESA(object):
         
         return
         
+    def save_spectrum(self, filename, dt, frequencies = None):
+        """
+        Saves the power spectral density computed by the model to a txt file. The PSD is evaluated on a user given grid of frequencies. If None, a standard grid is used (as computed by np.fft.fftfreq).
+        The spectrum is saved as a 2D array: [f, PSD(f)]
+        
+        Parameters
+        ----------
+        filename: `string`      
+            Name of the file to save the PSD at
 
+        dt: `np.float`      
+            Sampling rate for the time series
+
+        frequencies: `np.ndarray`      
+            Frequencies to compute the PSD at. If None, a standard grid will be computed
+                
+        """
+        if isinstance(frequencies, np.ndarray):
+            PSD = self.spectrum(dt,frequencies)
+        elif frequencies is None:
+            PSD, frequencies = self.spectrum(dt)
+        else:
+            raise ValueError("Wrong type for input frequencies: expected \`np.ndarray\` or None, got {} instead".format(type(frequencies)))
+         
+        to_save  = np.column_stack([frequencies, PSD])
+        np.savetxt(filename, to_save, header = "dt = {} s".format(dt))
+        return
+        
         
     def _spectrum(self, dt, N):
         """
@@ -663,4 +687,3 @@ class MESA(object):
 
 
 #FIXME: methods to save and load psd and AR coefficients in various formats, depending on the necessary application
-#FIXME: save/load class as pickle
