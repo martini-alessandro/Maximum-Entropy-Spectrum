@@ -123,7 +123,7 @@ To install the package: ::
 
 	pip install mesa
 
-It requires ``numpy`` and ``scipy`` all available to PyPI.
+It requires ``numpy``.
 
 A number of examples are available to the interested user.
  	* gwstrain.py
