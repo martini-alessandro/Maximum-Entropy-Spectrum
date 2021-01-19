@@ -478,7 +478,7 @@ class MESA(object):
             #Compute optimizer value for chosen method
             optimization.append( self._optimizer(P, a[-1], self.N, i + 1) )
             
-            	#checking if there is a minimum (every some iterations) if early_stop option is on
+                #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) + 1
                 if old_idx < idx:
@@ -584,7 +584,7 @@ class MESA(object):
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
             optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
-            	#checking if there is a minimum (every some iterations) if early_stop option is on
+                #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) + 1
                 if old_idx < idx:
@@ -662,4 +662,45 @@ class MESA(object):
         if not include_data:
             return predictions[:,p:]
         return predictions
+
+    def generate_noise(self, T, sampling_rate = 1., fmin = None, fmax = None, N_series = 1):
+        """
+        Generate some noise starting from a mesa object. The noise generated has the same features as the data given in input to the mesa.
+            
+        Parameters
+        ----------
+                T: `float`                  Length (in seconds) of the signal to generate
+                sampling_rate: `np.float`   Sampling rate for the time series to generate
+                fmin: `float`               Minimum frequency in the signal (if None, is equal to zero)
+                fmax: `float`               Maximum frequency in the signal (if None, Nyquist frequency is used: f_Ny = 0.5*sampling_rate)
+                N_series `float`            Number of time series to generate
+            
+            Returns:
+            --------
+                times: `np.ndarray`                  time grid at which the noise time series is evaluated at
+                times_series: `np.ndarray`           time series (shape (N_series, sampling_rate*T) )
+                frequencies: `np.ndarray`            frequency grid at which the noise frequency series is evaluated at
+                frequency_series: `np.ndarray`       frequency series from which the times_series is computed (shape (N_series, sampling_rate*T) )
+                psd: `np.ndarray`                    PSD of the model, including both positive and negative frequencies
+        """
+        df      = 1 / T
+        N       = int(sampling_rate * T)
+        times   = np.linspace(0., T , N) 
+        if fmin == None: fmin = 0
+        if fmax == None: fmax = (N / 2) / T
+        # filter out the bad bits
+        kmin = np.int(fmin/df)
+        kmax = np.int(fmax/df) + 1
+        
+        # generate the FD noise
+        frequencies = df * np.linspace(kmin, kmax, int(N / 2 + 1)) #(D,) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
+        psd = self.spectrum(1/sampling_rate, frequencies)
+
+        sigma = np.sqrt(psd /  df * .5) #(D,)
+        phi = np.random.uniform(0, 2 * np.pi, len(sigma))
+        frequency_series = np.einsum('ij,j -> ij',np.random.normal(0, 1, (N_series,len(sigma))) + 1j * np.random.normal(0, 1, (N_series,len(sigma)) ), sigma) #(N_series,D)
+          
+        # inverse FFT to return the TD strain
+        time_series = np.fft.irfft(frequency_series) * df * N ##(N_series, N )
+        return times, np.squeeze(time_series), frequencies, np.squeeze(frequency_series), psd
 

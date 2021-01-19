@@ -34,7 +34,7 @@ f_PSD = np.linspace(0,20000,N_points)
 PSD = M.spectrum(dt, f_PSD)
 
     #generate syntetic noise
-times, time_series, frequencies, frequency_series, psd_int = GenerateTimeSeries.generate_noise_mesa(M, T=16., sampling_rate = rate, N_series = 1)
+times, time_series, frequencies, frequency_series, psd_int = M.generate_noise(T=16., sampling_rate = rate, N_series = 1)
 
     #saving noise to file
 to_save = np.column_stack([time_series, time_series])
