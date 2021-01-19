@@ -46,6 +46,7 @@ To compute (and plot) a spectrum of a sinusoidal signal:
 	#import numpy as np
 
 Generating the data: 
+::
 
 	#N, dt = 1000, .01  #Number of samples and sampling interval
 	#time = np.arange(0, N) * dt
@@ -59,12 +60,14 @@ Generating the data:
    
    
 Solving MESA is needed to compute PSD or forecast. 
+::
 
 	#M = MESA(data) 
 	#M.solve() 
 	
 The spectrum can be computed on sampling frequencies (automatically generated) or on 
 some given interval 
+::
 
 	#spectrum, frequencies = M.spectrum(dt)  #Computes on sampling frequencies 
 	#user_frequencies = np.linspace(1.5, 2.5)
@@ -79,7 +82,8 @@ Plotting the two the following is obtained:
 It can also be used to perform forecasting. For example, we consider the first 900 points 
 of the data and try to infer the upcoming signal. 1000 simulations of 100 points are performed.
 Real observed data are compared with median estimate and 90% Credibility regions 
-: 
+::
+
 
 	#M = MESA(data[:-100]) 
 	#M.solve() 
