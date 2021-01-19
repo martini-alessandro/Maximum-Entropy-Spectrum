@@ -638,7 +638,7 @@ class MESA(object):
             Default is None and uses the estimate obtained with Burg's algorithm.
             
         include_data: `bool`
-            Whether to prepend the inpust time series to the output
+            Whether to prepend to the output the input time series
 
         Returns
         -------
