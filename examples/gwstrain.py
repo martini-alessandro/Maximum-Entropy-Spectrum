@@ -39,7 +39,7 @@ if __name__ == "__main__":
     elapsed = elapsed - start
     print ("Time spent MESA: {0} s".format(elapsed))
     start = time.perf_counter()
-    PSD, _     = M.spectrum(dt,len(f))[:N//2]
+    PSD    = M.spectrum(dt,f)
     elapsed = time.perf_counter()
     elapsed = elapsed - start
     print ("Time spent PSD: {0} s".format(elapsed))
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     M = MESA(data[:int(0.75*N)])
     P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     Np = 100
-    prediction = M.forecast(int(0.25*N), Np)
+    prediction = M.forecast_vectorized(int(0.25*N), Np, include_data = False)
     l, h = np.percentile(prediction,[5,95],axis=0)
     fig = plt.figure(2)
     ax  = fig.add_subplot(111)

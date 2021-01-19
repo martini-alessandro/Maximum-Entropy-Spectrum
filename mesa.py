@@ -590,10 +590,9 @@ class MESA(object):
             raise RuntimeError("PSD analysis is not performed yet: unable to forecast the data. You should call solve() before forecasting")
         if P is None: P = self.P 
         p = self.a_k.size - 1 
-        #predictions = np.zeros((number_of_simulations, p + length))
         predictions = np.zeros((number_of_simulations, p + length))
         predictions[:,:p] = self.data[-p:]
-        coef = self.a_k[1:][::-1]
+        coef = - self.a_k[1:][::-1]
         for i in range(length): 
             sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
             predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
