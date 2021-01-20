@@ -1,2 +1,2 @@
-cp ../GenerateTimeSeries.py ./mesa
-cp ../mesa.py  ./mesa/__init__.py
+cp ../GenerateTimeSeries.py ./mespectrum
+cp ../mespectrum.py  ./mespectrum/__init__.py
