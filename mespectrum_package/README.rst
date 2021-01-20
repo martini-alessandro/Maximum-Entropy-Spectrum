@@ -41,6 +41,7 @@ To get the PSD computed, the following steps are required
 
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
 ``m.solve()`` 
+
 + At this point you can compute the spectrum and forecast
 ``m.spectrum()``
 
