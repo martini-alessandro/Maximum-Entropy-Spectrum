@@ -1,5 +1,5 @@
-mespectrum
-==========
+memspectrum
+===========
 
 **Author** Alessandro Martini
 
@@ -14,7 +14,7 @@ mespectrum
 MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR FAST PSD COMPUTATION
 =============================================================
 
-``mespectrum`` is a package for the computation of power spectral densities of a time series. 
+``memspectrum`` is a package for the computation of power spectral densities of a time series. 
 It implements a Fast verions of Burg method of Maximum Entropy Spectral Analysis.
 The method is fast and reliable and provides better performance than other standard methods.
  
@@ -28,8 +28,8 @@ The computation of these quantities allow to perform high quality forecast for t
 The estimate of the autoregressive order is via a second class, that implements several methods
 available in literature. 
 
-Usage of mespectrum
-===================
+Usage of memspectrum
+====================
 
 To get the PSD computed, the following steps are required
 
@@ -37,7 +37,7 @@ To get the PSD computed, the following steps are required
 + Call ``MESA`` class passing data as argument
 ::
 
-	from mespectrum import MESA
+	from memspectrum import MESA
 	m = MESA(data)
 
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
@@ -56,7 +56,7 @@ Sinusoid example
 To compute (and plot) the spectrum of a (noisy) sinusoidal signal:
 ::
 
-	from mespectrum import MESA 
+	from memspectrum import MESA 
 	import numpy as np
 
 Generating the data: 
@@ -68,7 +68,7 @@ Generating the data:
 	data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
 	plt.plot(time, data, color = 'k') 
 	
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Data.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/memspectrum_package/ReadMeFigures/Data.jpeg
    :width: 700px
    
    
@@ -89,7 +89,7 @@ some given interval
 	
 Plotting the two the following is obtained: 
 
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Spectrum.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/memspectrum_package/ReadMeFigures/Spectrum.jpeg
    :width: 700px
    
    
@@ -114,16 +114,16 @@ Real observed data are compared with median estimate and 90% Credibility regions
 
 The forecast result is: 
 
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Forecast.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/memspectrum_package/ReadMeFigures/Forecast.jpeg
    :width: 700px
 
 
 Generating data from PSD
 ============================
-mespectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
+memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
 spectral density. It can be called as 
 :: 
-	from mespectrum.generateTimeSerie import generate_data
+	from memspectrum.generateTimeSerie import generate_data
 	f, psd = import wanted psd and frequency array 
 	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
 	
@@ -134,20 +134,20 @@ Installation & documentation
 ============================
 To install the package: ::
 
-	pip install mespectrum
+	pip install memspectrum
 
 It requires ``numpy``.
 
 On the GitHub repository, a number of examples are available to the interested user:
 
 * `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
-* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
+* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses memspectrum to find an autoregressive process which describes them and forecast
 * `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
 
 For more advanced use or for more information, please refer to the code documentation: ::
 
-	import mespectrum
-	help(mespectrum)
-	help(mespectrum.<function_name>)
+	import memspectrum
+	help(memspectrum)
+	help(memspectrum.<function_name>)
 
 For full source code (and much more) see: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum

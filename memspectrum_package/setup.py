@@ -8,18 +8,18 @@ def readme():
 #setuptools.find_packages()
 
 setup(
-    name='mespectrum',
+    name='memspectrum',
     version='1.0.0',
     author='Alessandro Martini, Walter Del Pozzo',
     author_email='martini.alessandr@gmail.com,walter.delpozzo@ligo.org',
-    packages=['mespectrum'],
-    package_dir = {'mespectrum':'./mespectrum'},
+    packages=['memspectrum'],
+    package_dir = {'memspectrum':'./memspectrum'},
     url="https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/",
     license='CC by 4.0',
     description='maximum entropy spectral analysis',
     long_description=readme(),
     include_package_data = True,
-#    package_data={'mespectrum': get_package_data()},
+#    package_data={'memspectrum': get_package_data()},
     install_requires=[
         "numpy >= 1.16.4",
     ],

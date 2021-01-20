@@ -17,7 +17,7 @@ of Burg's Method.
 Given the a_k coefficient, they can be used to perform high quality forecasting for the future
 values of the time series. A method to perform forecast is implemented in mesa class.
 
-The code is also released as a public [package](https://pypi.org/project/mespectrum/) `mespectrum`, available on the PyPI repository. A paper is in publication.
+The code is also released as a public [package](https://pypi.org/project/memspectrum/) `memspectrum`, available on the PyPI repository. A paper is in publication.
 
 _________
 # Code overview
@@ -27,7 +27,7 @@ _________
 
 Call it as 
 ```Python
-from mespectrum import MESA
+from memspectrum import MESA
 M = MESA(data) 
 ```
 #### methods: 
@@ -114,20 +114,20 @@ To install the code you might want to clone the repository
 git clone https://github.com/martini-alessandro/Maximum-Entropy-Spectrum.git
 ```
 
-Once you have it on local, you can import module mespectrum.py from your code and you're done.
+Once you have it on local, you can import module memspectrum.py from your code and you're done.
 
 You can also run some [examples](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/tree/main/examples) which provide some interesting applications of the algorithm.
 
 The code is also released as a PyPI package:
 
 ```
-pip install mespectrum
+pip install memspectrum
 ```
 
 We did our best to document every function. If you need it, you can use the python help utility:
 
 ```
-help(mespectrum.MESA.function_name)
+help(memspectrum.MESA.function_name)
 ```
 
 For further information, feel free to email: ...

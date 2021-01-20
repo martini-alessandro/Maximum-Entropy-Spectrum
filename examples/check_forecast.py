@@ -1,9 +1,9 @@
 try:
 	import sys
 	sys.path.insert(0,'..')
-	import mesa
+	import memspectrum
 except:
-	import mesa
+	import memspectrum
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +22,7 @@ plt.figure()
 plt.plot(data)
 #plt.show()
 
-m = mesa.MESA(data)
+m = memspectrum.MESA(data)
 
 m.solve(method = "Fast", optimisation_method = "FPE")
 

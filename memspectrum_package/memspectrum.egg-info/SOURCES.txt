@@ -1,0 +1,9 @@
+README.rst
+setup.py
+./memspectrum/GenerateTimeSeries.py
+./memspectrum/__init__.py
+memspectrum.egg-info/PKG-INFO
+memspectrum.egg-info/SOURCES.txt
+memspectrum.egg-info/dependency_links.txt
+memspectrum.egg-info/requires.txt
+memspectrum.egg-info/top_level.txt

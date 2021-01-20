@@ -3,11 +3,11 @@ import numpy as np
 try:
 	import sys
 	sys.path.insert(0,'..')
-	from mespectrum import MESA
+	from memspectrum import MESA
 	from GenerateTimeSeries import generate_data
 except:
-	from mespectrum import MESA
-	from mespectrum.GenerateTimeSeries import generate_data
+	from memspectrum import MESA
+	from memspectrum.GenerateTimeSeries import generate_data
 
 
 import matplotlib.pyplot as plt
