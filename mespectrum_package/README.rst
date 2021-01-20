@@ -33,14 +33,14 @@ Usage of mespectrum
 
 To get the PSD computed, the following steps are required
 
-* Import the data
-* Call ``MESA`` class passing data as argument
++ Import the data
++ Call ``MESA`` class passing data as argument
 	``from mespectrum import MESA``
 
 	``m = MESA(data)``
-* Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
++ Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
 	``m.solve()`` 
-* At this point you can compute the spectrum and forecast
++ At this point you can compute the spectrum and forecast
 	``m.spectrum()``
 
 	``m.forecast()``
@@ -134,9 +134,9 @@ It requires ``numpy``.
 
 On the GitHub repository, a number of examples are available to the interested user:
 
- * `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
- * `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
- * `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
+* `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
+* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
+* `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
 
 For more advanced use or for more information, please refer to the code documentation: ::
 
