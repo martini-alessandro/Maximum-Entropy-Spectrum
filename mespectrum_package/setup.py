@@ -8,18 +8,18 @@ def readme():
 #setuptools.find_packages()
 
 setup(
-    name='mesa',
+    name='mespectrum',
     version='1.0.0',
     author='Alessandro Martini, Walter Del Pozzo',
     author_email='martini.alessandr@gmail.com,walter.delpozzo@ligo.org',
-    packages=['mesa'],
-    package_dir = {'mesa':'./mesa'},
+    packages=['mespectrum'],
+    package_dir = {'mespectrum':'./mespectrum'},
     url="https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/",
     license='CC by 4.0',
     description='maximum entropy spectral analysis',
     long_description=readme(),
     include_package_data = True,
-#    package_data={'mesa': get_package_data()},
+#    package_data={'mespectrum': get_package_data()},
     install_requires=[
         "numpy >= 1.16.4",
     ],

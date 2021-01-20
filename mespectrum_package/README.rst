@@ -1,5 +1,5 @@
-mesa
-====
+mespectrum
+==========
 
 **Author** Alessandro Martini
 
@@ -14,11 +14,13 @@ mesa
 MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR FAST PSD COMPUTATION
 =============================================================
 
-mesa is a package for the computation of power spectral densities of a given time series. 
-It implements a Fast verions of Burg method of Maximum Entropy Spectral Analysis. 
+``mespectrum`` is a package for the computation of power spectral densities of a time series. 
+It implements a Fast verions of Burg method of Maximum Entropy Spectral Analysis.
+The method is fast and reliable and provides better performance than other standard methods.
+ 
 The computation of the power spectral density requires solving the Levinson recursion for the 
 forward prediction error coefficients a_k.
-The computation of these coefficients allow to characterize the observed process in terms of 
+The knowledge of such coefficients allows to characterize the observed process in terms of 
 an autoregressive process of order p (AR(p)), being p + 1 the lenght of the a_k array. Together
 with a_k coefficients a P coefficient is estimated, and is to be interpreted as the variance of 
 white noise component for the process. 
@@ -26,23 +28,37 @@ The computation of these quantities allow to perform high quality forecast for t
 The estimate of the autoregressive order is via a second class, that implements several methods
 available in literature. 
 
-Usage of mesa
-=============
+Usage of mespectrum
+===================
 
-A bullet point list.
+To get the PSD computed, the following steps are required
 
    * Import the data
-   * Call mesa class passing data as argument 
-   * Compute the coefficients via the .solve() method: MANDATORY for further computations 
-   * At this point you can compute the spectrum and forecast 
+   
+   * Call mesa class passing data as argument
+
+	``from mespectrum import MESA``
+
+	``m = MESA(data)``
+	
+   
+   * Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
+	``m.solve()``
+ 
+  
+   * At this point you can compute the spectrum and forecast
+  
+      ``m.spectrum()``
+
+      ``m.forecast()``
    
 
 Sinusoid example 
-============= 
-To compute (and plot) a spectrum of a sinusoidal signal:
+================
+To compute (and plot) the spectrum of a (noisy) sinusoidal signal:
 ::
 
-	from mesa import mesa 
+	from mespectrum import MESA 
 	import numpy as np
 
 Generating the data: 
@@ -110,7 +126,7 @@ Generating data from PSD
 mesa.generateTimeSeries provides a function that construct a time-series with a user-given power 
 spectral density. It can be called as 
 :: 
-	from mesa.generateTimeSerie import generate_data
+	from mespectrum.generateTimeSerie import generate_data
 	f, psd = import wanted psd and frequency array 
 	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
 	
@@ -125,12 +141,11 @@ To install the package: ::
 
 It requires ``numpy``.
 
-A number of examples are available to the interested user.
- 	* gwstrain.py
- 	* sunspots.py
- 	* sound_mesa.py
+On the GitHub repository, a number of examples are available to the interested user:
+ 	* `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
+ 	* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
+ 	* `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
 
-The tutorials above are intended only to present a basic usage.
 For more advanced use or for more information, please refer to the code documentation: ::
 
 	import mesa

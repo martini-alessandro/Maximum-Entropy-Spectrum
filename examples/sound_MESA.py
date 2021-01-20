@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 try:
     import sys
     sys.path.insert(0,'..')
-    from mesa import *
+    from mespectrum import *
     import GenerateTimeSeries
 except:
-    from mesa import *
-    import mesa.GenerateTimeSeries as GenerateTimeSeries
+    from mespectrum import *
+    import mespectrum.GenerateTimeSeries as GenerateTimeSeries
 
 t = 4. #seconds of data
 

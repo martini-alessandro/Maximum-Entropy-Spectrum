@@ -1,9 +1,9 @@
 try:
 	import sys
 	sys.path.insert(0,'..')
-	from mesa import *
+	from mespectrum import *
 except:
-	from mesa import *
+	from mespectrum import *
 
 import numpy as np
 import matplotlib.pyplot as plt

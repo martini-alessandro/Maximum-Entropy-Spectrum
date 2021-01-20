@@ -3,11 +3,11 @@ import numpy as np
 try:
 	import sys
 	sys.path.insert(0,'..')
-	from mesa import MESA
+	from mespectrum import MESA
 	from GenerateTimeSeries import generate_data
 except:
-	from mesa import MESA
-	from mesa.GenerateTimeSeries import generate_data
+	from mespectrum import MESA
+	from mespectrum.GenerateTimeSeries import generate_data
 
 
 import matplotlib.pyplot as plt
@@ -37,7 +37,6 @@ if __name__ == "__main__":
     t, time_series, f, frequency_series, psd = generate_data(f,
                           psd,
                           T = T,
-                          starttime = 0,
                           sampling_rate = srate,
                           fmin = fmin,
                           fmax = fmax,

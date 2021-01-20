@@ -17,28 +17,31 @@ of Burg's Method.
 Given the a_k coefficient, they can be used to perform high quality forecasting for the future
 values of the time series. A method to perform forecast is implemented in mesa class.
 
+The code is also released as a public package `mespectrum`, available on the PyPI repository.
+
 _________
-# Classes and public methods 
-## class: mesa 
+# Code overview
+## class: MESA 
 
 	Implements the mesa algorithm, input: The time-series under study 
 
 Call it as 
 ```Python
+from mespectrum import MESA
 M = MESA(data) 
 ```
 #### methods: 
 
-	mesa.solve() 
+	`mesa.solve()`
 	Solve the Levinson recursion for the computation of the a_k and P
 	coefficients. 
 
-	mesa.spectrum() 
+	`mesa.spectrum()` 
 	Computes the value of the power spectral density. It can be returned as both a function of the sampling frequencies or on a user-given 
 	frequency grid. 
 	Since P and a_k are needed, it is necessary to call .solve() method first. 
 	
-	mesa.forecast() 
+	`mesa.forecast()`
 	It uses the forward prediction error coefficients to predict the future values of 	the time series. User can choose both the 'time len-gth' for the forecasting and the total number of simulations. 
 	Since P and a_k are needed, it is necessary to call .solve() method first. 
 
@@ -61,9 +64,9 @@ _________
 
 ____
 
-# Example
+# A simple
 
-The easiest example is a sinusoidal singal with known frequency with white noise superimposition. 
+A example is a sinusoidal signal with known frequency with white noise superimposition. 
 
 
 #### Generating array of data:  
@@ -102,16 +105,39 @@ M = MESA(data[:-100])
 M.solve() 
 forecast = M.forecast(length = 100, number_of_simulations = 1000)
 ```
+
+# Installation and documentation
+
+To install the code you might want to clone the repository
+
+```
+git clone https://github.com/martini-alessandro/Maximum-Entropy-Spectrum.git
+```
+
+Once you have it on local, you can import module mespectrum.py from your code and you're done.
+
+You can also run some [examples](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/tree/main/examples) which provide some interesting applications of the algorithm.
+
+The code is also released as a PyPI package:
+
+```
+pip install mespectrum
+```
+
+We did our best to document every function. If you need it, you can use the python help utility:
+
+```
+help(mespectrum.MESA.function_name)
+```
+
+For further information, feel free to email: ...
 	
 
-
-	
-
-# References 
+## References 
 [J.P. Burg - Maximum Entropy Spectral Analysis](http://sepwww.stanford.edu/data/media/public/oldreports/sep06/)
 
 [V. Fastubrg - A Fast Implementation of Burg Method](
 https://svn.xiph.org/websites/opus-codec.org/docs/vos_fastburg.pdf)
 
-# License 
+## License 
 [GNU General Public License v3.0](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/LICENSE)
