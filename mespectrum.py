@@ -1,6 +1,6 @@
 """
-mesa
-====
+mespectrum
+==========
 
 A nice package for Maximum Entropy Spectral Analysis.
 Include short description here: it will appear when typing help(mesa)
