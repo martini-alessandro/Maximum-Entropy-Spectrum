@@ -34,24 +34,17 @@ Usage of mespectrum
 To get the PSD computed, the following steps are required
 
    * Import the data
-   
-   * Call mesa class passing data as argument
-
+   * Call ``MESA`` class passing data as argument
 	``from mespectrum import MESA``
 
 	``m = MESA(data)``
-	
    
    * Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
-	``m.solve()``
- 
-  
+	``m.solve()`` 
    * At this point you can compute the spectrum and forecast
-  
       ``m.spectrum()``
 
       ``m.forecast()``
-   
 
 Sinusoid example 
 ================
@@ -70,7 +63,7 @@ Generating the data:
 	data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000) 
 	plt.plot(time, data, color = 'k') 
 	
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Data.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Data.jpeg
    :width: 700px
    
    
@@ -91,7 +84,7 @@ some given interval
 	
 Plotting the two the following is obtained: 
 
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Spectrum.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Spectrum.jpeg
    :width: 700px
    
    
@@ -100,7 +93,6 @@ It can also be used to perform forecasting. For example, we consider the first 9
 of the data and try to infer the upcoming signal. 1000 simulations of 100 points are performed.
 Real observed data are compared with median estimate and 90% Credibility regions 
 ::
-
 
 	M = MESA(data[:-100]) 
 	M.solve() 
@@ -117,13 +109,13 @@ Real observed data are compared with median estimate and 90% Credibility regions
 
 The forecast result is: 
 
-.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mesa_package/ReadMeFigures/Forecast.jpeg
+.. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/mespectrum_package/ReadMeFigures/Forecast.jpeg
    :width: 700px
 
 
 Generating data from PSD
 ============================
-mesa.generateTimeSeries provides a function that construct a time-series with a user-given power 
+mespectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
 spectral density. It can be called as 
 :: 
 	from mespectrum.generateTimeSerie import generate_data
@@ -137,19 +129,20 @@ Installation & documentation
 ============================
 To install the package: ::
 
-	pip install mesa
+	pip install mespectrum
 
 It requires ``numpy``.
 
 On the GitHub repository, a number of examples are available to the interested user:
+
  	* `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
  	* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
  	* `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
 
 For more advanced use or for more information, please refer to the code documentation: ::
 
-	import mesa
-	help(mesa)
-	help(mesa.<function_name>)
+	import mespectrum
+	help(mespectrum)
+	help(mespectrum.<function_name>)
 
 For full source code (and much more) see: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum
