@@ -35,15 +35,16 @@ To get the PSD computed, the following steps are required
 
 + Import the data
 + Call ``MESA`` class passing data as argument
-	``from mespectrum import MESA``
+``from mespectrum import MESA``
 
-	``m = MESA(data)``
+``m = MESA(data)``
+
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
-	``m.solve()`` 
+``m.solve()`` 
 + At this point you can compute the spectrum and forecast
-	``m.spectrum()``
+``m.spectrum()``
 
-	``m.forecast()``
+``m.forecast()``
 
 Sinusoid example 
 ================
