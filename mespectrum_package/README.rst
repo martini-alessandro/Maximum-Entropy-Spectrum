@@ -35,9 +35,9 @@ To get the PSD computed, the following steps are required
 
 + Import the data
 + Call ``MESA`` class passing data as argument
-``from mespectrum import MESA``
-
-``m = MESA(data)``
+::
+from mespectrum import MESA
+m = MESA(data)
 
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
 ``m.solve()`` 
