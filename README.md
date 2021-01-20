@@ -17,7 +17,7 @@ of Burg's Method.
 Given the a_k coefficient, they can be used to perform high quality forecasting for the future
 values of the time series. A method to perform forecast is implemented in mesa class.
 
-The code is also released as a public package `mespectrum`, available on the PyPI repository.
+The code is also released as a public [package](https://pypi.org/project/mespectrum/) `mespectrum`, available on the PyPI repository. A paper is in publication.
 
 _________
 # Code overview
@@ -64,7 +64,7 @@ _________
 
 ____
 
-# A simple
+# A simple example
 
 A example is a sinusoidal signal with known frequency with white noise superimposition. 
 
