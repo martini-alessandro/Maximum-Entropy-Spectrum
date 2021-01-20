@@ -130,7 +130,7 @@ We did our best to document every function. If you need it, you can use the pyth
 help(memspectrum.MESA.function_name)
 ```
 
-For further information, feel free to email: ...
+For further information, feel free to email: [martini.alessandr@gmail.com](mailto:martini.alessandr@gmail.com)
 	
 
 ## References 
