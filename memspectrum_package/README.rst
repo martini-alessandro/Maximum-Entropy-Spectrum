@@ -35,17 +35,20 @@ To get the PSD computed, the following steps are required
 
 + Import the data
 + Call ``MESA`` class passing data as argument
+
 ::
 
 	from memspectrum import MESA
 	m = MESA(data)
 
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
+
 ::
 
 	m.solve()
 
 + At this point you can compute the spectrum and forecast
+
 ::
 
 	m.spectrum()
@@ -121,8 +124,8 @@ The forecast result is:
 Generating data from PSD
 ============================
 memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
-spectral density. It can be called as 
-:: 
+spectral density. It can be called as :: 
+
 	from memspectrum.generateTimeSerie import generate_data
 	f, psd = import wanted psd and frequency array 
 	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
