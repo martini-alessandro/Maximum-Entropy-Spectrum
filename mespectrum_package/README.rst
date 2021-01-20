@@ -134,6 +134,8 @@ To install the package: ::
 It requires ``numpy``.
 
 On the GitHub repository, a number of examples are available to the interested user:
+
+
  	* `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
  	* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses mespectrum to find an autoregressive process which describes them and forecast
  	* `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
