@@ -11,6 +11,19 @@ import sys
 import numpy as np
 import warnings
 
+def _fft_autocovariance(d, mmax):
+    a = np.concatenate((d,np.zeros(len(d)-1)))
+    X = np.fft.rfft(a)
+    R = np.real(np.fft.irfft(X*X.conj()))[:mmax + 2]
+    return R
+
+def _autocovariance(d, mmax):
+    N = d.shape[0]
+    c = np.zeros(mmax + 2, dtype = d.dtype)
+    for j in range(mmax + 2):
+        c[j] = np.dot(d[: N - j],d[j : ])
+    return c
+
 #Stefano: should the sampling rate be given at initialization? Or is it fine like it is today?
 
 #############DEBUG LINE PROFILING
@@ -363,7 +376,8 @@ class MESA(object):
               optimisation_method = "FPE",
               method              = "Fast",
               regularisation      = 1.0,
-              early_stop = True ):
+              early_stop          = False,
+              autocovariance      = None):
         """
         Computes the power spectral density of the attribute data for the class
         using standard Burg method recursive and a Faster (but less stable) version. 
@@ -394,6 +408,9 @@ class MESA(object):
             maximum after 200 iterations. 
             Recommended for every optimisation method but CAT.
         
+        autocovariance: 'str'
+            Default is None. If equal to "Fast" use the FFT to compute the autocovariance.
+            Warning! It is broken right now.
 
         Returns
         -------
@@ -425,15 +442,19 @@ class MESA(object):
             exit(-1)
         
         self._optimizer = optimizer(optimisation_method)
-        self.P, self.a_k, self.optimization = self._method()
+        self.P, self.a_k, self.optimization = self._method(autocovariance = autocovariance)
         return self.P, self.a_k, self.optimization
 
     #@do_profile(follow=[])
-    def _FastBurg(self):
+    def _FastBurg(self, autocovariance = None):
         """
         Uses the Fast version of Burg Algorithm to compute the power spectral
         density. The order is selected by the minimization of the chosen method
 
+        autocovariance: 'str'
+            Default is None. If equal to "Fast" use the FFT to compute the autocovariance.
+            Warning! It is broken right now.
+        
         Returns
         -------
         P: 'np.float'                  
@@ -446,12 +467,11 @@ class MESA(object):
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
         """
-        
-        #Define autocorrelation
-        c = np.zeros(self.mmax + 2, dtype = self.data.dtype) #here c has the same type of the data
-        #FIXME: use numpy functions (Stefano: not really simple to do this.. Now it is the bottleneck of the function)
-        for j in range(self.mmax + 1):
-            c[j] = self.data[: self.N - j] @ self.data[j : ]
+        if autocovariance == "Fast":
+            c = _fft_autocovariance(self.data, self.mmax)
+        else:
+            c = _autocovariance(self.data, self.mmax)
+
         c[0] *= self.regularisation
         #Initialize variables
         a = [np.array([1])]
@@ -543,7 +563,7 @@ class MESA(object):
         gDown = np.array([np.dot(r ,a.conj())])
         return np.concatenate((gUp, gDown))
 
-    def _Burg(self):
+    def _Burg(self, **kwargs):
         """
         Uses the Standard version of Burg Algorithm to compute the power spectral
         density. The order is selected by the minimization of the chosen method
