@@ -618,9 +618,20 @@ class MESA(object):
         new_x = np.concatenate((x, np.zeros(1)))
         return new_x + reflectionCoefficient * new_x[::-1]
     
-    def forecast(self, length, number_of_simulations, P = None, include_data = False): 
+    def get_p(self):
         """
-        Forecasting on the observed process for a total number of points given 
+        Returns the order of the autoregressive process that defines the PSD.
+
+        Returns
+        -------
+        p : 'int'
+            Order of the autoregressive process that define the PSD
+        """
+        return self.a_k.size - 1
+    
+    def forecast(self, length, number_of_simulations, P = None, data = None, include_data = False, verbose = False): 
+        """
+        Forecasting on an observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
         This method can only be used if a_k coefficients have been computed 
         already. Use solve method before forecasting. 
@@ -636,9 +647,15 @@ class MESA(object):
         P : 'np.float'
             Variance of white noise for the autoregressive process. 
             Default is None and uses the estimate obtained with Burg's algorithm.
+        
+        data: `np.ndarray`
+            Data used as a starting point for forecasting. If None, the data used for mesa computation are used
             
         include_data: `bool`
             Whether to prepend to the output the input time series
+        
+        verbose: `bool`
+            Whether to print the status of the forecasting
 
         Returns
         -------
@@ -652,13 +669,22 @@ class MESA(object):
         if P is None: P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
-        predictions[:,:p] = self.data[-p:]
+        if data is None:
+            predictions[:,:p] = self.data[-p:]
+        elif isinstance(data,np.ndarray):
+            assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
+            if len(data) >= p:
+                predictions[:,:p] = data[-p:]
+            else:
+                raise ValueError("Data are not long enough for forecasting")
+        else:
+            raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
         coef = - self.a_k[1:][::-1]
         for i in range(length): 
-            sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
+            if verbose: sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
             predictions[:, p + i] = predictions[:, i: p + i] @ coef +\
                          np.random.normal(0, np.sqrt(P), size = number_of_simulations)
-        sys.stderr.write('\n')
+        if verbose: sys.stderr.write('\n')
         if not include_data:
             return predictions[:,p:]
         return predictions
