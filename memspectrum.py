@@ -441,7 +441,7 @@ class MESA(object):
         self.P, self.a_k, self.optimization = self._method()
         return self.P, self.a_k, self.optimization
 
-    @do_profile(follow=[])
+    #@do_profile(follow=[])
     def _FastBurg(self):
         """
         Uses the Fast version of Burg Algorithm to compute the power spectral
@@ -463,7 +463,7 @@ class MESA(object):
 
             #this if is just for showing that the two methods give the same results
             #can remove, onve we are all convinced that the new method works
-        if True:
+        if False:
             c_slow = np.zeros(self.mmax + 2, dtype = self.data.dtype)
             N = self.data.shape[0]
             for j in range(self.mmax + 2):
