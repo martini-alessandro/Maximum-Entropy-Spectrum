@@ -12,21 +12,6 @@ import numpy as np
 import warnings
 from scipy.signal import correlate
 
-#### BAD AUTOCORRELATION: removed eventually?
-
-def _fft_autocovariance(d, mmax):
-    a = np.concatenate((d,np.zeros(len(d)-1)))
-    X = np.fft.rfft(a)
-    R = np.real(np.fft.irfft(X*X.conj()))[:mmax + 2]
-    return R
-
-def _autocovariance(d, mmax):
-    N = d.shape[0]
-    c = np.zeros(mmax + 2, dtype = d.dtype)
-    for j in range(mmax + 2):
-        c[j] = np.dot(d[: N - j],d[j : ])
-    return c
-
 #############DEBUG LINE PROFILING
 try:
     from line_profiler import LineProfiler
