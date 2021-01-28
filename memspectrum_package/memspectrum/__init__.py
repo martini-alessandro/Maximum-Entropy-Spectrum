@@ -2,8 +2,11 @@
 memspectrum
 ===========
 
-A nice package for Maximum Entropy Spectral Analysis.
-Include short description here: it will appear when typing help(mesa)
+A package for Maximum Entropy Spectral Analysis.
+Implements Burg's method to compute the power spectral density of a given 
+time-series. It can be used with two different methods, the standard, which
+provide higher stability, and a faster version. Having solved the method, 
+it is possible to use the algorithm to forecast on the time-series. 
 
 """
 
