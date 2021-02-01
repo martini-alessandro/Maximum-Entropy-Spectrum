@@ -362,7 +362,7 @@ class MESA(object):
               optimisation_method = "FPE",
               method              = "Fast",
               regularisation      = 1.0,
-              early_stop          = False):
+              early_stop          = True):
         """
         Computes the power spectral density of the attribute data for the class
         using standard Burg method recursive and a Faster (but less stable) version. 
@@ -389,7 +389,7 @@ class MESA(object):
             Default is 1, which means no regularisation 
                                        
         early_stop: 'boolean'          
-            Default is True. Breaks the iteration if there is no  no new global 
+            Default is True. Breaks the iteration if there is no new global 
             maximum after 200 iterations. 
             Recommended for every optimisation method but CAT.
 
