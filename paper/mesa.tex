@@ -113,9 +113,110 @@ Defining $\bar r_n$ as the sample autocorrelation, our constraints will be
 \begin{equation}\label{eq:MaxConstraint}
     \int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}.
 \end{equation}
-This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. The hard task is now to show that this problem has a solution. Remarkably, it admits an analytical solution in a closed expression for $S(f)$, that we now work out. 
+This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. The hard task is now to show that this problem has a solution. Remarkably, it admits an analytical solution in a closed expression for $S(f)$ in terms of some "forward prediciton error filter" coefficients $a_k$ 
+\begin{equation}\label{eq:MESApsd}
+    S(f) = \frac{P_N \Delta_t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}. 
+\end{equation}
+with $a_0 = 1$ and the other coefficients to be determined via the Levinson Recursion. 
+The MESA expression for the power spectral density admits a non-linear, all pole representation when evaluated in $z = e^{-\imath 2 \pi f \Delta t}$. All the roots of the first polynomial can be chosen to lay outside the unit circle, so that all the roots of the second polynomial will lay inside of it \cite{1975STIN...7714318B}. 
+If one is able to compute the values of the coefficients $a_i$ the PSD is uniquely determined from the previous equation. \\ 
+The values for the  \cite{doi:10.1002/sapm1946251261}
+To obtain the solution for the $N$-th order, one starts $\bar r_0 = P_0$ and recursively computes the new values until the desired order is computed. 
+This problem is often solved numerically with Burg's Algorithm \cite{Vos}.
+A python implementation of Standard Burg's Method can be found in Appendix \ref{app:Burg} 
+\section{The Autoregressive process analogy}
+The application of MESA is not limited to spectral estimates, but it also provides a bridge between spectral analysis and the analysis
+of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
+Consider an autoregressive stationary process of order $p$: 
+\begin{equation*}
+    x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_n x_{t - n} = \nu_t, 
+\end{equation*}
+taking the z transform of the previous: 
+\begin{align}
+    \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t
+\end{align}
+and calling $\tilde x(z)$ and $\tilde \nu (z)$, the transformed quantities, 
+in the $z$ domain, the process takes the form:
+\begin{equation}
+    \tilde x(z) = \frac{\tilde\nu(z)}{\left(1 - \sum_{i = n}^p b_n z^n \right)}
+\end{equation}
+Since we assumed stationarity for the process, $\tilde{x}(z)$ is analytic both on and inside the unit circle. Taking its square value and evaluating it on the unit circle $z = e^{-\imath 2 \pi f \Delta t}$, from the definition of spectral density one obtains:
+\begin{equation}\label{eq:ARspectrum}
+    S(f) = \vert \tilde x(z)\vert ^ 2 = 
+    \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}.
+\end{equation}
+The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$. \\ 
+Comparing (\ref{eq:ARspectrum}) with (\ref{eq:MESApsd}), identifying $b_1 = - a_i$ and $P_N \Delta t= \sigma ^ 2$, the expression for the power spectral density obtained with MESA is formally equivalent to the power spectral density of some stationary autoregressive process. \\ 
+Having computed the prediction error filter one can easily obtain an estimate of the $AR$ coefficients for the process just changing sign to the prediction error filter $a_i$.
+Taken a time series, MESA allows us to compute the power spectrum and to find an effective description in terms of an autoregressive process. 
+Wold's theorem ensures that this (approximate) description for the phenomenon is legitimate when the process is found to be stationary. So, MESA defines a bridge between spectral estimation and the study of autoregressive processes, an unexpected and fundamental result. \\
+Another very remarkable process for this estimate, is that the linear predictor obtained solving the error filter equation, is the best linear predictor, i.e. it minimizes error, and is equivalent to a least square fit for the coefficients. \cite{VDBos}  \\ 
+To prove that it minimizes error, we will follow the original proof provided by Burg \cite{burg1975maximum}. Consider a general linear predictor $-c_i$: 
+\begin{equation}
+    x_{t} - \sum_{i = 1}^p (-c_i)x_{t - i} = \sum_{i = 0}^p c_i x_{t - i} = e'_t, 
+\end{equation}
+Denoting with $E\left[\cdot\right]$ the expectation value of some variable, the mean square error is given by: 
+\begin{equation}
+E\left[\sum_{i = 0}^p c_i x_{t-i}\sum_{j = 0}^p c^*_j x^*_{t - j}\right] = \sum_{i,j} c^*_j E\left[x^*_{t-j}x_{t-i} \right] c_j = \sum_{i, j}c^*_j R(j - i) c_i > 0,
+\end{equation}
+which, being $R$ positive definite and defined by the multiplication of a complex number times its complex conjugate, is always positive definite. 
+Let $-\vec{b}$ be the prediction error filter obtained with MESA. Multiplying the left hand side of \ref{eq:predictionErrorFilter} for the complex conjugate of the forward prediction error, 
+\begin{equation}\nonumber 
+    \sum_{i,j}b^*_jR(j-i)b_i = P_N
+\end{equation}
+is obtained . \\ 
+The (positive) quantity  
+\begin{equation}\label{eq:linearPredictor}
+    \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i),
+\end{equation}
+using Einstein notation on repeated indices and recall that $c_0 = b_0 = 1$, can be rewritten as 
+\begin{align}
+    & c^*_j R(j - i) c_i - c^*_j R(j - i) b_i - b^*_j R(j - i) c_i + b^*_j R(j - i)  b_i =\\ \nonumber 
+    &c^*_j R(j - i) c_i - c^*_0 P_N - P_N c_0 + P_N =\\ \nonumber
+    & c^*_j R(j - i) c_i - P_N.
+\end{align}
+Moving $P_N$ on the left hand side, it becomes 
+\begin{equation}\label{eq:bestLinearPredictor}
+    \sum_{i, j}c^*_j R(j-i)c_i = \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i) + P_N.
+\end{equation}
+Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
 
 
+\section{Choosing an autoregressive order}\label{sec:optimizers} 
+Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$. \\ 
+In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$. \\ 
+The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact. A compromise between the two behaviour is proposed to be \cite{doi:10.1190/1.1440902}
+\begin{equation}\label{eq:MMAx}
+M_{max} = 2N / \ln{(2N)}
+\end{equation}
+Still, this is not a satisfactory answer since it is an upper limit for the estimate of the length $M$.
+Various approaches to optimize the order $M$ have been proposed in literature; in the following we present them.
+\begin{itemize}
+\item \textbf{Final prediction Error (FPE)} 
+The first criterion is due to Akaike (1970) \cite{Akaike1970StatisticalPI}. He proposed that M has to be chosen as the length that reduces the error when the filter is used as a predictor: 
+\begin{equation}
+    FPE: \min_{M}E\left((x_t - \hat x_t) ^ 2\right)
+\end{equation}
+with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.  This criterion is equivalent to the choice of $M$ such that 
+\begin{equation}
+    \min_{M}P_{m} \frac{N + m + 1}{N - m - 1}
+\end{equation}
+with $P_M$ defined by the prediction error filter equation. 
+\item \textbf{Criterion Autoregressive Transfer function (CAT)}
+This second criterion is due to Parzen \cite{bhansali1986}, and requires $M$ to be chosen as the length $m$ the minimizes the quantity 
+\begin{equation}
+    \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
+\end{equation}
+It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. 
+
+\item \textbf{Optimum Bayes Decision rule (OBD)} 
+The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, $M$ is proposed to be the length that maximizes the posterior distribution, condition met selecting $m$ that minimize 
+   \begin{equation}
+        (N - m - 2) \log(P_m) + m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2.
+    \end{equation}
+\end{itemize}
+Once an optimizer is chosen to select the best recursion order $M$, we then proceed as follows:  we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value. \\
+The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
 
 
 
