@@ -1,7 +1,7 @@
 memspectrum
 ===========
 
-**Author** Alessandro Martini
+**Authors** Alessandro Martini, Stefano Schmidt, Walter del Pozzo
 
 **email** martini.alessandr@gmail.com
 
@@ -124,7 +124,12 @@ The forecast result is:
 Generating data from PSD
 ============================
 memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
+<<<<<<< HEAD
+spectral density. It can be called as 
+:: 
+=======
 spectral density. It can be called as :: 
+>>>>>>> af7984f4cf9ef4ad7b528e26a5fd54e6ccbfb4d4
 
 	from memspectrum.generateTimeSerie import generate_data
 	f, psd = import wanted psd and frequency array 

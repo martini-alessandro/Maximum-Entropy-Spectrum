@@ -1,7 +1,14 @@
 README.rst
+copy_files.sh
 setup.py
 ./memspectrum/GenerateTimeSeries.py
 ./memspectrum/__init__.py
+ReadMeFigures/Data.jpeg
+ReadMeFigures/Forecast.jpeg
+ReadMeFigures/Spectrum.jpeg
+dist/memspectrum-1.0.0.tar.gz
+memspectrum/GenerateTimeSeries.py
+memspectrum/__init__.py
 memspectrum.egg-info/PKG-INFO
 memspectrum.egg-info/SOURCES.txt
 memspectrum.egg-info/dependency_links.txt
