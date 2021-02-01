@@ -1,0 +1,1234 @@
+\documentclass[twocolumn,showpacs,preprintnumbers,nofootinbib,prd,
+superscriptaddress,10pt]{revtex4-1}
+
+\usepackage{amsmath,amssymb}
+\usepackage{amsfonts}
+\usepackage[normalem]{ulem}
+\usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{afterpage}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage{mathtools}
+%\usepackage{tensor}
+\usepackage{layouts}
+%\usepackage{DejaVuSans}
+\usepackage{epstopdf}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{blindtext}
+\usepackage{graphicx}
+\usepackage{siunitx}
+	\sisetup{output-decimal-marker={.}}
+\newtheorem{theorem}{Theorem}
+	
+
+	%some math symbols
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\DeclareMathOperator{\sign}{sign}
+\renewcommand{\d}[1]{\ensuremath{\operatorname{d}\!{#1}}}
+%argmin and argmax
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% comments command
+\newcommand{\an}[1]{{\textcolor{orange}{\texttt{AN: #1}} }}
+\newcommand{\pr}[1]{{\textcolor{cyan}{\texttt{PR: #1}} }}
+\newcommand{\fm}[1]{{\textcolor{blue}{\texttt{FM: #1}} }}
+\newcommand{\sschmidt}[1]{{\textcolor{red}{\texttt{SS: #1}} }}
+\newcommand{\BS}[1]{{\textcolor{green}{\texttt{SB: #1}} }}
+\newcommand{\oldnewtxt}[2]{\sout{#1}\textcolor{red}{#2}}
+
+\begin{document}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ABSTRACT
+\begin{abstract}
+Burg method of Maximum Entropy Spectral Analysis (MESA) provides a powerful tool to perform spectral estimation of a time-series. The method is a generalization of Jaynes maximum entropy principle and provides the estimate for the spectrum in terms of the coefficients of some autoregressive order p process (AR(p)). The recursive solution requires a method for the estimate of the order $p$ for the process. Several methods are characterized on synthetic noise having a known power spectral density (PSD) via the computation of the percentage error and then compared.  
+
+\end{abstract}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
+	\title{Maximum Entropy Spectral Analysis}
+	\author{Alessandro \surname{Martini}}
+		\email{martini.alessandr@gmail.com}
+        \affiliation{Dipartimento di Fisica  Universit\`a di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy}        
+        %
+  
+	
+	\maketitle
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY  
+	
+\section{Maximum Entropy Principle} 
+
+Jaynes Maximum Entropy principle (MAXENT) \cite{JaynesArticle}\cite{jaynes2003ptl} represents one of the most important results in Bayesian Statistics: it provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. It is formulated as a variational problem in which Shannon's entropy \cite{Shannon}
+\begin{equation}\label{eq:shannonEntropy}
+H[p_1, \dots, p_N] = - \sum_{i = 1}^{N}p_i\log(p_i)
+\end{equation}
+or, in the continuous case
+\begin{equation}
+H[p(x)] = - \int dx p(x)\log p(x)
+\end{equation}
+is the functional to be maximized. The constraints on the variational problem are given by the prior knowledge $I$ and are usually represented as fixed values for various momenta of the probability distribution.  The most interesting result of MAXENT is obtained when a constraint on both mean and variance is considered. Consider for simplicity a vector $\vec x(t)$ with components in $\mathbb{R}^N$
+\begin{equation*}
+    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
+\end{equation*}
+We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
+\begin{equation}
+    p\left(\vec x(t)\vert I\right) = 
+    \frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp^{\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right)}. 
+\end{equation}
+With MAXENT, the often unjustified assumptions for the data to be normally distributed finds an elegant explanation. It is not only the central limit distribution for finite variance processes, it is also the distribution that maximizes the entropy and, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural 'statistical' evolution toward a configuration that maximizes entropy. 
+Thanks to Burg, maximum entropy method has been generalized to compute the most unbiased estimate of the spectrum for a realization of some stochastic process. 
+Since it contains the same information of a power spectral density, high resolution computation of a power spectrum from a single time series $\vec x(t)$ of length $N$ is a fundamental task in signal analysis.  \\
+Since we are dealing with a finite number of samples $N$, it is not possible to have an accurate computation of the autocorrelation function for every time interval. Also, the error $\sigma$ in the estimate increases with the time interval $k$ as $\sigma \sim \frac{1}{\sqrt{N - k}}$, so that only a few values for the autocorrelation function can actually be computed. \\ 
+The problem we want to address is how to compute a PSD from the partial knowledge of the autocorrelation function. \\
+The standard approach of peridiograms \cite{Lomb} \cite{Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
+    \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
+\end{equation}
+The sequence $W$ is a window function that can be chosen in several different way, each method having pros and cons for the final estimate of the power spectral density. \\ 
+The choice of a window function is arbitrary and made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of power spectral density  is reached. A high frequency resolution implies high variance and vice-versa. Another problem,is that the result depends on this choice, and this fact may raise the question of which we should consider as the "real" power spectral density. \\  
+Another problem with this approach is the requirement for the window to be $0$ outside the interval: we are arbitrarily assuming $\rho_j = 0$ for $j > M$, and modifying the estimate if a non-rectangular window is chosen. Making assumptions on unavailable data and modifying the ones we have at our disposal does not seem a completely fair approach. \\
+MAXENT gives us the possibility to develop a completely new way for the estimation of PSDs, without any a priori assumptions on the unavailable data. Our requirements (the constraints for the variational problem) are i) the PSD estimate has to be non-negative; ii) its Fourier transform has to match the sample autocorrelation. \\
+To do so, there is a problem we have to solve: our definition of entropy (equation \ref{eq:entropy}) depends on the probability distribution, not the power spectrum. We need to find a way to change the definition's domain for the entropy to formulate the variational problem in terms of the power spectral density $S(f)$ alone. A way out of this problem is considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. One can show that the 'entropy gain' obtained filtering white noise is: 
+\begin{equation}\label{eq:EntropyGain}
+    \Delta H = \int_{-\infty}^{\infty}\log S(f) df , 
+\end{equation}
+so that we can reformulate the variational problem requiring $S(f)$ to maximize the entropy gain. In real examples we have no access to all frequencies but only on those between minus and plus the Nyquist frequency, defined from the sampling interval $\Delta t$ as 
+\begin{equation}
+    Ny = \frac{1}{2 \Delta t}.
+\end{equation}
+All our quantities are well defined in this range only, so that we are not going to maximize \ref{eq:EntropyGain}, but
+\begin{equation}\label{eq:EntropyGain2}
+    \Delta H = \int_{- Ny}^{Ny}\log S(f) df.
+\end{equation}
+Defining $\bar r_n$ as the sample autocorrelation, our constraints will be
+\begin{equation}\label{eq:MaxConstraint}
+    \int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}.
+\end{equation}
+This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. The hard task is now to show that this problem has a solution. Remarkably, it admits an analytical solution in a closed expression for $S(f)$, that we now work out. 
+
+
+
+
+
+
+
+\newpage 
+a
+\newpage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Introduction}
+The Maximum Entropy principle (MAXENT) is one of the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series. After a short introduction to Jayne's MAXENT, we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form. Since its natural domain of application are time series, we will also provide a brief explanation of the basic concepts in stochastic processes that are needed to fully understand the method and the cases in which it can be correctly applied. 
+\section{Maximum Entropy}
+One of the main problems in statistics is the assignment of a probability for an event. There have been several proposals from both 'objective' and 'subjective' approaches to probability and statistic. The former assert that concept of probability is intrinsic to the event itself and can be computed as the 'percentage of occurrences of an attribute in a given ensemble':
+speaking of probability only makes sense when an ensemble is considered. 
+For the latter approach instead, probability is a representation of the state of knowledge of the observer about the event itself: the higher the probability, the higher our belief that the event will occur and vice versa. 
+It appears to be clear that for the Bayesian, information will play a key role in the a priori assignment of the probability for an event, while for the frequentist prior assignment does not make sense at all, since the whole information is contained in the experiment. \\
+So, assigning probability given some prior information is a pure Bayesian problem.
+
+\subsection{Indifference principle}
+The indifference principle (IP) is one of the easiest principle that can be used to assign a probability to some events. 
+Consider a set of independent, mutually exclusive hypotheses: 
+\begin{equation}\nonumber
+    \left\{H_i\right\} \quad i = 1 \dots N
+\end{equation}
+so that they are exhaustive: 
+\begin{equation}\nonumber
+    \sum_{i = 1}^{N} P(H_i \vert I) = 1.
+\end{equation}
+If there is no reason to prefer one hypothesis with respect to another, the IP states that we should assign the same probability for every event: 
+\begin{equation}
+    P(H_i\vert I) = \frac{1}{N}. 
+\end{equation}
+This can be easily generalized to the continuous case. Consider, for simplicity, a one dimensional case, and suppose we have the additional information: $a < x < b$.\\ 
+In the continuous case, the probability $p(x\vert I)$ is meant as the probability for the event to assume values in a given subset $\left[x, x +dx\right]$. Requiring events to be mutually exclusive is requiring their interception to be the empty set, while the exhaustiveness condition is the normalization condition:
+\begin{equation}
+    \nonumber
+    \int_a^b p(x\vert I)dx = 1.
+\end{equation}
+In this case, the IP reduces to the computation of the normalization constant: 
+\begin{equation}
+    p(x\vert I) = \frac{1}{b-a}
+\end{equation}
+and allow us to easily introduce uniform priors, the simplest prior distribution for Bayesian computation. The only hypothesis is for our events to be mutually exclusive and exhaustive. In this case, since there is no evidence for a given hypothesis to be more plausible than another, according to IP we have to assign the same probability for every event. \\
+If that is not the case, how can we generalize IP principle for a larger amount of information?\\ 
+Jaynes\cite{JaynesArticle}\cite{jaynes2003ptl} formulated an exhaustive answer as a variational problem and rely to the concept of information entropy: 
+the distribution that reflects knowledge being maximally non committal to unknown information is uniquely determined maximizing Shannon's entropy\cite{Shannon} using information as constraints. \\ 
+This is now known as the 'Maximum Entropy Principle' (MAXENT)
+
+\subsection{Maximum Entropy Principle}
+To introduce MAXENT as a variational problem, we will workout some simple examples to understand how information's entropy and 'uncertainty' are related. \\ 
+The word 'information' will not be used to indicate our knowledge on the system under study: this is what we will call 'evidence'. Information will be intended as in communication theory: it specifies the quantity of details needed to provide a full description of the system under study. \\ 
+If we consider a perfectly sinusoidal signal, knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information entropy content . \\ 
+Even less information is required if we are studying a system whose outcome is certain (has probability $p = 1$).
+If the quantity of information can be considered to be $I = 0$, a communication is not even needed.  
+Shannon \cite{Shannon} proposed the quantity
+\begin{equation}\label{eq:information}
+    I_i = \log_2 \frac{1}{p(x_i)}
+\end{equation}
+to represent the quantity of information brought by an outcome $x_i$ with probability $p_i$. It has the nice property of being an additive quantity and it is monotonically decreasing as a function of $p \in [0, 1]$. The more uncertain the outcome, the higher the information it brings. \\ 
+What happens if we consider not one outcome, but a larger set of different events? What is  the 'most uncertain' outcome?  Since we are intending probability as a representation of the state of knowledge, one of the first requirement for our assignment is the agreement with common sense. \\ 
+Consider an experiment based on the occurrence of one of two different outcomes $E_1, E_2$ with given probabilities $P_1$ and $P_2$. What are the values that make our outcome the most uncertain? \\ 
+If $P_1$ and $P_2$ are largely different, like $P_1 = 0.999$ and $P_2 = 0.001$, we have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome. \\ 
+The most unpredictable experiment is the one in which 
+\begin{equation}\nonumber
+    P_1 = P_2 = \frac{1}{2}:
+\end{equation}
+this describes a situation of 'maximum ignorance'; we have no evidence at all and we have no instruments to predict what the outcome of such an experiment will be.  \\ 
+This can be generalized in the case of $N$ events. Assigning same probability
+\begin{equation*}
+    P_1 = \dots = P_N = \frac{1}{N}
+\end{equation*}
+for each outcome, i.e. appealing to the indifference principle, is equivalent to the requirement for our experiment to be the most unpredictable. 
+All we know is that one over $N$ events is going to happen. With this evidence, we cannot expect one outcome to occur over the others. 
+To report the results of such an experiment, we need to communicate every single outcome: it 'carries' high information. 
+This description also makes clearer the role played by evidence: it has to be used in probability assignment in order to make the result 'more certain' or 'less informative'. It is clear from the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it. \\ 
+It is now clear that any assignment different from the 'most uncertain' is violating the hypothesis for it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. 
+Assigning probabilities requires maximization of uncertainty using evidence as constraint. This looks like a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a 'generalization' of information defined in equation (\ref{eq:information}) to be something like the 'expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.  \\ 
+Some properties for $H$ can be worked out easily. 
+From previous discussion, given a fixed number $N$ of possible outcomes, we want $H$ to be maximized by the choice $p_1 = \dots = p_N$. \\ 
+Consider now the opposite situation, in which probability is assigned appealing to IP and we have a different number of possible outcomes: 
+\begin{itemize}
+\centering
+    \item $P_1 = P_2 = \frac{1}{2}$
+    \item $P_1 = P_2 = P_2 = \frac{1}{3}$
+    \item $P_1 = \dots = P_4 = \frac{1}{4}$
+\end{itemize}
+Intuitively, the most unpredictable experiment is the one with larger number of outcomes: probability of getting it wrong increases as $\frac{N -1}{N}$. So when equal probabilities are assigned, we want
+\begin{equation}
+    \nonumber
+    H\left[\frac{1}{N}, \dots, \frac{1}{N}\right]
+\end{equation}
+to increase monotonically with N. \\ 
+We also want our function to be continuous in its parameters: any small change in probability has to slightly affect uncertainty. \\
+Last is composition property. Consider three events with probability $p_1, p_2, p_3$ such that $p_2 + p_3 = 1 - p_1 = q$. We require 
+\begin{equation}
+    H\left(p_1, p_2, p_3\right) = H(p_1, q) + qH\left(\frac{p_2}{q}, \frac{p_3}{q}\right),
+\end{equation}
+so that uncertainty is additive. \\ 
+Shannon \cite{Shannon} showed that the only functional form satisfying our assumptions is given by:
+\begin{equation}\label{eq:entropy}
+    H[p_1, \dots, p_N] = - \sum_{i = 1}^N p_i\log{p_i},
+\end{equation}
+or, in the continuous case:
+\begin{equation}
+    H[p(x)] = - \int p(x)\ln p(x) dx,
+\end{equation}
+and $H$ is what we will call entropy. This result is very interesting, if we compare it with Eq.~(\ref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being 'non committal' with unavailable evidence, since \ref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization. \\ It is easy to verify that this expression for entropy verifies the aforementioned properties. 
+Assigning the same value for each probability $p_i$, it is straightforward to verify $H$ increases with N: 
+\begin{equation}
+    -\sum_{i = 1}^N \frac{1}{N}\log{\frac{1}{N}} = - \log\frac{1}{N} = \log N.
+\end{equation}
+We want to show that, in case in which our only constraint is exhaustiveness \begin{equation}\nonumber 
+    \sum_{i = 1}^{N}p_i = 1,
+\end{equation}
+MAXENT reduces to indifference principle as it should be. The variational problem is defined as
+\begin{equation}\label{eq:entropyNormConst}
+    \delta\left[H - \lambda\sum_{i = 1}^N (p_i - 1)\right] = 0 
+\end{equation}
+with
+\begin{equation}
+    \delta H\left[p_1, \dots, p_N\right] = \sum_{i = 1}^N\frac{\partial H}{\partial p_i}\delta p_i = - \sum_{i = 1}^N\left(\log p_i + 1\right),
+\end{equation}
+so that equation \ref{eq:entropyNormConst} reduce to
+\begin{equation}\nonumber 
+    \sum_{i = 1}^N\left[\log p_i + \lambda + 1 \right]\delta p_i = 0\,.
+\end{equation}
+The solution of the previous equation is easily worked out requiring every term to be zero: 
+\begin{equation}\nonumber 
+    p_i = e^{-\lambda - 1}.
+\end{equation}
+Applying the normalization condition, it is immediate to show that
+\begin{equation}
+    p_i = \frac{1}{N}.
+\end{equation}
+MAXENT reduces to the IP when only the normalization constraint is used. What happens if more than one constraint is used? \\
+For simplicity, we will work through the next examples in the continuous case. Suppose the mean of the distribution is known $\int xP(x) dx = \bar{x}$. The variational problem can be rewritten as: 
+\begin{equation}
+    \int \left[\log p(x) + 1 + \lambda + \mu x \right]\delta p(x) = 0
+\end{equation}
+and its solution in term of $p_i$ is: 
+\begin{equation}
+    p(x) = e^{-1 - \lambda - \mu x} 
+\end{equation}
+and constraints: 
+\begin{equation} \nonumber
+    \int p(x) dx  = 1 \text { and }
+    \int x p(x) dx = \bar x.
+\end{equation}
+For simplicity, we consider $x$ to be a variable ranging in the interval $(-\infty,+\infty)$, but this can be easily computed for every other interval. The normalization conditions implies 
+\begin{equation}\nonumber 
+   1 =  \int p(x \vert I) dx = e^{-1-\lambda}\int e^{-\mu x} dx, 
+\end{equation}
+so that: 
+\begin{equation}\nonumber 
+    e^{-1 -\lambda} = \mu.
+\end{equation}
+In the continuous case MAXENT assigns for $x$ an exponential distribution
+\begin{equation}
+    p(x \vert I) = \mu e^{-\mu x}. \nonumber 
+\end{equation}
+It is clear from the functional form that the Lagrange multiplier has to be $\mu = \frac{1}{\bar x}$ to satisfy the second constraint. \\ 
+The most interesting and useful result of MAXENT is obtained when a constraint on the variance is also considered. Take a vector  $\vec x(t)$ with components in $\mathbb{R}^N$
+\begin{equation*}
+    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
+\end{equation*}
+We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C_(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
+\begin{equation}
+    p\left(\vec x(t)\vert I\right) = 
+    \frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right). 
+\end{equation}
+With MAXENT, the often unjustified assumptions for the data to be normally distributed finds an elegant explanation. It is not only the central limit distribution for finite variance processes, it is also the distribution that maximizes the entropy and, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural 'statistical' evolution toward a configuration that maximizes entropy. 
+
+\section{Time Series}
+Before we introduce MAXENT applications to spectral analysis, we provide a short review on time series and some concepts that will be used in following chapters. \\ 
+Consider a stochastic process, i.e. any process with some non deterministic component that takes values in some space $\bar X = \left\{x_1 \right\}$. A time series X of the process, i.e. a realization, is a set of subsequent values assumed by the variable at different times, i.e.
+\begin{equation}
+    X = \left\{x_1, x_2, \dots, x_N \right\}; \qquad \text{ with } x_i = x(t_i)
+\end{equation}
+For our goal is important to understand how a single time series can be used to infer properties on the stochastic process itself. A full characterization for the stochastic process can only be provided if all the joint probability distributions for the process are known
+\begin{equation}\nonumber 
+    p(x_1, t_1 | I); \quad \dots \quad ;  p(x_1, t_1; \dots x_n, t_n | I);  \quad \dots  
+\end{equation}
+or, equivalently, all momenta for the distribution are provided: 
+\begin{align}
+    \nonumber &\mu(t_1) = \int  x_1p(x_1, t_1 \vert I)dx_1  \\
+    \nonumber 
+    & R(t_1, t_2) = \int  x_1x_2p(x_1, t_1;x_2, t_2\vert I) dx_1dx_2\\
+    \nonumber 
+    \vdots \\ \nonumber
+    &\mu_n(t_1, \dots, t_n) = \int  x_1\dots x_np(x_1; \dots; x_n \vert I) dx_1dx_2\dots dx_n\\ 
+    \nonumber
+    &\vdots
+\end{align}
+Since both descriptions require $N \to \infty$, they are impossible to achieve and very often an estimate of just the first two moments is given, hence only a partial characterization can be made. \\ 
+The first momentum is known as the mean for the process, while second moment is known as 'Autocorrelation', and gives information on the deterministic dependence of a process from its previous values. It is a central quantity in time series analysis and is related to the autocovariance function via: 
+\begin{equation}\nonumber 
+    C(t_1, t_2) = R(t_1, t_2) - \mu(t_1)\mu(t_2).
+\end{equation} \\
+Study of time series analysis is often a hard task, but there are some special cases that simplify the analysis: stationary and autoregressive processes.  
+\subsection{Stationary processes}
+\subsubsection{Stationarity conditions}
+There are several definitions of stationarity for a process \cite{Mantegna2007Introduction}. A stochastic process is said to be 'strictly stationary' if the joint distribution for the process: 
+\begin{equation}
+p(x_1,t_1; \dots; x_n,t_n \vert I) = p(x_1,t_1 + \Delta t; \dots; x_n, t_n +\Delta t\vert I)
+\end{equation}
+is constant in time whatever the order $n$ and time lag $\Delta t$. This implies that its moments are also constant in time. In this case, the time series consists in independent identically distributed terms. Such a process is rarely encountered and more general definitions are needed for real case studies.  \\ 
+On of the most important is the 'wide sense stationary process', whose constraints are: 
+\begin{equation}
+    \mu_1(t) = \mu; \quad R(t_1, t_2) = R(t_2 - t_1) = R(\tau).
+\end{equation}
+Such a process has constant mean and autocorrelation that only depends on time lag between the considered values. \\
+The mean does not bring high information about the process, and can always be reabsorbed in the process defining 
+\begin{equation}
+    \nonumber
+    y(t) = x(t) - \mu.
+\end{equation}
+y(t) is a stationary process with 0 mean but same statistical properties of $x(t)$. $R(\tau)$ brings information on the amount of dependence of the time series on its previous values: if some process repeats similarly after $\bar t$ seconds, autocorrelation will have a secondary maximum at $\tau = \bar t$. Also, if the function is periodic of period $T$, the autocorrelation will have same periodicity. 
+In general, autocorrelation represents most of the information we can obtain from the study of a stationary stochastic process, and it is rather fundamental. Its computation is even more important in the case of a Gaussian process. For such a process it is the only moment required to fully characterize it. 
+One of the most important results regarding the autocorrelation function, is the Wiener-Khinchin theorem. It ensures that, for a wide sense stationary process, the frequency domain counterpart of the autocorrelation function is the power spectral density:
+\begin{equation}
+    R(\tau) = \int  S(\omega) e^{-\imath \omega \tau} d\omega,
+\end{equation}
+Autocorrelation and power spectral density bring the same information about the process. It is fundamental to develop methods to accurately estimate the power spectral density in such a way that it is consistent with the autocorrelation function.
+\subsubsection{Gaussian noise}
+MAXENT is a powerful tool to study noise. If one considers a wide sense stationary process  $\vec n(t) = \left(n_1, n_2, \dots, n_k \right)$ with 0 mean and known autocorrelation matrix, one can assign uniquely a normal distribution: 
+\begin{equation}\label{eq:noisePDF}
+    p\left(\vec n(t)\vert I\right) = \frac{1}{\left(2\pi\det R \right)^{\frac{k}{2}}}\exp\left(-\frac{1}{2}\sum_{i, j}n_i R^{-1}_{ij}n_j\right)\,.
+\end{equation}
+In the case of a wide sense stationary process, being $R_{ij} = R(t_j - t_i)$ dependent on time steps only, the autocorrelation matrix is a Toeplitz Matrix (see Appendix \ref{app:Toeplitz}) and can be diagonalized, in the limit of large number of samples, by a Discrete Fourier Transform: 
+\begin{equation}
+    S = F R F^{-1}. 
+\end{equation}
+For the Wiener-Khinchin theorem, $S$ is the power spectral density for the noise itself. Defining
+\begin{equation}
+    \tilde n(\omega) = F\left[n(t) \right],
+\end{equation}
+with $F$ the Fourier transform, the probability distribution (\ref{eq:noisePDF}) for noise in frequency domain (FD) becomes  
+\begin{equation}
+    p(\tilde n(f) \vert I) = \frac{1}{\left(2 \pi \det S \right)} \exp \left(-\frac{1}{2}\sum_{i} \frac{\tilde n_i \tilde n_i}{S_i} \right).
+\end{equation}
+Power spectral density plays a central role in noise study: it is the covariance matrix for noise in frequency domain. Also, in large N domain, frequency noise is serially uncorrelated. \\
+There is a very special case of Gaussian Noise that we have to mention: white noise. White noise can be represented as Gaussian noise with autocorrelation function
+\begin{equation}
+    R_{ij} = \sigma^2 \delta_{ij},
+\end{equation}
+ it is a strictly stationary process whose autocorrelation function is 0 for any time lag different from 0, and its realization is made of independent identically distributed samples.
+ Going in the Fourier Domain
+\begin{equation}
+S_{ij} = \sigma^2 F_{ik}\delta_{kl}F^{-1}_{lj} = \sigma^2 \delta_{ij} = R_{ij}, 
+\end{equation}
+we show that power spectral density for white noise is constant over frequency. 
+
+\subsection{Autoregressive process}\label{sec:ARprocess}
+The description of a process is simplified if we are dealing with some autoregressive process of order p, or simply an AR(p) process. For an AR(p) process, each value depends linearly from its previous values
+\begin{equation}
+    x_i = \sum_{i = 1}^{p}a_{i}x_{i - p} + \nu_i, 
+\end{equation}
+with $a_i$ some constant coefficients and $\nu_i$ white noise. \\
+An AR(1) process is known as a Markov process. Complete knowledge on AR(p) can be achieved with the computation of $p + 1$ momenta (or conditional distributions) only. We prove it for a Markov process.\\  
+Consider the $n'th$ order joint probability distribution
+\begin{equation}\label{eq:NthOrderPDF}
+    p(x_1, t_1; x_2, t_2; \dots; x_n, t_n | I),
+\end{equation}
+from the definition of conditional probability
+\begin{equation}\nonumber 
+p(x,y \vert I) = p(x \vert y I) p(y \vert I)
+\end{equation}
+one can rewrite \ref{eq:NthOrderPDF} as 
+\begin{equation} \nonumber 
+    p(x_n, t_n; \dots; x_1, t_1 \vert I) = p(x_n, t_n \vert x_{n-1}, t_{n-1}; \dots x_1, t_1 I) p(x_{n-1}, t_{n-1} \dots x_1, t_1 \vert I). 
+\end{equation}
+Since under Markov assumption, conditional $pdf$ only depends on the previous value for the variable 
+\begin{equation} \nonumber 
+    p(x_n, t_n \vert x_{n-1}, t_{n-1}; \dots, x_{1}, t_1 I) = p(x_n, t_n \vert x_{n-1}. t_{n-1} I) 
+\end{equation}
+reiterating the decomposition of the joint probability, we find that
+\begin{equation}
+\left(\ref{eq:NthOrderPDF} \right)=  p(x_n, t_n \vert x_{n-1}, t_{n-1}, I )p(x_{n-1}, t_{n-1}\vert x_{n-2}, t_{n-2}, I) \dots p(x_1, t_1\vert  I),
+\end{equation}
+so that for every order $n$, the probability distribution can be reduced to the product of $n$ second order probability distributions. \\
+The knowledge of the distribution for the variable and of the second order conditional distribution fully characterize a Markov process.\\
+The same reasoning can be repeated for any order $p$. For an AR(p) process the $n$-th order joint probability distribution ($n > p$) can be rewritten as a product of the $p$-th order conditional distributions, so that they completely characterize the process. 
+
+\subsection{ARMA process and Autoregressive stationary process}
+There are two fundamental results for an autoregressive process that are strictly related with Burg's Algorithm (see section \ref{sec:MESA}) for spectral analysis, and they are all about autoregressive stationary processes and their generalization, ARMA(p,q) processes. 
+\subsubsection{ARMA process}
+We will only need to define ARMA(p,q) and their relation with AR(p) processes without stepping in many details. These concepts are needed to give a stronger background to our future results.  \\
+The generalization of the Autoregressive Process, the $ARMA(p,q)$ process, is defined by the following relation: 
+\begin{equation}
+    x_t = \sum_{i = 1}^p \alpha_i x_{t - i} + \sum_{i = 1}^q \beta_i \nu_{t - i} + \nu_t,
+\end{equation}
+again, $\nu$ is white noise and both $\alpha$ and $\beta$ are constants. It is evident that an autoregressive process is a special case of the more general $ARMA(p,q)$ process, since  $Ar(p) = ARMA(p,0)$. We will not enter in the details of the description of $ARMA(p,q)$ processes, but they are important for two main reasons. \\
+First, $ARMA$ is a parsimonious way to characterize an $AR$ process. It is, in fact, possible to prove that an $ARMA(p,q)$ process, with both $p, q$ finite, is equivalent to some $AR(\infty)$ process \cite{Haykin}. \\
+The second and even more important result about these processes is Wold's Theorem\cite{Wold}: 
+\begin{theorem}
+Every real valued stationary stochastic process $P$ can be written as an $ARMA(p,q)$ process. 
+\end{theorem}
+This theorem makes clear the central role played by the ARMA representation: it allow us to fully characterize any stochastic process if its coefficients are known. This is usually an hard task, but, since we know the $AR / ARMA$ equivalence, we can find an approximate description of the process in terms of an $AR$ process, all is needed is a way to estimate the autoregressive coefficients. \\ 
+\subsubsection{Autoregressive stationary process}
+The last important ingredient is the condition of stationarity for AR processes. The conditions of stationarity for a stochastic process are well known. Defining the 'lag' operator $B$ such that 
+\begin{equation}
+    \nonumber 
+    B x_{i} = x_{i - 1},
+\end{equation}
+one can rewrite the autoregressive process as 
+\begin{equation} \nonumber 
+    x_i - \sum_{k = 1}^p a_k B^k x_i = \nu_i, 
+\end{equation}
+or, defining $b_0 = 1$ and $b_k = - a_k$
+\begin{equation}
+    \left(\sum_{k = 0}^p b_k B^{k}\right) x_i = \nu_i.
+\end{equation}
+The polynomial on the left side is known as the 'characteristic polynomial' of the autoregressive process $\phi (B) = \sum_{k = 0}^p b_k B^k$. 
+The condition of stationarity for autoregressive processes is
+\begin{theorem}
+An autoregressive process of order $p$ is stationary if all the roots $\beta_i$ of its characteristic polynomials lay outside the unit circle, i.e. $\vert\beta_i\vert > 1$.
+\end{theorem}
+Consider for simplicity a Markov process that only takes real values
+\begin{equation}\nonumber 
+    x_t - a_1 x_{t- 1} = \nu_t; \quad \text{ with } a_i \in \mathbb{R}
+\end{equation}
+whose characteristic polynomial is
+\begin{equation}
+    \nonumber 
+    \phi(B) = 1 - a_1 B .
+\end{equation}
+Let $\beta$ be the root of the polynomial $\phi(\beta) = 0$. 
+If $\vert \beta \vert > 1$ ($\vert \beta \vert < 1$) $a_1$ has to be $\vert a_1 \vert < 1$ ($\vert a_1 \vert > 1$). It is easy to see that if condition of stationarity is not met, the process explodes and $x_t$ will quickly diverge. \\ 
+These few concepts are fundamental in stochastic processes and necessary for what follows.
+\section{Maximum Entropy Spectral Analysis}\label{sec:MESA}
+From our previous discussion on time series, the importance of the autocorrelation function should be clear. Since it contains the same information of a power spectral density, high resolution computation of a power spectrum from a single time series $\vec x(t)$ of length $N$ is a fundamental task in signal analysis.  \\
+Since we are dealing with a finite number of samples $N$, it is not possible to have an accurate computation of the autocorrelation function for every time interval. Also, the error $\sigma$ in the estimate increases with the time interval $k$ as $\sigma \sim \frac{1}{\sqrt{N - k}}$, so that only a few values for the autocorrelation function can actually be computed. \\ 
+The problem we want to address is how to compute a PSD from the partial knowledge of the autocorrelation function. \\
+The standard approach of peridiograms \cite{Lomb} \cite{Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
+    \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
+\end{equation}
+The sequence $W$ is a window function that can be chosen in several different way, each method having pros and cons for the final estimate of the power spectral density. \\ 
+The choice of a window function is arbitrary and made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of power spectral density  is reached. A high frequency resolution implies high variance and vice-versa. Another problem,is that the result depends on this choice, and this fact may raise the question of which we should consider as the "real" power spectral density. \\  
+Another problem with this approach is the requirement for the window to be $0$ outside the interval: we are arbitrarily assuming $\rho_j = 0$ for $j > M$, and modifying the estimate if a non-rectangular window is chosen. Making assumptions on unavailable data and modifying the ones we have at our disposal does not seem a completely fair approach. \\
+MAXENT gives us the possibility to develop a completely new way for the estimation of PSDs, without any a priori assumptions on the unavailable data. Our requirements (the constraints for the variational problem) are i) the PSD estimate has to be non-negative; ii) its Fourier transform has to match the sample autocorrelation. \\
+To do so, there is a problem we have to solve: our definition of entropy (equation \ref{eq:entropy}) depends on the probability distribution, not the power spectrum. We need to find a way to change the definition's domain for the entropy to formulate the variational problem in terms of the power spectral density $S(f)$ alone. A way out of this problem is considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. One can show that the 'entropy gain' obtained filtering white noise is: 
+\begin{equation}\label{eq:EntropyGain}
+    \Delta H = \int_{-\infty}^{\infty}\log S(f) df , 
+\end{equation}
+so that we can reformulate the variational problem requiring $S(f)$ to maximize the entropy gain. In real examples we have no access to all frequencies but only on those between minus and plus the Nyquist frequency, defined from the sampling interval $\Delta t$ as 
+\begin{equation}
+    Ny = \frac{1}{2 \Delta t}.
+\end{equation}
+All our quantities are well defined in this range only, so that we are not going to maximize \ref{eq:EntropyGain}, but
+\begin{equation}\label{eq:EntropyGain2}
+    \Delta H = \int_{- Ny}^{Ny}\log S(f) df.
+\end{equation}
+Defining $\bar r_n$ as the sample autocorrelation, our constraints will be
+\begin{equation}\label{eq:MaxConstraint}
+    \int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}.
+\end{equation}
+This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. The hard task is now to show that this problem has a solution. Remarkably, it admits an analytical solution in a closed expression for $S(f)$, that we now work out. 
+\subsection{MESA solution}
+We will follow the solution proposed by Burg in his PhD thesis \cite{burg1975maximum}. Instead of directly solving the variational problem for the power spectral density, we will rewrite it in terms of the constraints (\ref{eq:MaxConstraint}) of the problem. $S(f)$ is defined as the Fourier Transform of the autocorrelation function, as: 
+\begin{equation}
+    S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t}.
+\end{equation}
+Substituting in \ref{eq:EntropyGain2}, the variational problem reduces to the maximization of: 
+\begin{equation}
+    \int_{-Ny}^{Ny} 
+    \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{-\imath 2 \pi f n \Delta t}
+    \right).
+\end{equation}
+As we said before, not all the values for the autocorrelation are known. Generally, we have access to a finite number of values for the autocorrelation function, ranging in a symmetric interval $n \in [-N, N]$. 
+In the previous equation, since the summation index is ranging between $-\infty$ and $+\infty$, we are correctly assuming that also the unknown values have to be used in the computation of the power spectral density. But, since they are not known, we have to require the maximization of entropy to be independent of these values:
+\begin{equation}\nonumber 
+    \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N. 
+\end{equation}
+Using the explicit form for $H$, this becomes
+\begin{equation}
+      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny}S(f)^{-1}e^{-\imath 2 \pi f s \Delta t} = \lambda_s = 0 \text{ for } \vert s \vert > N. 
+\end{equation}
+We see that $S(f)$ can be expressed in terms of the $\lambda s$ via a Fourier Series
+\begin{equation}\label{eq:PSDconstraint}
+    S(f)^{-1} = \sum_{s = -N}^N \lambda_s e^{-\imath 2 \pi f s \Delta t},
+\end{equation}
+This is a non-linear closed expression for the power spectral density. The requirement for $S(f)$ to be positive definite implies that: 
+\begin{equation}
+    \nonumber 
+    \lambda_{-s} = \lambda_s^* 
+\end{equation}
+With this property, and defining $z = e^{-\imath 2 \pi f \Delta t}$, $S(f)^{-1}$ can be rewritten as a polynomial in $z$ and $z^*$
+\begin{equation}
+    \label{eq:zExp}
+    S(f)^{-1} = \lambda_0 + \sum_{s = i}^N \lambda_s z^s + \sum_{s = 1}^N \lambda^*_s z^{-s}.
+\end{equation}
+Let $z_0$ be a root for the polynomial
+\begin{equation}
+    \nonumber
+    \lambda_0 + \sum_{s = 1}^N \lambda_s z_0^s + \sum_{s = 1}^N \lambda^*_s z_0^{-s} = 0,
+\end{equation}
+it is easy to show that $(z_0^*)^{-1}$ is also a root for the equation: 
+\begin{align}
+    \nonumber 
+    &\lambda_0 + \sum_{s = 1}^{N} \lambda s \left(\frac{1}{z_0^s} \right)^* + \sum_{s = 1}^N \lambda^*_s \left(\frac{1 }{z_0^{-s}}\right)^* = \\ \nonumber 
+    &\lambda_0 + \sum_{s = 1}^N \lambda_s (z_0^{-s})^* + \sum_{s=1}^N \left(\lambda_s (z_0^s)\right)^* = \\ \nonumber 
+    &\left(\lambda_0 + \sum_{s=1}^N \lambda_s z_0^s + \sum_{s = 1}^N \lambda^*_s z_0^{-s}\right)^* = 0 
+\end{align}
+This means that for every pole $z_0$ laying outside (inside) the unit circle, there is another pole inside (outside) the unit circle.  So, if there are no roots on the unit circle, $N$ roots lay outside and $N$ inside of it. \\ 
+These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}
+\begin{equation}\nonumber 
+    S(f)^{-1} = \frac{1}{P_N \Delta t} \left(1 + \sum_{s}^N a_s z^s\right)\left(1 + \sum_s^N  a^*_s z^{-s}\right),
+\end{equation}
+or, defining $a_0 = 1$,
+\begin{equation}\label{eq:MESApsd}
+    S(f) = \frac{P_N \Delta_t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}. 
+\end{equation}
+The MESA expression for the power spectral density admits a non-linear, all pole representation when evaluated in $z = e^{-\imath 2 \pi f \Delta t}$. All the roots of the first polynomial can be chosen to lay outside the unit circle, so that all the roots of the second polynomial will lay inside of it \cite{1975STIN...7714318B}. 
+If one is able to compute the values of the coefficients $a_i$ the PSD is uniquely determined from the previous equation. \\ 
+To compute the $a_i$-s, we substitute in equation
+(\ref{eq:MaxConstraint}) with the above representation for $S(f)$ in terms of the $a_i$ coefficients. Changing  variable from $f$ to $z(f) = e^{-\imath 2 \pi f \Delta t}$, the integral (\ref{eq:MaxConstraint}) becomes a contour integral in the unit circle centered at the origin of the complex plane: 
+\begin{equation}
+   \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}} = \bar r_s. 
+\end{equation}
+Sending $s \to s - r$, multiplying by $a^*_s$ and summing over all possible values for $s$ the equation becomes 
+\begin{align} \nonumber 
+    \sum_{s = 0}^N a_s \bar r_{s - r} &= \frac{P_N}{2 \pi \imath}\oint \frac{z^{r - 1} \sum_{s = 0}^N a^*s z^{-s}}{\sum_{s = 0}^N a_s z^s \sum_{s = 0}^N a^*s z^{-s}} dz\\
+    & = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz\label{eq:ErFilter}
+\end{align}
+Since all the zeros of the denominator lay outside the unit circle, the contour integral is 0. The only exception is for $r = 0$ with a residual in the origin of the axis. For $r = 0$ the integral can be computed via the Cauchy integral formula and (\ref{eq:ErFilter}) becomes: 
+\begin{align}\label{eq:errorFilter1}
+    \sum_{s = 0}^N a_s \bar r_{r - s} &= P_N \quad \text{ if } r = 0 \\ \label{eq:errorFilter2}
+    \sum_{s = 0}^N a_s \bar r_{r - s} & = 0 \qquad \text{ if } r \neq 0.
+\end{align}
+This kind of equations are solved by the use of the Levinson recursion \cite{doi:10.1002/sapm1946251261}
+\subsection{Levinson Recursion}
+The equations (\ref{eq:errorFilter1}) and (\ref{eq:errorFilter2}) can be rewritten as a Matrix equation of the form
+\begin{equation}\label{eq:predictionErrorFilter}
+    \begin{pmatrix}
+    \bar r_0 &  \bar r_{-1} & \dots & \bar r_{-N}\\
+    \bar r_{1} & \bar r_ 0 & \dots & \bar r_{1 - N} \\ 
+    \bar r_{2} & \bar r_{1} & \dots & \bar r_{2 - N}
+    \\
+    \vdots & \vdots & \ddots & \vdots  \\
+    \bar r_{N} & \bar r_{N - 1} & \dots  &\bar r_0
+    \end{pmatrix}
+    \begin{pmatrix}
+    1 \\   a_1 \\   a_ 2 \\  \vdots \\   a_N
+    \end{pmatrix} = 
+    \begin{pmatrix}
+    P_N \\   0 \\  0 \\ \vdots  \\   0
+    \end{pmatrix}
+\end{equation}
+know as the prediction error filter equation. It is a matrix equation involing the Toeplitz Matrix $R_{ij}$ and the vector $\vec a$, known as the forward prediction error filter. The approach for solving the equations is the Levinson - Durbin recursion. \\
+Our goal is to obtain the $N$-th order equation (\ref{eq:predictionErrorFilter}) from the $N-1$-th order equation: 
+\begin{equation}\label{eq:Forward}
+    \begin{pmatrix}
+    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N}\\
+    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} \\ 
+    \vdots & \vdots & \ddots & \vdots \\ 
+    \bar r_{N - 1} & \bar r_{N -2} & \dots & \bar r_0
+    \end{pmatrix} 
+    \begin{pmatrix}
+    1  \\   b_1  \\  \vdots \\   b_{N - 1}
+    \end{pmatrix} =
+    \begin{pmatrix}
+    P_{N -1} \\  0 \\ \vdots \\ 0
+    \end{pmatrix} .
+\end{equation}
+This equation is not sufficient to solve the recursion. Since the autocorrelation matrix is self-adjoint, from equations (\ref{eq:errorFilter1}) and (\ref{eq:errorFilter2}) and noting that the first and the last row of the autocorrelation matrix are respectively the complex conjugate reverse, is easy to show that
+\begin{equation}\label{eq:Backward}
+     \begin{pmatrix}
+    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N}\\
+    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} \\ 
+    \vdots & \vdots & \ddots & \vdots \\ 
+    \bar r_{N - 1} & \bar r_{N -2} & \dots & \bar r_0
+    \end{pmatrix} 
+    \begin{pmatrix}
+    b^*_{N-1} \\ b^*_{N- 2} \\\vdots \\ 1
+    \end{pmatrix} 
+    = 
+    \begin{pmatrix}
+    0 \\ 0 \\ \vdots \\ P_{N-1}
+    \end{pmatrix} 
+\end{equation}
+holds. The vector obtained reflecting b and taking its complex conjugate is known as ``backward prediction error". \\ 
+Stepping from order $N - 1$ to order $N$, the autocorrelation matrix grows from size $(N,N)$ to size $(N + 1, N + 1)$, this implies that a new component $b_n$ for the prediction error filter is needed. If we take it to be $b_N = 0$, this choice does not modify the first $N$ component of the right side of equation (\ref{eq:Forward}) (or the last $N$ components of (\ref{eq:Backward})), i.e.:
+
+\begin{equation}\label{eq:OrderN}
+    \begin{pmatrix}
+    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N} & \bar r_{- N}\\
+    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} & \bar r_{1 - N}\\ 
+    \vdots & \vdots & \ddots & \vdots & \vdots \\ 
+    \bar r_{N -1} & \bar r_{N-2} & \dots & \bar r_0 & \bar r_{-1}
+    \\
+    \bar r_{N } & \bar r_{N -1} & \dots & \bar r_1 & r_0 
+    \end{pmatrix} 
+    \begin{pmatrix}
+    1  \\   b_1  \\  \vdots \\   b_{N - 1} \\ 0 
+    \end{pmatrix} =
+    \begin{pmatrix}
+    P_{N -1} \\  0 \\ \vdots \\ 0 \\ \Delta_N
+    \end{pmatrix} .
+\end{equation}
+with 
+\begin{equation}
+    \Delta_N = \sum_{n=0}^N \bar r_{N - n}b_n.
+\end{equation}
+Adding the previous expansion for both forward and backward equations, one obtains 
+\begin{equation}\nonumber 
+        \begin{pmatrix}
+    \bar r_0 & \bar r_{-1} & \dots & \bar r_{- N}\\
+    \bar r_{1} & \bar r_0 & \dots & \bar r_{1 - N}\\ 
+    \vdots & \vdots & \ddots & \vdots \\ 
+    \bar r_{N -1} & \bar r_{N-2} & \dots &  \bar r_{-1}
+    \\
+    \bar r_{N } & \bar r_{N -1} & \dots  & r_0 
+    \end{pmatrix} 
+    \begin{pmatrix}
+    1  \\   b_1  \\  \vdots \\   b_{N - 1} \\ 0 
+    \end{pmatrix} 
+    + c_N 
+    \begin{pmatrix}
+    0 \\ b^*_{N -1} \\ \vdots  \\ b_1 \\ 1 
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    P_{N -1} \\  0 \\ \vdots \\ 0 \\ \Delta_N
+    \end{pmatrix} .
+    + c_N
+    \begin{pmatrix}
+    \Delta^*_N \\ 0 \\\vdots \\ 0 \\ P_{N-1}
+    \end{pmatrix}.
+\end{equation}
+With the reflection coefficient $c_N$ to be computed. Requiring the previous equation to be equivalent to \ref{eq:predictionErrorFilter}, one obtains
+\begin{equation}\nonumber 
+\begin{cases}
+    P_{N - 1} + c_N\Delta^*_N = P_N \\
+    c_N P_{N - 1} + \Delta_N = 0
+\end{cases}
+\end{equation}
+which can be easily solved for $c_N$ and $P_N$ as 
+\begin{equation}
+    c_N = -\frac{\Delta_N}{P_{N-1}}; \quad \text{ and } P_N = P_{N - 1}\left(1 - \vert c_N \vert ^2 \right). 
+\end{equation}
+Having computed the value for the reflection coefficient, the $N$-th order forward prediction error filter is found to be 
+\begin{equation}
+    a_i = b_i + c_N b^*_{N - i}.
+\end{equation}
+To obtain the solution for the $N$-th order, one starts $\bar r_0 = P_0$ and recursively computes the new values until the desired order is computed. 
+This problem is often solved numerically with Burg's Algorithm \cite{Vos}.
+A python implementation of Standard Burg's Method can be found in Appendix \ref{app:Burg} 
+\section{The Autoregressive process analogy}
+The application of MESA is not limited to spectral estimates, but it also provides a bridge between spectral analysis and the analysis
+of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
+Consider an autoregressive stationary process of order $p$: 
+\begin{equation*}
+    x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_n x_{t - n} = \nu_t, 
+\end{equation*}
+taking the z transform of the previous: 
+\begin{align}
+    \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t
+\end{align}
+and calling $\tilde x(z)$ and $\tilde \nu (z)$, the transformed quantities, 
+in the $z$ domain, the process takes the form:
+\begin{equation}
+    \tilde x(z) = \frac{\tilde\nu(z)}{\left(1 - \sum_{i = n}^p b_n z^n \right)}
+\end{equation}
+Since we assumed stationarity for the process, $\tilde{x}(z)$ is analytic both on and inside the unit circle. Taking its square value and evaluating it on the unit circle $z = e^{-\imath 2 \pi f \Delta t}$, from the definition of spectral density one obtains:
+\begin{equation}\label{eq:ARspectrum}
+    S(f) = \vert \tilde x(z)\vert ^ 2 = 
+    \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}.
+\end{equation}
+The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$. \\ 
+Comparing (\ref{eq:ARspectrum}) with (\ref{eq:MESApsd}), identifying $b_1 = - a_i$ and $P_N \Delta t= \sigma ^ 2$, the expression for the power spectral density obtained with MESA is formally equivalent to the power spectral density of some stationary autoregressive process. \\ 
+Having computed the prediction error filter one can easily obtain an estimate of the $AR$ coefficients for the process just changing sign to the prediction error filter $a_i$.
+Taken a time series, MESA allows us to compute the power spectrum and to find an effective description in terms of an autoregressive process. 
+Wold's theorem ensures that this (approximate) description for the phenomenon is legitimate when the process is found to be stationary. So, MESA defines a bridge between spectral estimation and the study of autoregressive processes, an unexpected and fundamental result. \\
+Another very remarkable process for this estimate, is that the linear predictor obtained solving the error filter equation, is the best linear predictor, i.e. it minimizes error, and is equivalent to a least square fit for the coefficients. \cite{VDBos}  \\ 
+To prove that it minimizes error, we will follow the original proof provided by Burg \cite{burg1975maximum}. Consider a general linear predictor $-c_i$: 
+\begin{equation}
+    x_{t} - \sum_{i = 1}^p (-c_i)x_{t - i} = \sum_{i = 0}^p c_i x_{t - i} = e'_t, 
+\end{equation}
+Denoting with $E\left[\cdot\right]$ the expectation value of some variable, the mean square error is given by: 
+\begin{equation}
+E\left[\sum_{i = 0}^p c_i x_{t-i}\sum_{j = 0}^p c^*_j x^*_{t - j}\right] = \sum_{i,j} c^*_j E\left[x^*_{t-j}x_{t-i} \right] c_j = \sum_{i, j}c^*_j R(j - i) c_i > 0,
+\end{equation}
+which, being $R$ positive definite and defined by the multiplication of a complex number times its complex conjugate, is always positive definite. 
+Let $-\vec{b}$ be the prediction error filter obtained with MESA. Multiplying the left hand side of \ref{eq:predictionErrorFilter} for the complex conjugate of the forward prediction error, 
+\begin{equation}\nonumber 
+    \sum_{i,j}b^*_jR(j-i)b_i = P_N
+\end{equation}
+is obtained . \\ 
+The (positive) quantity  
+\begin{equation}\label{eq:linearPredictor}
+    \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i),
+\end{equation}
+using Einstein notation on repeated indices and recall that $c_0 = b_0 = 1$, can be rewritten as 
+\begin{align}
+    & c^*_j R(j - i) c_i - c^*_j R(j - i) b_i - b^*_j R(j - i) c_i + b^*_j R(j - i)  b_i =\\ \nonumber 
+    &c^*_j R(j - i) c_i - c^*_0 P_N - P_N c_0 + P_N =\\ \nonumber
+    & c^*_j R(j - i) c_i - P_N.
+\end{align}
+Moving $P_N$ on the left hand side, it becomes 
+\begin{equation}\label{eq:bestLinearPredictor}
+    \sum_{i, j}c^*_j R(j-i)c_i = \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i) + P_N.
+\end{equation}
+Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
+
+
+\section{Choosing an autoregressive order}\label{sec:optimizers} 
+Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$. \\ 
+In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$. \\ 
+The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact. A compromise between the two behaviour is proposed to be \cite{doi:10.1190/1.1440902}
+\begin{equation}\label{eq:MMAx}
+M_{max} = 2N / \ln{(2N)}
+\end{equation}
+Still, this is not a satisfactory answer since it is an upper limit for the estimate of the length $M$.
+Various approaches to optimize the order $M$ have been proposed in literature; in the following we present them.
+\begin{itemize}
+\item \textbf{Final prediction Error (FPE)} 
+The first criterion is due to Akaike (1970) \cite{Akaike1970StatisticalPI}. He proposed that M has to be chosen as the length that reduces the error when the filter is used as a predictor: 
+\begin{equation}
+    FPE: \min_{M}E\left((x_t - \hat x_t) ^ 2\right)
+\end{equation}
+with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.  This criterion is equivalent to the choice of $M$ such that 
+\begin{equation}
+    \min_{M}P_{m} \frac{N + m + 1}{N - m - 1}
+\end{equation}
+with $P_M$ defined by the prediction error filter equation. 
+\item \textbf{Criterion Autoregressive Transfer function (CAT)}
+This second criterion is due to Parzen \cite{bhansali1986}, and requires $M$ to be chosen as the length $m$ the minimizes the quantity 
+\begin{equation}
+    \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
+\end{equation}
+It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. 
+
+\item \textbf{Optimum Bayes Decision rule (OBD)} 
+The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, $M$ is proposed to be the length that maximizes the posterior distribution, condition met selecting $m$ that minimize 
+   \begin{equation}
+        (N - m - 2) \log(P_m) + m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2.
+    \end{equation}
+\end{itemize}
+Once an optimizer is chosen to select the best recursion order $M$, we then proceed as follows:  we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value. \\
+The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
+\section{Conclusions}
+In this chapter, we investigated several aspects of the maximum entropy approach to spectral analysis. We saw how MAXENT was originally introduced and how it solves the problem of probability assignments given some information about the phenomenon under study. We have shown that the best assignment we can make using no more assumptions than those given by the available evidence, is the one obtained maximizing Shannon's Entropy \ref{eq:entropy}. \\ 
+The domain of application of MAXENT is even wider. With a proper redefinition and analogy with filters, we have been able to rewrite the variational problem in terms of the power spectral density and the constraints in terms of the sample autocorrelation. This allowed us to define MESA to compute power spectral densities of a large range of spectra, obtaining an analytical representation for the power spectral density, that result to be defined for every frequency comprised between plus or minus Nyquist frequency. \\
+The analogy with autoregressive processes can be taken even further, and MESA is found to provide an estimate of the best linear predictor for a stationary autoregressive process. With the support of Wold's theorem, we can state that MESA defines a bridge between the study of spectral densities and analysis of stationary processes. \\
+Even more remarkable is the fact that, in principle, this approach requires no assumption at all about the process, and all the information is directly extracted from the dataset. 
+But, from a practical point of view, there is one a priori choice that one has to make: the optimizer to better approximate the length of the autoregressive process. This problem arises because we do not have a full knowledge of the autocorrelation function, but just an estimate whose error increases with the order of the time window. We briefly introduced three different optimizers, FPE, CAT and OBD, and in the next chapter we will study the properties of each of them. 
+
+
+\section{Analysis of optimizers - Introduction}
+To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
+In either cases, we will quantify the agreement between the reconstructed quantities and the expected ones.\\
+A short description of the principle of the algorithm used to construct the time series is also given. 
+
+\section{Gaussian noise} 
+This section is devoted to the analysis of the optimizations methods, applied on pure Gaussian noise process $\vec n = (n_1, n_2, \dots, n_N),\text{ with } n_i = n(t_i)$, assuming our process to be a wide-sense stationary process, i.e. autocorrelation matrix is a Toeplitz matrix depending only on time intervals.\\ 
+The spectrum chosen for our first analysis is a Gaussian distribution
+\begin{equation}
+    \nonumber
+    S(f) = \frac{1}{\sqrt{2 \pi} \sigma}e^{-\frac{(f - \mu)^2}{2 \sigma ^2}}
+\end{equation}
+with mean $\mu =2.5 \quad a.u.$ and standard deviation $\sigma =  0.5 \quad  a.u.$. 
+To generate noise with a power spectrum that is known, we have to first understand what is the role played by the PSD. \\ 
+Via MAXENT principle, we can state that noise in normally distributed with 0 mean and some covariance matrix $C_{ij} = C(t_i, t_j)$, i.e.
+\begin{equation}
+    \nonumber
+    p(\vec{n}(t) \vert I) \propto \exp{\left\{-\frac{1}{2}n_i C^{-1}_{ij}n_j\right\}},
+\end{equation}
+\begin{figure}
+    \centering
+        \includegraphics[scale = 0.43]{Images/Noise and PSD/NormalPSDautocorr.pdf}
+        \caption{A priori spectrum (left) and autocorrelation (right)}
+        \label{fig:autocorr}
+\end{figure}and, since process has zero mean, autocovariance and autocorrelation matrices are identical. \\ 
+Using the properties of Toeplitz matrices (see appendix \ref{app:Toeplitz}) and the relation between autocorrelation and power spectral density, it is immediate to verify that, in the limit of large number of time samples, the distribution of noise in frequency domain is given by:
+\begin{equation}
+    p(\tilde{n}(f_i) \vert I) \propto \exp{\left\{-\frac{1}{2}\sum_i\frac{n_i ^2}{S(f_i)}\right\}},
+\end{equation}
+so that the role of PSD appears to be clear: it is the diagonal covariance matrix for the noise distribution in Fourier Domain: \\
+\begin{equation}
+    \nonumber
+    <\tilde n_i \tilde n_j > = S(f_i)\delta_{ij}.
+\end{equation}
+With this information, it is easy to generate any time series with power spectral density of any shape.
+Choosing a priori values for sampling interval $dt$ and total time of observation $T$, recalling Nyquist theory of sampling, we generate arrays of given length N / 2 in frequency domain from 0 to the Nyquist Frequency $f_{Ny} = \frac{1}{2 dt}$. We then convert noise to the time domain using an Inverse Fast Fourier Transform.\cite{oliphant2006guide}\cite{van2011numpy} \\ Basic idea for fast algorithm used to construct noise can be found in ~\cite{noiseGen}. We worked it out in a slightly different way, the imaginary component is not obtained sampling a random complex phase from a uniform distribution. We choose to sample both real and imaginary part from two identical normal distribution distributing variance in a proper way between real and imaginary components. 
+\section{Test on Time Series}
+It is now possible to test the three methods on a given time series. We will concentrate on a power spectral density that is a normal distribution with mean $\mu = 2.5 \quad units$ and standard deviation $\sigma = 0.5 \quad units$.
+We will apply Burg method with each optimizer on a large amount of simulated dataset, obtaining a variety of estimate for PSD. We will study statistical properties for both single reproductions and ensemble average. In many cases, such as gravitational waves, one cannot observe multiple time series realizations for a fixed process, so that single reproduction studies are probably more useful. Still, study of ensemble average is important to highlight some interesting properties. In this way we can fully characterize the performance of each optimizer 
+We will attentively study the role of the filter length estimate M in determining the accuracy of the reconstruction. We will consider every optimizer separately and compare result only at the end of this section. We will then study in depth the Advanced LIGO design sensitivity power spectrum \cite{Ligo}
+\subsection{Normal Power Spectral Density}
+\begin{figure}
+    \centering
+        \includegraphics[scale = .43]{Images/NormalPSD/NormalNoise.pdf}
+    \caption{Noise in both time and frequency domain. Frequency noise behaviour is representative of the chosen spectrum, having its maximum amplitude around $f = 2.5 au$}
+    \label{fig:noise}
+\end{figure}
+Fig \ref{fig:noise} shows a realization of the gaussian process in the frequency (left panel) and time domain (right panel).   \\ 
+To study noise with normal-shaped PSD, we generate 1000 datasets of 3000 points each. This will provide a number of samples that is large enough to perform statistical analysis. For every dataset we will reproduce its spectrum with every optimization method. We will show that the quality of reconstruction is very different in different parts of the spectrum: the minimum of the error will be achieved around the peaks, increasing fastly in the tails
+ \\ \\ 
+\subsubsection{Final Prediction Error (FPE)}
+The estimate of the recursive order obtained with FPE on the 1000 realization of noise, is found to lay between 30 and 70. Qualitatively, there is a good agreement between the reconstructed spectrum and the true spectrum: a logarithmic plot of the mean of all the spectra versus the true spectrum is reported in \textbf{Figure \ref{fig:FPEmean}} with 90\% credible regions. It is evident that, despite not too large error bars, the tail of the normal distribution is not comprised in the interval of the estimation. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .4]{Images/NormalPSD/FPEpsdAndResiduals.pdf}
+    \caption{Ensemble Average for FPE reconstruction with 90\% Credibility Regions (above) and percentage error (below)}
+    \label{fig:FPEmean}
+\end{figure}
+To assess the magnitude of the disagreement, we compute the relative error between the mean spectrum $\hat{S}$ and the true spectrum $S$ for every frequency bin
+\begin{equation}
+    \nonumber
+    r(f) = \frac{|\hat{S}(f) - S(f)|}{S(f)}\,.
+\end{equation}
+We found this to be a better choice than residuals since relative errors are not dependent on the magnitude of the data. Second Fig \ref{fig:FPEmean} (below) shows that the largest error in the reconstruction of the spectrum is in the tails, while in the bulk of the distribution we have a good approximation of the true function. 
+For the entire spectrum, the mean relative error $\Bar{r}$ is 
+\begin{equation}
+    \nonumber
+    \bar{r}_{\bar S, FPE} = 0.025.
+\end{equation}
+FPE performs well in reconstructing the spectrum even with relatively short time series, with a deviation from the true spectrum around 2\%, but it is evident that it is not able to capture all the features of the spectrum, since the reconstruction in the tails is inaccurate. If we compute the average percentage error in three standard deviations from the mean we gain an order of magnitude estimate of the accuracy of the reconstruction, obtaining: 
+\begin{equation}
+    \nonumber
+    \bar{r}_{\bar S, FPE}^{\mu \pm 3\sigma} = 0.005. 
+\end{equation}
+and we can state the the method is highly performant in this frequency window. 
+Since it is not always possible to work with more then one realization for a process, as in observational experiments, it is important to understand how this method behaves when we apply it on a single time series. In that case, the mean error and its standard deviation are: 
+\begin{equation}
+    \nonumber
+    \bar r_{FPE} = 0.16; \quad \sigma_{r} = 0.16\,.
+\end{equation}
+The average error of a reconstruction based on a single time series is bigger than the one obtained considering the average of all the reconstructions.
+Standard deviation of the errors assume small values and 90\% credibility regions (Cr.) in \ref{fig:FPEmean} are tight. This means that if we randomly take two of the reconstructed spectra, we expect their differences to be statistically small. These facts are evidence for FPE to be a relatively stable optimizer. 
+We already said that the estimate for filter's length lays in a well defined range of values. The quality of the reconstruction, as noted in Chapter 1, depends on the order of the reconstructed AR process. 
+To investigate this idea further, we plot the value of the optimizer for each recursion and the residuals as a function of the estimate for the order of the autoregressive process (\textbf{Figure \ref{fig:FPEErrorOrder}}),
+
+\begin{figure}[H]
+    \noindent
+    \centering
+    \includegraphics[scale = .3]{Images/NormalPSD/FPEoptimizer.pdf}
+    \caption{Stability of FPE, that results in a cluster of values in a small region (left), is due to the typical behaviour of the optimizer as a function of the AR order (right).}
+    \label{fig:FPEErrorOrder}
+\end{figure}
+Foremost evidence for the stability of this optimizer is found in its values as a function of the AR order. Figure \ref{fig:FPEErrorOrder} shows that Values tend to decrease monotonically until a sharp and well defined minimum is reached, to start growing again after this area. This is representative of the typical behaviour of this optimizer as a function of the length of the filter, and explains why the estimates for AR orders are confined in a small region. This plot also shows that most of the values collapsed in the region of AR orders comprised between 30 an 50. There are only few values outside this interval, and get fewer as order's estimate increases. In this region, there is no strong evidence of some correlation between the estimate for M and its associated relative error. It is important to notice that the estimate associated with the higher values of M (around $M > 60$) exhibit the highest 'mean' relative error. \\ 
+We conclude that the FPE shows good quality reconstruction for the spectrum and very desirable stability properties, its estimate for filter's length M is clustered in a region where there is no dependence of error from M. 
+\subsubsection{Optimum Bayes Decision Rule (OBD)}
+The second optimizer in consideration is OBD.  (\textbf{Figure \ref{fig:OBD3000}}) shows a good agreement between the average over the reconstructions and true spectrum.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .45]{Images/NormalPSD/OBDpsdAndResiduals.pdf}
+    \caption{Reconstruction of the spectrum from 1000 simulations with OBD optimizer. Plot is mean of all the results with 90\% credibility regions (above) and percentage error (below)}
+    \label{fig:OBD3000}
+\end{figure}
+The same behaviour of FPE is observed, a good quality reconstruction at the center of the distribution with quite small Credibility regions (Cr.) at a $90$\% credibility level.
+Qualitatively they behave similarly but quantitatively the disagreement of this method is found to be even larger than the one obtained with FPE, as can be noticed in the plot of relative errors in figure \ref{fig:OBD3000} (below) where at the extremes the inaccuracy is even larger than 300\% with respect to the real value of the spectrum. For the overall spectrum and within three standard deviation from the mean, we find that the reconstructed spectrum has a deviation of
+\begin{equation}
+    \nonumber
+    r_{\bar S, OBD} = 0.15, \qquad r^{\mu \pm 3\sigma}_{\bar S, OBD} = 0.018. 
+\end{equation}
+When applied to single realizations of the time series, we find
+\begin{equation}
+    \nonumber
+    \bar{r}_{OBD} = 0.237, \qquad \sigma_{r, OBD} = 0.0296.
+\end{equation}
+It is interesting to notice that overall relative error of the average spectrum is of the same order of magnitude of the average single reconstruction for the spectrum. Averaging over a 1000 realisations does not substantially improve our results. As a function of the filter length, the values taken by the OBD cluster in a small region, indicating the stability of the reconstructed process order $M$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .3]{Images/NormalPSD/OBDoptimizer.pdf}
+    \caption{Stability of OBD, that results in a cluster of values in a small region (left), is due to the typical behaviour of the optimizer as a function of the AR order (right)}
+       \label{fig:OBDErrorOrder}
+\end{figure}we see that again our results are clustered in a very small region, due to the behaviour of the optimizer that converge in a small area before growing again. The estimate of the length of the filter is around $p = 20 \div 30$.Note the difference compared to FPE (see \ref{fig:FPEErrorOrder}); for OBD the mean relative error depends on $M$ as
+\begin{equation}
+    \hat r \sim M ^ {-2.016 \pm 0.006}.
+\end{equation}
+In summary, OBD shows greater error wherever in the spectrum, due to the fact that it choose filters that are too short and in a region where quality drastically change when changing M. In this case we can say that we have a stable estimate for M, but due to this dependence, the estimate is not as stable as FPE's. 
+\subsubsection{Criterion Autoregressive Transfer function (CAT)}
+This last criterion differs substantially from the two other optimizers. Figure \ref{fig:CATmean} (above) shows a good agreement between the estimate of the spectrum for every frequency
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .43]{Images/CAT/CATnormal.pdf}
+    \caption{Mean spectrum for CAT optimizer, 1000 simulations for 3000 points datasets}
+    \label{fig:CATmean}
+\end{figure} and also tails are well captured by the average spectrum. However, the variance of the reconstructed spectrum is quite large, much larger than for FPE and OBD. In general, the relative error is nearly constant, $\sim 10\%$ over all frequencies, see  Fig. \ref{fig:CATmean} (below). The residuals, averaged over all frequencies, are: 
+\begin{equation}
+    \nonumber
+    \bar r_{\bar S, CAT} = 0.016 \qquad \bar r^{\mu \pm \sigma}_{\bar S, CAT} = 0.017.
+\end{equation}
+the overall reconstruction is thus quite accurate, with deviations from the simulated spectrum of the order of $1\% \div 2\%$.\\
+The picture drastically changes in the case of individual time series realizations. The average residuals are, in fact
+\begin{equation}
+    \bar r_{CAT} = 0.42 \qquad \sigma_{CAT} = .44\,.
+\end{equation}
+The error is indeed $\sim 42\%$, hence much larger than in the case of FPE and OBD. Both large error bars and the large standard deviation are indications of the instability of this optimizer. This is exemplified by the variety of different spectra that can be obtained considering different time series. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .43]{Images/CAT/CAToptimizer1.pdf}
+    \caption{CAT is not a stable optimizer since its optimizer do not converge to any specific region of the AR estimate order}
+    \label{fig:CAToptimizer}
+
+\end{figure}
+The reason for this behaviour, can be found in \textbf{Figure (\ref{fig:CAToptimizer})}. CAT does not converge to any specific value for the order of the autoregressive process. In turn, this results in estimates for the order that span a large range.  Figure \ref{fig:CAToptimizer} also shows a strong dependence of the error on the estimated length of the filter. The good quality of the reconstruction from the average spectrum can be explained as follows: long filters are able to capture features that short filters cannot see, like the big excursion in the size of datas of a normal distribution, but this length is also responsible of an augmented variance in the estimate, introducing spurious peaks in the reproduction (Figure \ref{fig:GaussMedian})
+
+Averaging, the noise in each spectrum is cancelled. It is interesting that the cancelling of errors in averaging is property of gaussian noise (the process is gaussian, after all). This implies, in a sense, that each estimate of the spectrum is independent of any other, as suggested by the huge variance in the residuals. This instability is not a good property for an estimation, so that this estimator might be found to be optimal for repeatable experiments and not for single observation of some process. Another approach to this method will be proposed in section \ref{sec:ACAT}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/NormalPSD/Gaussmedian.pdf}
+    \caption{Reconstructed power spectral density with the three method. The reported reconstruction is the one that shows the median percentage error (overall)}
+    \label{fig:GaussMedian}
+\end{figure}
+\subsection{Summary and Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[scale = .3]{Images/NormalPSD/Normal Residuals.pdf}
+    \caption{Percentage error in the reconstruction for every optimizer, as a function of the frequency. Lower panel restricts the domain to three standard deviation to increase the definition}
+    \label{fig:NormalEnsembleResiduals}
+\end{figure}
+In our analysis, FPE and OBD optimizers are found to behave similarly while CAT shows completely different properties. Studying the average spectrum is not sufficient to choose which method behaves better. \\ 
+The bad behaviour in the reconstruction of the tails from OBD and FPE might be due to the fact that very small values require longer filters. 
+In fact when we consider the average for all the spectra we note that the shorter the filter the larger the error in the tails: OBD, which select the shortest filters, arrives to a $300 \%$ error at the extrema of the power spectral density, FPE which select intermediate order has got a $85\%$ error in same window, while CAT, that selects a wide range of long filters, has got a constant accuracy everywhere in the spectrum.  \\ 
+Figure \ref{fig:NormalEnsembleResiduals} shows that CAT is the method that minimizes errors in the tails (upper plot), but if one restrict to three standard deviations from the mean, FPE is found to reach best accuracy (lower plot). 
+The frequency averaged percentage error is reflecting this behaviour. Considering the whole reproduction, error's average and standard deviation are found to be: 
+\begin{align*}
+\centering
+&r_{\bar S, FPE} = 0.025; \quad \sigma_{\bar S, FPE} = 0.083;  \\
+&r_{\bar S, OBD} = 0.15;\quad \sigma_{\bar S, OBD} = 0.42 ; \\ 
+&r_{\bar S, CAT} = 0.015; \quad \sigma_{\bar S, CAT} = 0.012
+\end{align*}
+In is interesting to see that the average for FPE and OBD is strongly affected from the high value of the error in the tails of the distribution. If one consider the three standard deviations from the mean, the value of the error substantially decreases, 
+\begin{align*}
+\centering
+&r_{\bar S, FPE} = 0.005; \quad \sigma_{\bar S, FPE} = 0.004;  \\
+&r_{\bar S, OBD} = 0.018;\quad \sigma_{\bar S, OBD} = 0.019 ; \\ 
+&r_{\bar S, CAT} = 0.015; \quad \sigma_{\bar S, CAT} = 0.011
+\end{align*}
+showing that the overall percentage error is just a first indicator for the quality of the reproduction, but is not sufficient to perform a full characterization. \\
+It is evident that tails do not affect CAT  average error and standard deviation at all, so that it's accuracy is approximately constant everywhere in the spectrum. \\ \ 
+Since both FPE and CAT shows pros and cons, at this level, there is no reason to choose between them.\\ 
+Analyzing the resolution of the single reconstruction, figure \ref{fig:optcomparison} clearly shows that FPE minimize overall relative error giving a stable result.\\ 
+CAT instead shows a larger error and do not converge to any specific value. Almost every reproduction obtained with CAT is worst with respect to those obtained with FPE, but their mean is more precise. \\ 
+It's instability is probably the cause for this behaviour. Since it does not show a strong convergence to some order with respect to others, very different lengths are selected.
+Longer lengths are able to capture a lot of details but are more likely to introduce noise. In other words, long filters reduce bias but increment the variance of the result. 
+Taking the average, for central limit theorem the error decreases as $\sim \frac{1}{\sqrt{N}}$. In this way we compensate noise and obtain a spectrum with small bias and small fluctuations.
+Considering the average, CAT reconstruct precisely and with good accuracy every part of the spectrum, even if in "regular" parts best accuracy is reached from FPE. For a single reproduction, CAT is very noisy and unstable, while FPE performs the better. \ref{fig:optcomparison}
+\begin{figure}
+    \centering
+    \includegraphics[scale = .3]{Images/NormalPSD/NormalPSDcomparison.pdf}
+    \caption{Relative error as function of the length of the filter.}
+    \label{fig:optcomparison}
+\end{figure}
+\begin{figure}
+    \hfill
+    \centering
+    \includegraphics[scale = .45]{Images/NormalPSD/ordersComparison.pdf}
+    \caption{Histogram of estimate orders for each method}
+    \label{fig:ordersCompairson}
+
+\end{figure}
+definitely shows that FPE gives the best results: it is a stable method that choose filters in the clustered area associated with minimum error, while both OBD and CAT result lies outside this area and show bigger errors. Two other interesting plots that stress this fact are reported in figure \ref{fig:ordersCompairson} and \ref{fig:residualsComparison}
+\begin{figure}
+    \centering
+    \includegraphics[scale = .46]{Images/NormalPSD/ResidualsComparison.pdf}
+    \caption{Histogram of residuals for each method}
+    \label{fig:residualsComparison}
+\end{figure}
+where the histograms for the errors and for order's estimate are reported. These graphs provide stronger evidence for our previous statements. As already noticed, FPE is very stable and provide the smallest 'overall relative error'. \\
+CAT histogram shows a very interesting behaviour. The histogram for the order show two different peaks,  a small one associated to 'short filters', and a second high peak at $m = M$. This means that CAT is most likely to not converge at all at some value for the regression order, and it is more likely selects a length that is comparable with the largest available.  If short filters are selected, the overall percentage error will be low, respectively represented by the first peak in the distribution of the errors, while if long filters are selected, the error is maximized. 
+
+So, even if in some cases CAT might be more accurate when taking the average over several spectra, FPE guarantees that minimum error will be reached. 
+
+\subsection{Analysis of Ligo Spectrum}
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/LIGOsimulate/LigoPSDoriginal.pdf}
+    \caption{Original power spectral density from Ligo}
+    \label{fig:LigoPSDOriginal}
+\end{figure}
+In this subsection we concentrate again on the reconstruction of a specific, known, power spectrum.
+We analyze the properties of reconstruction of this second spectrum whose shape is the Advanced LIGO design sensitivity theoretical spectral curve (Figure \ref{fig:LigoPSDOriginal}). 
+For this analysis we will study properties only for arrays of 40960 points. We consider a sampling rate of $2048 samples / second$ that means we can reconstruct a Nyquist frequency of $1024 Hz$. We chose a longer dataset than before because algorithm works with a 1 dimensional interpolation of spectrum, and with shorter datasets the interpolated spectrum is not consistent with the original spectrum and does not capture the height of the peaks. Shorter choices would result in noise extracted from a different power spectrum than the one in figure \ref{fig:LigoPSDOriginal}. \\ 
+We will study statistical properties from samples obtained with 500 simulations and compare the obtained results for each optimizer. 
+We start considering statistical properties of mean spectrum obtained averaging over all the simulations and conclude with an analysis for the statistics of the reproduction of single spectrum. 
+\subsubsection{Properties for the average spectrum}
+Here we report mean properties of the reproductions of the spectrum. The spectrum we want to reconstruct is reported in Figure \ref{fig:ligospectrum},
+\begin{figure}
+    \centering
+  
+        \includegraphics[scale = 0.45]{Images/LIGOsimulate/PSD.pdf}
+        \caption{A priori spectrum from Ligo database}
+        \label{fig:ligospectrum}
+\end{figure}
+shows the original power spectral density and the ensemble average of every method. For the mean, the relative errors are: 
+\begin{equation}
+    \bar r_{\bar S, FPE} = 0.0426\%, \qquad \bar r_{\bar S, OBD} = 0.129\%, \qquad \bar r_{\bar S, CAT} = 0.0211\%
+\end{equation}
+Again, if one only check overall accuracy for every method, CAT is outperforming. In fact, even in presence of very sharp peaks, CAT reconstruction seems to be almost perfectly coincident with each of them. To check this behaviour we take a look at the two peaks separately. For the first one a log plot of the reconstructed peaks and their relative errors are shown in Figure \ref{fig:ligo1peak} 
+\begin{figure}[h]
+        \includegraphics[scale = 0.45]{Images/LIGOsimulate/1stPeakComparison.pdf}
+        \caption{1st peak of the spectrum and it reconstruction with every optimizer (left) and associated percentage error (right)}
+        \label{fig:ligo1peak}
+\end{figure}
+and the results reinforce our previous statement. The behaviour of the error is very similar for CAT and FPE, showing similar shapes but very different sizes, while CAT is giving a different and way more precise result. Both FPE and OBD are not able to capture the width of the peak and also show larger errors, while CAT has a good behaviour in reconstructing width's also. 
+The reconstruction for very sharp peaks considering the average over all the spectra is found to be strongly inaccurate for both FPE and OBD, while a good accuracy is reached with CAT method. \\ 
+Considering the estimate for the position of the peak, whose true value is found to be $16.85 \quad a.u. $, within numerical accuracy both FPE and CAT find its exact position, while OBD shift the peak left at $16.7 a.u.$, with a $0.9\%$ inaccuracy.\\ 
+Second peak results are analogous, plotting the peak and the errors value around it
+\begin{figure}[h]
+    \centering
+        \includegraphics[scale = 0.45]{Images/LIGOsimulate/2ndPeakComparison.pdf}
+        \caption{2nd peak of the spectrum, Relative error around 2nd peak of the spectrum}
+        \label{fig:ligo2peak}
+\end{figure}
+we find again that FPE and OBD are performing similarly, the magnitude of the error is maximum for OBD and minimum for CAT. \\ 
+In this case even CAT shows large errors in some points, but they are reasonable in a large part of it, still, it remains the best reconstruction.  For this second peak, all the methods find maximum position to be at $438.05 \quad a.u.$, which is the true position of the maximum.
+Looking at Figure \ref{fig:ligo1peak} at \ref{fig:ligo2peak}, it appears to be clear that the least of the accuracy is not on the peak, but immediately around, so that one of the biggest deal is the reconstruction of peak's width, that only CAT is able to capture with high definition. \\ 
+Even if FPE shows larger error in the peaks than CAT, when the average over all the frequencies is considered, their percentage errors are of the same order of magnitude. This means that outside the peaks FPE is more accurate than CAT, i.e. CAT is still giving noisy results.\\ 
+As for the normal distributed noise, mean spectrum is not sufficient to declare what is the best optimizer to be used, since most of experiment are purely observational and mean spectrum over different realizations of the same stochastic process cannot be computed. So, it is important to also understand what is their behaviour for single realizations of the process.
+\subsubsection{Statistical properties of single realizations} 
+The errors for the single realizations behave very differently from the errors obtained when we considered the mean spectrum. In computing the mean of the overall errors for each single spectrum, the results we obtain are the following:
+\begin{equation}
+    \bar{r}_{FPE} = 0.13 \pm 0.01; \qquad \bar{r}_{OBD} = 0.17 \pm .02; \qquad 
+    \bar{r}_{CAT} = 0.4 \pm 0.1
+\end{equation}
+where the error is just the standard deviation of the samples.
+In this case we find a different result: FPE shows the best results and order's estimate is associated with least errors. Also, having found a smaller standard deviation of the datas, we can state that FPE and OBD are more stable optimizers then CAT. In fact, their properties as a function of filter's length are almost identical to those obtained in the study of normal spectrum. If we again plot the value of the errors as a function of the estimate of the order (Figure \ref{fig:LigoOrderError})
+\begin{figure}
+    \centering
+    \includegraphics[scale = .43]{Images/LIGOsimulate/orderVSerror.pdf}
+    \caption{Plot of relative error as a function of the estimate for filter's length}
+    \label{fig:LigoOrderError}
+\end{figure}
+it is immediate to see that, again, FPE results lies in the are of filter's length associated with a minimum of relative errors, OBD lies in a clustered window with a higher error and CAT is not convergent, but most of the results are outside the minimum error area. So, we arrive at the same conclusion we had when we considered the normal specturm. OBD has no general properties that make it a preferable optimizer then FPE or CAT while, what to choose beneath the last two is based on the problem we are dealing with: if we have one single realization for the process, we are mostly sure that FPE would catch the area associated with the best resolution possible, while CAT would result in a spurious result with, in general, a not so good resolution. But, in case we have several realization for the same process, this last property of CAT, together with its instability, result to be his luck and, taking the average errors tend to compensate noise in the result, originating a very well defined spectrum that show same resolution almost everywhere, no matter how small the values are (as for normal PSD case) or how sharp peaks can be, the result has got generally good accuracy, also if it is clear that we have to pay this fact with very large error bars. So a choice between these methods is a matter of convenience and interest for each specific problem. \\
+\begin{figure}
+    \centering
+    \includegraphics[scale = .43]{Images/LIGOsimulate/LigoHists.pdf}
+    \caption{Histograms showing the estimate for the autoregressive order and overall percentage error obtained with all the three optimizers.}
+    \label{fig:my_label}
+\end{figure}
+
+\section{Another approach to CAT} \label{sec:ACAT}
+We stated that, if one consider a single realization for some stochastic process the choice for the optimizer should rely on FPE because of its stability and better single estimate, while CAT, when applied on a single dataset, does not assure a good resolution for our estimate. \\
+It was found that CAT shows its best properties when considering the average over a big number of reconstructions, where noisy results tend to compensate each other reaching a very good quality reconstruction even for not too long arrays (as in the case of Gaussian PSD where we considered simulations of 3000 points). This led us to propose another approach to CAT: instead of applying Burg's method on the whole data set, we can divide it in smaller arrays of data and apply it to each one of them taking their mean at the end of the computation. In this way, accuracy can be made incredibly higher than the one obtained with the standard approach. \\ 
+Unluckly, it is very hard to investigate how one should divide the dataset to reach minimum error. If one consider a known power spectrum, the problem could be solved numerically, but unuckly in real life experiments we do not know what true spectrum is, and such an approach is non-sense. \\ 
+The non linear form for the estimator together with the finite-order recursion make it hard or even impossible to find general properties for the estimate, and so we will not investigate many of that questions that could arise.\\
+For examples, what is the best choice for the length of the sub data-set? If we choose too short arrays, we will mediate over a lot of different spectra, decreasing variance, but it is probable that we will not be able to capture all the features of the spectrum. Too long subsets, instead, would result in too few reconstructed spectra, so that taking their average would not reduce variance in a significant way. It seems a very hard task to answer this question uniquely, and maybe such an answer does not even exist in a general case. One prescription on the length of the sub arrays may concern some consideration about frequencies: if we want to accurately reconstruct low frequency behaviour, one has to make long time observations, so for those cases longer datasets are required.  
+Since taking overlapping arrays does not seems to affect negatively single estimates, this could be a good prescription to maximize the number of reconstructions for a given length. \\
+Stressing to its maximum the hypothesis that such a procedure is harmless, one could try any overlapping sequence to maximize the number of reconstructions. To study this approach, since we want every reconstruction to be more than slightly different from each other, we chose an overlapping that is half the length for the sub arrays. 
+We test this new approach on LIGO dataset on the same noise simulations as before. We chose sub segments of length L = 3000, 5000, 7000 and 10000.. \\
+In figure \ref{fig:alternativeCAT} we compare the result associated with with this new approach for the lengths written above. For each of the 500 reproductions, we chose the one associated with the median overall error. 
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/AlternativeCAT/AlternativeCAT.pdf}
+    \caption{Alternative CAT approach to Ligo Spectrum for different lengths of the sub arrays}
+    \label{fig:alternativeCAT}
+\end{figure}
+As one can expect from CAT behaviour results obtained with larger arrays are associated with increasing noise. Considering the reconstruction for single peaks, it is found that accuracy is certainly dependent from the length, but it seems to give the best result for $L = 7000$, and not for $L = 10000$ as we were expecting. This difference can be understood if one considers the number of realizations over which we take our average: for arrays of $7000$ points we are taking the average over 12 different realizations, while for arrays of $10000$ points we are taking our average on eight different realizations only. This is probably the reason why this higher length is not associated with higher resolution. 
+We clearly see that the reconstruction achieved using $L = 7000$ is the best in capturing the width of the peaks and their position, but none of the reconstructions is able to accurately reproduce the second peak. 
+We want to compare these results with the standard approach, and with both the results obtained with FPE and with CAT. 
+
+\subsection{Alternative CAT vs FPE}
+The first comparison we make between FPE and alternative CAT regards the distribution of the overall errors. 
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/AlternativeCAT/histACatVSFpe.pdf}
+    \caption{Histogram of the percentage error as a function of the length of the sub arrays. The blue panel shows the histogram obtained from FPE}
+    \label{fig:aCATvsFPEhist}
+\end{figure}
+Figure \ref{fig:aCATvsFPEhist} shows the distribution of the percentage error as a function of the length of the segments of the data. The support of the histogram is, for every length, shorter than the support the one expect to be obtained with CAT (y-axis of figure \ref{fig:LigoOrderError}), so that this approach is found to be more stable than standard CAT. \\ 
+Shorter arrays are found to minimize the error, as could be expected from the fact that the variance is reduced from this choice, but non of the chosen lengths reaches the overall accuracy of FPE. \\ 
+From the previous histograms, the most meaningful comparison of FPE with alternative CAT is obtained using as preferable length the reconstruction '3000'. \\ 
+The mean and standard deviations of the percentage error are, in the two cases 
+\begin{align} 
+    \bar &r_{FPE} = 0.13; \qquad 
+    \sigma_{FPE} = 0.01 \\ 
+    \bar &r_{aCAT} = 0.158; \quad 
+    \sigma_{aCAT} = 0.007
+\end{align}
+With this alternative approach, we have been able to obtain reconstructions for the spectra whose accuracy is almost comparable with the one obtained with FPE. But the comparison of the overall error is just a rough indicator of the accuracy in the reconstruction, for that reason we compare the median error reconstruction of both methods. 
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/AlternativeCAT/FPEaCATwhole.pdf}
+    \caption{Comparison of FPE method with alternative cat with length of 3000 points (above panel) and their percentage error (below panel)}
+    \label{fig:aCATvsFPEwhole}
+\end{figure}
+Figure \ref{fig:aCATvsFPEwhole} shows both the reconstruction obtained with FPE and alternative CAT (above panel) and the percentage error for each frequency (below panel). It is evident that the two result are very similar. Alternative CAT provides a sightly better accuracy in the reproduction for the first peak. But, for the rest of the reconstruction FPE has to be preferred. Regarding the second peak, FPE accuracy is largely better. Alternative CAT flattens the peak and its maximum is not localized, while the reconstruction of FPE is representative of true position of the peak. Also, in the rest of the spectrum the result of FPE still shows less noise. \\ 
+From thie brief comparison, we can conclude that alternative CAT approach shouldn't be used with "short" arrays (short with respect to the total length N of the time series), since FPE provides a better estimate. \\ 
+Since for short arrays the best quality is still achieved by the use of FPE, a second interesting comparison is the one between FPE with the alternative CAT estimate on longer arrays. From figure \ref{fig:alternativeCAT}, it is evident that the best compromise between noise and accuracy in the reproduction is obtained by the arrays of 7000 points. It is clear that, outside peaks, the smaller error is achieved by FPE, so that te interesting part will be the expected gain in the definition of the peaks.
+\begin{figure}
+    \centering
+    \includegraphics[scale = .43]{Images/AlternativeCAT/FPEaCAT7000.pdf}
+    \caption{Comparison of the alternative CAT with 7000 points subsegments of data with FPE}
+    \label{fig:aCAT7000FPE}
+\end{figure}
+Figure \ref{fig:aCAT7000FPE} shows the reconstruction obtained with FPE (red line) and the one obtained with the alternative CAT approach, for sub-segments of 7000 data and a 50\% overlapping. This result is more interesting than the previous. As expected, the noise in the reproduction is larger, as can also be noticed looking at the error in the below panel, but the introduced noise is a reasonable quantity.  Concerning the peaks, the first peaks reconstruction has gained a large accuracy in the reproduction, for both its width and position. The second peak is reconstructed in a comparable way for both the methods. FPE captures in a better way the position of the peak, while alternative CAT gains in the reproduction of the width and general shape. \\ 
+Concluding, this new approach might be a valid alternative to FPE if 'not-too-short' sub segments of data are chosen. In this way, introducing a reasonable amount of noise, we are able to capture some details with more accuracy.
+But if we deal with shorter datasets, like 3000 points, without any a priori knowledge on the shape of the spectrum, is this alternative method convenient? In chapter 4 we will see that this method is the best to characterize brown noise spectrum even with dataset of $1000$ points only, but such an investigation would require a long analysis and would deviate too much from our main interests. 
+Since FPE has minimum requirement of external input we will prefer this standard approach, even if this alternative approach seems to have its merits. 
+\subsection{Alternative VS Standard CAT}
+We now compare the performance of this alternative approach with the standard approach with CAT optimizer. 
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/AlternativeCAT/AlternativeVSstandard.pdf}
+    \caption{Spectral reconstruction obtained with standard CAT approach and alternative approach}
+    \label{fig:alternativevsstandard}
+\end{figure}
+Figure \ref{fig:alternativevsstandard} show that the alternative approach provides a reconstruction that presents a largely decreased quantity of noise. This decreased level of noise has as counterpart a decreased accuracy in the reconstruction of the width of both the peaks. But, even with this loss, the estimate is still very representative of the obtained spectrum, and might be a good price to pay to reduce the variance of the estimate.
+\begin{figure}
+    \centering
+    \includegraphics[scale = .45]{Images/AlternativeCAT/CATvsALTerrors.pdf}
+    \caption{Percentage error of spectral estimate with CAT (red) and alternative CAT (green) }
+    \label{fig:CATALTerrors}
+\end{figure}
+Figure \ref{fig:CATALTerrors} shows that loss in the definition due to the averaging over the subset is concentrated in a very small number of points of the estimate, and  negligible with respect to the gain obtained in the whole spectrum. \\ 
+In this case, the reduction of noise is important because we selected the spectrum associated with the median overall error, highly influenced from noise. If CAT is 'lucky enough' to select filters whose length is comparable with FPE, probably such an achievement wouldn't be reached, but we expect the alternative estimate won't show any big loss. So, since this alternative approach gives better result for long filters and comparable results for shorter filter, being also more stable, is probably to be preferred to the standard approach with CAT as optimizer.
+Clearly, such an approach has a great disadvantage: we lose all the information regarding the prediction error filter. So, if we want to characterize the process, FPE is with no doubt the best choice. While, if we are only interested in reconstructing the power spectral density, alternative CAT's approach might be worth an attempt. 
+\section{Comparison of MESA with Welch Method}
+We now compare the performance of MESA algorithm with estimate obtained with Welch method \cite{Welch1967}. Welch introduced his method in 1967, and it is based of Fast Fourier Transform. 
+Estimate is obtained averaging over modified peridiograms computed on subset of the original dataset. Here, as in the alternative approach to CAT, one has to choose an opportune length for the arrays and their overlapping. Else, a window is required to emulate period of the Fourier Transform, and with this choice one is obliged to assume data to be zero outside this window. The shape of the reconstruction is strongly dependent from window's choice, so, in general, Welch method is not a stable estimate of the spectra, since it strongly depends on this arbitrary choice. We compare the reconstruction obtained with the two methods in figure \ref{fig:WelchVSfpe} 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = .3]{Images/WelchVSfpe.pdf}
+    \caption{Comparison of the reconstructed spectrum obtained with FPE (red line) and Welch's method (green line)}
+    \label{fig:WelchVSfpe}
+\end{figure}
+
+Graphically both methods are found to perform similarly. Since MESA is analytical, graph obtained with this method is smoother than one obtained with Welch. In fact, Welch spectrum is obtained performing a FFT and so its output length is related to the length of the subsets. Computing percentage errors, we obtain
+\begin{equation}
+    \nonumber
+    \bar r_{MESA} = 0.11; \qquad \bar r_{Welch} = 0.26
+\end{equation}
+so that better overall accuracy is reached with MESA. A plot of both the errors of FPE and Welch method is reported in figure \ref{fig:WelchError}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale = .3]{Images/WelchErrors.pdf}
+    \caption{Comparison of percentage error of reconstruction with MESA and Welch method}
+    \label{fig:WelchError}
+\end{figure}It is evident that greater error for Welch is due to two main reasons. First reason is the reconstruction of the second peak. While for the first peak accuracy of the two methods is comparable, regarding the second peak Welch method shows a huge disagreement on the peak, with a value of percentage error near 4000\%. Clearly, being one in more than 1000 points, its own contribute to overall error is not sufficient to justify the different accuracy of the two methods. To explain this we have to look at noise, in fact, it is evident that in the other parts of the spectrum Welch method shows an error that is almost everywhere bigger than the one obtained with MESA. Taking care of noise justify the big difference of the accuracy between the two methods. 
+We can conclude that, even if Welch method is a fine reconstruction for the spectrum, MESA has to be preferred for several reasons: firstly, accuracy is mostly everywhere better than the one obtained with Welch method and secondly MESA is more stable, does not require to work with arbitrary choices that significantly change results and even more important MESA does not require a modification of data, being maximally non committal to not available data, while Welch require them to be zero. So we can conclude that MESA is a better approach for both the quality of the reconstruction and scientific reasons. 
+\section{Conclusions}
+In this chapter we studied the properties for the reconstruction of power spectral density using maximum entropy principle. We tried to understand what is the best criterion to infer the recursion order and that provides the better estimate of the power spectral density. We studied all the optimizers applying them to a normal shaped spectrum Ligo's. FPE and OBD optimizers are found to be very similar optimizers, for both quality of the reconstruction and stability of the method itself, but OBD shows everywhere a larger error. Figures {\ref{fig:optcomparison}} and \ref{fig:LigoOrderError} clearly explain the reason for this lower quality: percentage error is dependent on the estimate for filter's length, and the range where filter's  chosen from OBD lays is associated with higher error with respect to those reached by FPE, where errors seems to be independent from the choice for the autoregressive order and reach their minimum values. So, this allowed us to exclude OBD from the race for the best optimizer. \\
+The last comparison was between CAT and FPE. If one only considers the regions of estimated lengths, CAT estimates lay in a region associated with larger errors and it is also found to be a very unstable optimizer, since it does not show any convergence property and it is more likely to choose an order comparable with maximum length available (figure \ref{fig:ordersCompairson}). This behaviour led us to choose FPE as the best method to infer what is the best recursion order that allow us to reproduce the spectrum. But an analysis of the spectrum obtained as an average over all the simulations showed important and very interesting features of CAT: it is able to reproduce the spectrum with the same accuracy everywhere, also where FPE is found to fail. This is probably due to the high variability of the results reproduced from CAT. \\
+This led us to propose a different approach to MESA when CAT is used. We apply it to different subsets (of fixed length and overlapping) of the original dataset, taking the average over all the reconstructions at the end. This approach is found to have a better reproduction than the standard approach (figure (\ref{fig:alternativevsstandard})), providing an estimate that reduces noise with a reasonable loss in terms of details.  Unlucky this require to introduce some arbitrary parameters for the estimate, such as the length of the smaller data extracted from the original dataset and their overlapping. A lot of interesting questions arises in the application of this method but, since their investigation is not our purpose, further investigation is postponed.   
+At the end we compared the performance of MESA with Welch method and found that MESA has to be preferred for several reasons, firstly because it result in a better quality reconstruction for the spectrum, secondly because it requires a smaller number of 'arbitrary' assumptions, making it a more stable estimator. Thirdly, it requires no assumption on not available data, while Welch method requires the choice of a window that forces the data outside the window to be zero. So, MESA is a better performing estimate with less commitment with data and has to be preferred to Welch method. 
+
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END & BIB
+
+
+        \begin{acknowledgments}
+         
+          R.~G. acknowledges support from the Deutsche Forschungsgemeinschaft
+          (DFG) under Grant No. 406116891 within the Research Training Group
+          RTG 2522/1. 
+          M.~B. and S.~B. acknowledge support by the EU H2020 under ERC Starting
+          Grant, no.~BinGraSp-714626.  
+          M.~B.~ acknowledges support from the Deutsche Forschungsgemeinschaft
+          (DFG) under Grant No. 406116891 within the Research Training Group
+          RTG 2522/1. 
+          %
+          
+          %
+          This research has made use of data, software and/or web tools obtained 
+          from the Gravitational Wave Open Science Center (https://www.gw-openscience.org), 
+          a service of LIGO Laboratory, the LIGO Scientific Collaboration and the 
+          Virgo Collaboration. LIGO is funded by the U.S. National Science Foundation. 
+          Virgo is funded by the French Centre National de Recherche Scientifique (CNRS), 
+          the Italian Istituto Nazionale della Fisica Nucleare (INFN) and the 
+          Dutch Nikhef, with contributions by Polish and Hungarian institutes.
+        \end{acknowledgments}
+
+	\bibliography{Bibliography.bib}
+	\bibliographystyle{ieeetr}
+
+\end{document}
+
+
+
