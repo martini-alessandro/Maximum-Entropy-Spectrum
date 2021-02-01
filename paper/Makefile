@@ -1,14 +1,14 @@
-all: mlgw.pdf
+all: mesa.pdf
 
-mlgw.pdf: mlgw.tex mlgw.bbl mlgw.aux
-	pdflatex -synctex=1 -interaction=nonstopmode "mlgw".tex
+mesa.pdf: mesa.tex mesa.bbl mesa.aux
+	pdflatex -synctex=1 -interaction=nonstopmode "mesa".tex
 
-mlgw.aux:
-	pdflatex -synctex=1 -interaction=nonstopmode "mlgw".tex
+mesa.aux:
+	pdflatex -synctex=1 -interaction=nonstopmode "mesa".tex
 
-mlgw.bbl: mlgw.aux
-	bibtex "mlgw".aux
+mesa.bbl: mesa.aux
+	bibtex "mesa".aux
 
 clean:
-	rm -f mlgw.bbl mlgw.out mlgwNotes.bib mlgw.aux mlgw.log mlgw.blg mlgw.toc mlgw.synctex.gz mlgw.pdf
+	rm -f mesa.bbl mesa.out mesaNotes.bib mesa.aux mesa.log mesa.blg mesa.toc mesa.synctex.gz mesa.pdf
 	rm -rf scripts/__pycache__
