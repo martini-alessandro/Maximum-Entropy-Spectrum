@@ -44,8 +44,8 @@ if __name__ == "__main__":
                           asd = False)
     N = time_series.shape[0]
     f = np.fft.fftfreq(N, d=dt)
-    M = MESA(time_series)
-    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    M = MESA()
+    P, ak, _ = M.solve(time_series, method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("p = {0}".format(len(ak)))
     PSD     = M.spectrum(dt,f)
 
@@ -57,10 +57,10 @@ if __name__ == "__main__":
     ax.set_xlabel("frequency (Hz)")
     ax.set_ylabel("PSD (Hz$^{-1}$)")
     
-    M = MESA(time_series[:int(0.9*N)])
-    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    M = MESA()
+    P, ak, _ = M.solve(time_series[:int(0.9*N)],method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     Np = 3
-    prediction = M.forecast(int(0.1*N), Np)
+    prediction = M.forecast(time_series[:int(0.9*N)], int(0.1*N), Np)
     l, h = np.percentile(prediction,[5,95],axis=0)
     fig = plt.figure(2)
     ax  = fig.add_subplot(111)

@@ -179,7 +179,7 @@ class MESA(object):
     init: data: `np.ndarray` shape (N,)
     solve(): 
     """
-    def __init__(self, data):
+    def __init__(self, *args, **kwargs):
         """ 
         Class that implements Burg method to estimate power spectral densitiy of
         time series. 
@@ -188,9 +188,7 @@ class MESA(object):
         ----------
         data: 'np.ndarray'       
             Time series with power spectral density to be computed 
-        """ 
-        self.data = data
-        self.N    = len(self.data)
+        """
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
         self.optimization = None
@@ -209,9 +207,8 @@ class MESA(object):
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
         
-        to_save = np.concatenate([[self.P], self.a_k, self.optimization, self.data])
-        header = "(1,{},{},{})".format(len(self.a_k), len(self.optimization), len(self.data))
-        print(header)
+        to_save = np.concatenate([[self.P], [self.N], self.a_k])
+        header = "(1,1,{})".format(len(self.a_k))
         np.savetxt(filename, to_save, header = header)
         return
         
@@ -235,13 +232,11 @@ class MESA(object):
         shapes = eval(first_line.translate({ord('#'): None, ord(' '): None}))
             #checking for the header
         if not isinstance(shapes, tuple):
-            if len(shapes) != 4 or not np.all([isinstance(s, int) for s in shapes]):
+            if len(shapes) != 3 or not np.all([isinstance(s, int) for s in shapes]):
                 raise ValueError("Wrong format for the header: unable to load the model")
 
             #assigning values
-        self.P, self.a_k, self.optimization, self.data = np.split(data, np.cumsum(shapes)[:-1])
-
-        self.N = shapes[3]
+        self.P, self.N, self.a_k = np.split(data, np.cumsum(shapes)[:-1])
         
         return
         
@@ -316,6 +311,7 @@ class MESA(object):
             
         frequencies: 'np.ndarray'        
             (positive) frequencies to evaluate the spectrum at (shape (N,))
+            must be equally spaced
 
         
 
@@ -339,26 +335,24 @@ class MESA(object):
         """
         f_ny = .5 / dt 
         
-        if isinstance(frequencies, np.ndarray): 
-            df = np.min(np.abs(np.diff(frequencies))) * 0.9
+        spec, f_spec = self._spectrum(dt, self.N)
+        
+        if frequencies is None:
+            return spec, f_spec
+        
+        elif isinstance(frequencies, np.ndarray):
             if np.max(frequencies) > f_ny *1.01: 
                 warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny))
+                
+            f_interp = np.interp(frequencies, f_spec[:int(self.N/2+0.5)], spec.real[:int(self.N/2+0.5)], left = 0., right = 0.)
         
-        if frequencies is None: N = self.N
-        elif isinstance(frequencies, np.ndarray): N = int(2. * f_ny / df)
-        else: raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
-
-        spec, f_spec = self._spectrum(dt, N)
-        
-        if frequencies is None: 
-            return spec, f_spec   
-
-        f_interp = np.interp(frequencies, f_spec[:int(N/2+0.5)], spec.real[:int(N/2+0.5)], left = 0., right = 0.)
-        
-        return f_interp 
+            return f_interp
+        else:
+            raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
 
         
     def solve(self,
+              data,
               m = None,
               optimisation_method = "FPE",
               method              = "Fast",
@@ -371,6 +365,9 @@ class MESA(object):
 
         Parameters
         ----------
+        data: 'np.ndarray'(N,)
+              data for the spectrum calculation
+              
         m : 'np.int'                   
             Maximum number of recursions for the computation of the  power spectral density. 
             Default is None, that means m = 2N / log(2N)
@@ -408,10 +405,20 @@ class MESA(object):
 
         """
         
+        data = np.array(data)
+        data = np.squeeze(data)
+        
+        if isinstance(data.flatten()[0],np.number):
+            assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
+        else:
+            raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
+        
+        self.data = data
+        self.N    = len(data)
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*self.N/np.log(2.*self.N))
+            self.mmax = int(2*N/np.log(2.*N))
         else:
             self.mmax = m
            
@@ -425,6 +432,7 @@ class MESA(object):
         
         self._optimizer = optimizer(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
+        del self.data
         return self.P, self.a_k, self.optimization
 
     #@do_profile(follow=[])
@@ -445,15 +453,15 @@ class MESA(object):
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
         """
-        c = correlate(self.data, self.data)[len(self.data)-1:len(self.data)+self.mmax+1] #(M,) #very fast scipy correlation!!
+        c = correlate(self.data, self.data)[self.N-1:self.N+self.mmax+1] #(M,) #very fast scipy correlation!!
 
             #this if is just for showing that the two methods give the same results
             #can remove, onve we are all convinced that the new method works
         if False:
             c_slow = np.zeros(self.mmax + 2, dtype = self.data.dtype)
-            N = self.data.shape[0]
+
             for j in range(self.mmax + 2):
-                c_slow[j] = np.dot(self.data[: N - j],self.data[j : ])
+                c_slow[j] = np.dot(self.data[: self.N - j],self.data[j : ])
             print("The two methods agree? ",np.allclose(c_slow,c))
 
             import matplotlib.pyplot as plt
@@ -639,7 +647,7 @@ class MESA(object):
         """
         return self.a_k.size - 1
     
-    def forecast(self, length, number_of_simulations, P = None, data = None, include_data = False, verbose = False): 
+    def forecast(self, data, length, number_of_simulations, P = None, include_data = False, verbose = False):
         """
         Forecasting on an observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
@@ -648,6 +656,10 @@ class MESA(object):
 
         Parameters
         ----------
+        
+        data: 'np.ndarray'(N,)
+              data for the spectrum calculation
+        
         length : 'np.int'
             Number of future points to be predicted 
             
@@ -657,9 +669,6 @@ class MESA(object):
         P : 'np.float'
             Variance of white noise for the autoregressive process. 
             Default is None and uses the estimate obtained with Burg's algorithm.
-        
-        data: `np.ndarray`
-            Data used as a starting point for forecasting. If None, the data used for mesa computation are used
             
         include_data: `bool`
             Whether to prepend to the output the input time series
@@ -679,9 +688,11 @@ class MESA(object):
         if P is None: P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
-        if data is None:
-            predictions[:,:p] = self.data[-p:]
-        elif isinstance(data,np.ndarray):
+        
+        data = np.array(data)
+        data = np.squeeze(data)
+        
+        if isinstance(data.flatten()[0],np.number):
             assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
             if len(data) >= p:
                 predictions[:,:p] = data[-p:]
