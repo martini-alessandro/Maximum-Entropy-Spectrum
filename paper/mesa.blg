@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: mesa.aux
+The style file: ieeetr.bst
+Database file #1: mesaNotes.bib
+Database file #2: Bibliography.bib
+Warning--empty journal in Vos
+Warning--can't use both author and editor fields in Akaike1970StatisticalPI
+Warning--empty publisher in Wold
+You've used 25 entries,
+            1876 wiz_defined-function locations,
+            655 strings with 7220 characters,
+and the built_in function-call counts, 6353 in all, are:
+= -- 685
+> -- 123
+< -- 0
++ -- 56
+- -- 31
+* -- 388
+:= -- 830
+add.period$ -- 31
+call.type$ -- 25
+change.case$ -- 20
+chr.to.int$ -- 0
+cite$ -- 28
+duplicate$ -- 355
+empty$ -- 649
+format.name$ -- 31
+if$ -- 1631
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 30
+newline$ -- 85
+num.names$ -- 24
+pop$ -- 73
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 274
+stack$ -- 0
+substring$ -- 452
+swap$ -- 167
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 3
+while$ -- 59
+width$ -- 27
+write$ -- 250
+(There were 3 warnings)

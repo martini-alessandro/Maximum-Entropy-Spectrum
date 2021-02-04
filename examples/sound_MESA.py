@@ -15,7 +15,7 @@ except:
     from memspectrum import *
     import memspectrum.GenerateTimeSeries as GenerateTimeSeries
 
-t = 4. #seconds of data
+t = 14. #seconds of data
 
     #loading data and preparing input to MESA
 rate, data = scipy.io.wavfile.read("data/waterfall_noise.wav") #loading waterfall noise file
@@ -25,8 +25,8 @@ dt = 1./rate
 times_out = np.linspace(0., len(data_MESA)*dt, len(data_MESA))
 
     #computing PSD with MESA
-M = MESA(data_MESA)
-P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
+M = MESA()
+P, ak, opt= M.solve(data_MESA, method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
 
     #evaluating the spectrum
 N_points = 100000
@@ -44,10 +44,10 @@ scipy.io.wavfile.write("data/simulated_noise.wav", rate, to_save.real.astype(np.
     #simulated noise is loaded and psd is estimated again
 rate, data = scipy.io.wavfile.read("data/simulated_noise.wav") #loading waterfall noise file
 data_MESA = data[:int(t*rate),0].astype(np.float64)
-data_MESA = data_MESA+1j*0.
+data_MESA = data_MESA
 dt = 1./rate
-M = MESA(data_MESA)
-P, ak, opt= M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
+M = MESA()
+P, ak, opt= M.solve(data_MESA, method = "Fast", optimisation_method = "FPE", m = int(2*len(data_MESA)/(2*np.log(len(data_MESA)))))
 PSD_sim =  M.spectrum(dt,f_PSD) #PSD computed on simulated data
 
 print("All done: if you like to listen to the output file, type \"aplay data/simulated_noise.wav\" ")
@@ -73,6 +73,19 @@ plt.plot(f_PSD, PSD_sim.real, label = "simulated")
 plt.yscale('log')
 plt.xlabel("frequency (Hz)")
 plt.legend()
+
+#comparison between two different values of N
+PSD_N, f_PSD_N = M._spectrum(dt, len(data_MESA))
+PSD_ak, f_PSD_ak = M._spectrum(dt, len(M.a_k))
+
+
+plt.figure()
+plt.title("Comparison between two different choices of N")
+plt.loglog(f_PSD_N[:int(len(data_MESA)/2)+1],PSD_N.real[:int(len(data_MESA)/2)+1], c='r')
+plt.loglog(f_PSD_ak[:int(len(M.a_k)/2)+1], PSD_ak.real[:int(len(M.a_k)/2)+1], c = 'b')
+plt.axvline(1./(dt*len(data_MESA)))
+plt.axvline(1./(dt*len(M.a_k)))
+plt.axvline(1./(dt*2.))
 
 plt.show()
 
