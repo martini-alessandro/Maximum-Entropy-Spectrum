@@ -31,9 +31,9 @@ if __name__ == "__main__":
     N = data.shape[0]
     f = np.fft.fftfreq(N, d=dt)
     t = np.arange(0,T,step=dt)
-    M = MESA(data)
+    M = MESA()
     start = time.perf_counter()
-    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    P, ak, _ = M.solve(data,method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("p = {0}".format(len(ak)))
     elapsed = time.perf_counter()
     elapsed = elapsed - start
@@ -51,10 +51,10 @@ if __name__ == "__main__":
     ax.set_xlabel("frequency (Hz)")
     ax.set_ylabel("PSD (Hz$^{-1}$)")
     
-    M = MESA(data[:int(0.75*N)])
-    P, ak, _ = M.solve(method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
+    M = MESA()
+    P, ak, _ = M.solve(data[:int(0.75*N)],method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     Np = 100
-    prediction = M.forecast(int(0.25*N), Np)
+    prediction = M.forecast(data[:int(0.75*N)], int(0.25*N), Np)
     l, h = np.percentile(prediction,[5,95],axis=0)
     fig = plt.figure(2)
     ax  = fig.add_subplot(111)

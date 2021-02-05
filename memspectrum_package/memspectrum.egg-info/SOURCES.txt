@@ -3,6 +3,7 @@ copy_files.sh
 setup.py
 ./memspectrum/GenerateTimeSeries.py
 ./memspectrum/__init__.py
+./memspectrum/memspectrum.py
 ReadMeFigures/Data.jpeg
 ReadMeFigures/Forecast.jpeg
 ReadMeFigures/Spectrum.jpeg

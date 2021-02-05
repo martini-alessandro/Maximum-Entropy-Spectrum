@@ -1,2 +1,2 @@
 cp ../GenerateTimeSeries.py ./memspectrum
-cp ../memspectrum.py  ./memspectrum/__init__.py
+cp ../memspectrum.py  ./memspectrum
