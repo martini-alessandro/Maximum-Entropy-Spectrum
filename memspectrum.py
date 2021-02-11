@@ -423,7 +423,7 @@ class MESA(object):
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*N/np.log(2.*N))
+            self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
             self.mmax = m
            
