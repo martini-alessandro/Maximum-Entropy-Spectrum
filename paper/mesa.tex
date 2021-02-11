@@ -59,16 +59,20 @@ Burg method of Maximum Entropy Spectral Analysis (MESA) provides a powerful tool
 	\title{Maximum Entropy Spectral Analysis}
 	\author{Alessandro \surname{Martini}}
 		\email{martini.alessandr@gmail.com}
-        \affiliation{Dipartimento di Fisica  Universit\`a di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy}        
+        \affiliation{Dipartimento di Fisica  Università di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy}        
         %
   
 	
 	\maketitle
+	\tableofcontents
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY  
 
+\section{Introduction}
+\blindtext
 
-\section{Maximum Entropy Principle} 
+\section{Theoretical foundations}
+\subsection{Maximum Entropy Principle} 
 The Maximum Entropy principle (MAXENT) is one of the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series. After a short introduction to Jayne's MAXENT, we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form.
 To introduce MAXENT as a variational problem, we will workout some simple examples to understand how information's entropy and 'uncertainty' are related. \\ 
 The word 'information' will not be used to indicate our knowledge on the system under study: this is what we will call 'evidence'. Information will be intended as in communication theory: it specifies the quantity of details needed to provide a full description of the system under study. \\ 
@@ -190,7 +194,7 @@ With MAXENT, the often unjustified assumptions for the data to be normally distr
 
 
 
-\section{Maximum Entropy Spectral Analysis} 
+\subsection{Maximum Entropy Spectral Analysis} 
 The computation of the power spectral density is an important component in time series analysis and characterization. Also, if the process is at least wide sense stationary, PSD is related to the autocorrelation function via a Fourier Transform.
 Since we are dealing with a finite number of samples $N$, it is not possible to have an accurate computation of the autocorrelation function for every time interval. Also, the error $\sigma$ in the estimate increases with the time interval $k$ as $\sigma \sim \frac{1}{\sqrt{N - k}}$, so that only a few values for the autocorrelation function can actually be computed. \\ 
 The problem we want to address is how to compute a PSD from the partial knowledge of the autocorrelation function. \\
@@ -223,7 +227,7 @@ This approach on power spectral density estimate was developed by Burg \cite{bur
 \end{equation}
 with $\Delta t$ the sampling interval $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The explicit solution can be found in Appendix REF
 
-\section{Autoregressive Process Analogy} 
+\subsection{Autoregressive Process Analogy} 
 The application of MESA is not limited to spectral estimates, but it also provides a link between spectral analysis and the analysis
 of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
 Consider an autoregressive stationary process of order $p$ (AR(p)): 
@@ -282,9 +286,10 @@ Being all the quantities positive definite, the left hand side is minimized by t
 
 
 
-\section{Forecasting} 
+\subsection{Forecasting} 
 
-\section{Choosing an autoregressive order}\label{sec:optimizers} 
+\section{Validation of the model}
+\subsection{Choosing an autoregressive order}\label{sec:optimizers} 
 Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$. \\ 
 In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$. \\ 
 The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact. A compromise between the two behaviour is proposed to be \cite{doi:10.1190/1.1440902}
@@ -321,6 +326,7 @@ Once an optimizer is chosen to select the best recursion order $M$, we then proc
 PARLARE QUI DELL'EARLY STOP? 
 The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
 
+<<<<<<< HEAD
 \section{Analysis of the optimizers}
  \section{Analysis of optimizers - Introduction}
 To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
@@ -618,10 +624,21 @@ it is immediate to see that, again, FPE results lies in the are of filter's leng
 
 
 \section{Example} 
+=======
+\subsection{Analysis of the optimizers}
 
-\section{Comparison with Welch method}
+\subsection{Comparison with Welch method}
+ 
+\section{Examples} 
 
-\section{Appendix 1: MESA solution}
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END & BIB
+>>>>>>> dc2ea6b02d554f80ea49ef0c67cf14dcffc60bb8
+
+
+\appendix
+\section{MESA solution}
 \subsection{MESA solution}
 We will follow the solution proposed by Burg in his PhD thesis \cite{burg1975maximum}. Instead of directly solving the variational problem for the power spectral density, we will rewrite it in terms of the constraints (\ref{eq:MaxConstraint}) of the problem. $S(f)$ is defined as the Fourier Transform of the autocorrelation function, as: 
 \begin{equation}
@@ -813,35 +830,63 @@ To obtain the solution for the $N$-th order, one starts $\bar r_0 = P_0$ and rec
 This problem is often solved numerically with Burg's Algorithm \cite{Vos}.
 A python implementation of Standard Burg's Method can be found in Appendix \ref{app:Burg} 
 
-\newpage 
-a
-\newpage
 
 
+	\bibliography{Bibliography.bib}
+	\bibliographystyle{ieeetr}
+
+\end{document}
 
 
+%%%%%%%%%%%%%% BELOW THE OLD PART... USEFUL TO TAKE INSPIRATION FROM
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -2428,35 +2473,6 @@ MESA on source estimate seems to be a promising approach to separate noise and s
 
 
 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END & BIB
-
-
-        \begin{acknowledgments}
-         
-          R.~G. acknowledges support from the Deutsche Forschungsgemeinschaft
-          (DFG) under Grant No. 406116891 within the Research Training Group
-          RTG 2522/1. 
-          M.~B. and S.~B. acknowledge support by the EU H2020 under ERC Starting
-          Grant, no.~BinGraSp-714626.  
-          M.~B.~ acknowledges support from the Deutsche Forschungsgemeinschaft
-          (DFG) under Grant No. 406116891 within the Research Training Group
-          RTG 2522/1. 
-          %
-          
-          %
-          This research has made use of data, software and/or web tools obtained 
-          from the Gravitational Wave Open Science Center (https://www.gw-openscience.org), 
-          a service of LIGO Laboratory, the LIGO Scientific Collaboration and the 
-          Virgo Collaboration. LIGO is funded by the U.S. National Science Foundation. 
-          Virgo is funded by the French Centre National de Recherche Scientifique (CNRS), 
-          the Italian Istituto Nazionale della Fisica Nucleare (INFN) and the 
-          Dutch Nikhef, with contributions by Polish and Hungarian institutes.
-        \end{acknowledgments}
-
-	\bibliography{Bibliography.bib}
-	\bibliographystyle{ieeetr}
-
-\end{document}
 
 
 
