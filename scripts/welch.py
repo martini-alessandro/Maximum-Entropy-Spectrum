@@ -5,7 +5,9 @@ def psd(strain,
         sampling_rate,
         segment_duration,
         window_function  = None,
-        overlap_fraction = 0.5):
+        overlap_fraction = 0.5,
+        nfft = None,
+        return_onesided = False):
     """
     Computes the power spectral density of a time series using the Welch method
    
@@ -19,6 +21,10 @@ def psd(strain,
     :type window_function: string, tuple or array-like
     :param overlap_fraction: overlap between segments (as a fraction of the segment duration)
     :type overlap_fraction: float
+    :param nfft: total number of points for the fft. If None is equal to the length of the dataset
+    :type nfft: int
+    :param return_onesided: returns onesided (twoside) power spectral density if True (False) 
+    :type return_onesided: boolean 
     
     :return: frequencies, corresponding power spectral density
     :rtype: array, array
@@ -33,13 +39,15 @@ def psd(strain,
     # number of samples per segments
     N = int(segment_duration*sampling_rate)
     
+    if nfft is None: nfft = len(strain)
     # compute the PSD and its frequencies
     frequencies, psd = welch(strain,
                              fs              = sampling_rate,
                              window          = window_function,
                              nperseg         = N,
                              noverlap        = int(overlap_fraction*N),
-                             return_onesided = True,
-                             scaling         = 'density')
+                             return_onesided = return_onesided,
+                             scaling         = 'density',
+                             nfft = nfft)
                              
     return frequencies, psd

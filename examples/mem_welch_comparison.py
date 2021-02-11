@@ -38,12 +38,12 @@ if __name__ == '__main__':
     #Generate the Time Series 
     f_ny = 5 
     dt = 1 / (2 * f_ny)
-    N = 8192
+    N = 81920 * 5 
     T = N * dt 
     frequency = np.arange(0, N // 2 + 1) / T 
     bnoise_psd = 1 / (frequency ** 2 + 1)
     normal_psd = scipy.stats.norm.pdf(frequency, 2.5, .5) 
-    number_of_segments = 5 #Number of segments for Welch method
+    number_of_segments = 10 #Number of segments for Welch method
     
     #Generate Time series 
     time, normal_series, frequency, normal_frequency_series, normal_psd =\
