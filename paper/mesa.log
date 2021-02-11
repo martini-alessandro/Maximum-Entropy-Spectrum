@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.1.28)  4 FEB 2021 12:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.1.28)  8 FEB 2021 10:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -760,6 +760,63 @@ LaTeX Warning: Label `sec:optimizers' multiply defined.
 
 LaTeX Warning: Label `eq:MMAx' multiply defined.
 
+
+LaTeX Warning: Label `fig:autocorr' multiply defined.
+
+
+LaTeX Warning: Label `fig:noise' multiply defined.
+
+
+LaTeX Warning: Label `fig:FPEmean' multiply defined.
+
+
+LaTeX Warning: Label `fig:FPEErrorOrder' multiply defined.
+
+
+LaTeX Warning: Label `fig:OBD3000' multiply defined.
+
+
+LaTeX Warning: Label `fig:OBDErrorOrder' multiply defined.
+
+
+LaTeX Warning: Label `fig:CATmean' multiply defined.
+
+
+LaTeX Warning: Label `fig:CAToptimizer' multiply defined.
+
+
+LaTeX Warning: Label `fig:GaussMedian' multiply defined.
+
+
+LaTeX Warning: Label `fig:NormalEnsembleResiduals' multiply defined.
+
+
+LaTeX Warning: Label `fig:optcomparison' multiply defined.
+
+
+LaTeX Warning: Label `fig:ordersCompairson' multiply defined.
+
+
+LaTeX Warning: Label `fig:residualsComparison' multiply defined.
+
+
+LaTeX Warning: Label `fig:LigoPSDOriginal' multiply defined.
+
+
+LaTeX Warning: Label `fig:ligospectrum' multiply defined.
+
+
+LaTeX Warning: Label `fig:ligo1peak' multiply defined.
+
+
+LaTeX Warning: Label `fig:ligo2peak' multiply defined.
+
+
+LaTeX Warning: Label `fig:LigoOrderError' multiply defined.
+
+
+LaTeX Warning: Label `fig:my_label' multiply defined.
+
 )
 \openout1 = `mesa.aux'.
 
@@ -972,202 +1029,644 @@ Overfull \hbox (10.62769pt too wide) detected at line 276
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.291 \begin{equation}
-                      \label{eq:MMAx}]
-Overfull \hbox (9.69865pt too wide) detected at line 350
+                      \label{eq:MMAx}] [5]
+<Images/Noise and PSD/NormalPSDautocorr.pdf, id=447, 793.91025pt x 424.55914pt>
+
+File: Images/Noise and PSD/NormalPSDautocorr.pdf Graphic file (type pdf)
+<use Images/Noise and PSD/NormalPSDautocorr.pdf>
+Package pdftex.def Info: Images/Noise and PSD/NormalPSDautocorr.pdf  used on in
+put line 346.
+(pdftex.def)             Requested size: 246.0pt x 131.55367pt.
+
+
+LaTeX Warning: Reference `app:Toeplitz' on page 6 undefined on input line 350.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 353--355
+
+ []
+
+<Images/NormalPSD/NormalNoise.pdf, id=452, 935.1738pt x 484.209pt>
+File: Images/NormalPSD/NormalNoise.pdf Graphic file (type pdf)
+<use Images/NormalPSD/NormalNoise.pdf>
+Package pdftex.def Info: Images/NormalPSD/NormalNoise.pdf  used on input line 3
+68.
+(pdftex.def)             Requested size: 246.0pt x 127.36905pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--375
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--375
+
+ []
+
+[6pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.375 \subsubsection
+                    {Final Prediction Error (FPE)}pdfTeX warning (ext4): destin
+ation with the same identifier (name{equation.8.31}) has been already used, dup
+licate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.375 \subsubsection
+                    {Final Prediction Error (FPE)}pdfTeX warning (ext4): destin
+ation with the same identifier (name{equation.8.31}) has been already used, dup
+licate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.375 \subsubsection
+                    {Final Prediction Error (FPE)}pdfTeX warning (ext4): destin
+ation with the same identifier (name{figure.2}) has been already used, duplicat
+e ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.375 \subsubsection
+                    {Final Prediction Error (FPE)} <./Images/Noise and PSD/Norm
+alPSDautocorr.pdf> <./Images/NormalPSD/NormalNoise.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/NormalNoise.pdf): PD
+F inclusion: multiple pdfs with page group included in a single page
+>]
+<Images/NormalPSD/FPEpsdAndResiduals.pdf, id=546, 790.8598pt x 425.89224pt>
+File: Images/NormalPSD/FPEpsdAndResiduals.pdf Graphic file (type pdf)
+<use Images/NormalPSD/FPEpsdAndResiduals.pdf>
+Package pdftex.def Info: Images/NormalPSD/FPEpsdAndResiduals.pdf  used on input
+ line 379.
+(pdftex.def)             Requested size: 246.0pt x 132.47362pt.
+<Images/NormalPSD/FPEoptimizer.pdf, id=550, 1146.17235pt x 561.03125pt>
+File: Images/NormalPSD/FPEoptimizer.pdf Graphic file (type pdf)
+<use Images/NormalPSD/FPEoptimizer.pdf>
+Package pdftex.def Info: Images/NormalPSD/FPEoptimizer.pdf  used on input line 
+413.
+(pdftex.def)             Requested size: 246.0pt x 120.41391pt.
+ [7pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.419 \subsubsection
+                    {Optimum Bayes Decision Rule (OBD)}pdfTeX warning (ext4): d
+estination with the same identifier (name{equation.9.32}) has been already used
+, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.419 \subsubsection
+                    {Optimum Bayes Decision Rule (OBD)}pdfTeX warning (ext4): d
+estination with the same identifier (name{equation.9.32}) has been already used
+, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.419 \subsubsection
+                    {Optimum Bayes Decision Rule (OBD)}pdfTeX warning (ext4): d
+estination with the same identifier (name{equation.9.32}) has been already used
+, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.419 \subsubsection
+                    {Optimum Bayes Decision Rule (OBD)}pdfTeX warning (ext4): d
+estination with the same identifier (name{figure.4}) has been already used, dup
+licate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.419 \subsubsection
+                    {Optimum Bayes Decision Rule (OBD)} <./Images/NormalPSD/FPE
+psdAndResiduals.pdf> <./Images/NormalPSD/FPEoptimizer.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/FPEoptimizer.pdf): P
+DF inclusion: multiple pdfs with page group included in a single page
+>]
+<Images/NormalPSD/OBDpsdAndResiduals.pdf, id=642, 790.8598pt x 425.89224pt>
+File: Images/NormalPSD/OBDpsdAndResiduals.pdf Graphic file (type pdf)
+<use Images/NormalPSD/OBDpsdAndResiduals.pdf>
+Package pdftex.def Info: Images/NormalPSD/OBDpsdAndResiduals.pdf  used on input
+ line 423.
+(pdftex.def)             Requested size: 246.0pt x 132.47362pt.
+
+Underfull \hbox (badness 2828) in paragraph at lines 420--426
+[]\OT1/cmr/m/n/10 The sec-ond op-ti-mizer in con-sid-er-a-tion is OBD.
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{equation.9.32
+}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.429 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.429 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.429 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.429 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.434 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.434 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.434 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.434 \begin{equation}
+                      
+<Images/NormalPSD/OBDoptimizer.pdf, id=644, 1149.03717pt x 561.03125pt>
+File: Images/NormalPSD/OBDoptimizer.pdf Graphic file (type pdf)
+<use Images/NormalPSD/OBDoptimizer.pdf>
+Package pdftex.def Info: Images/NormalPSD/OBDoptimizer.pdf  used on input line 
+442.
+(pdftex.def)             Requested size: 246.0pt x 120.10573pt.
+pdfTeX warning (ext4): destination with the same identifier (name{equation.9.32
+}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.9.32}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      
+<Images/CAT/CATnormal.pdf, id=647, 790.8598pt x 425.89224pt>
+File: Images/CAT/CATnormal.pdf Graphic file (type pdf)
+<use Images/CAT/CATnormal.pdf>
+Package pdftex.def Info: Images/CAT/CATnormal.pdf  used on input line 454.
+(pdftex.def)             Requested size: 246.0pt x 132.47362pt.
+ [8pdfTeX warning (ext4): destination with the same identifier (name{figure.5})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.458 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{figure.6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.458 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{figure.7}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.458 \begin{equation}
+                       <./Images/NormalPSD/OBDpsdAndResiduals.pdf> <./Images/No
+rmalPSD/OBDoptimizer.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/OBDoptimizer.pdf): P
+DF inclusion: multiple pdfs with page group included in a single page
+> <./Images/CAT/CATnormal.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/CAT/CATnormal.pdf): PDF inclus
+ion: multiple pdfs with page group included in a single page
+>]
+<Images/CAT/CAToptimizer1.pdf, id=779, 782.73569pt x 428.37025pt>
+File: Images/CAT/CAToptimizer1.pdf Graphic file (type pdf)
+<use Images/CAT/CAToptimizer1.pdf>
+Package pdftex.def Info: Images/CAT/CAToptimizer1.pdf  used on input line 471.
+(pdftex.def)             Requested size: 246.0pt x 134.63013pt.
+<Images/NormalPSD/Gaussmedian.pdf, id=784, 935.1738pt x 484.209pt>
+File: Images/NormalPSD/Gaussmedian.pdf Graphic file (type pdf)
+<use Images/NormalPSD/Gaussmedian.pdf>
+Package pdftex.def Info: Images/NormalPSD/Gaussmedian.pdf  used on input line 4
+82.
+(pdftex.def)             Requested size: 246.0pt x 127.36905pt.
+<Images/NormalPSD/Normal Residuals.pdf, id=785, 1176.87555pt x 558.1141pt>
+File: Images/NormalPSD/Normal Residuals.pdf Graphic file (type pdf)
+<use Images/NormalPSD/Normal Residuals.pdf>
+Package pdftex.def Info: Images/NormalPSD/Normal Residuals.pdf  used on input l
+ine 489.
+(pdftex.def)             Requested size: 246.0pt x 116.66238pt.
+ [9pdfTeX warning (ext4): destination with the same identifier (name{equation.9
+.33}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.498 \begin{align*}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.8}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.498 \begin{align*}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.9}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.498 \begin{align*}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.10}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.498 \begin{align*}
+                     <./Images/CAT/CAToptimizer1.pdf> <./Images/NormalPSD/Gauss
+median.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/Gaussmedian.pdf): PD
+F inclusion: multiple pdfs with page group included in a single page
+> <./Images/NormalPSD/Normal Residuals.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/Normal Residuals.pdf
+): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+<Images/NormalPSD/NormalPSDcomparison.pdf, id=919, 1136.27074pt x 561.03125pt>
+File: Images/NormalPSD/NormalPSDcomparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/NormalPSDcomparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/NormalPSDcomparison.pdf  used on inpu
+t line 522.
+(pdftex.def)             Requested size: 246.0pt x 121.4583pt.
+<Images/NormalPSD/ordersComparison.pdf, id=920, 789.11891pt x 427.79753pt>
+File: Images/NormalPSD/ordersComparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/ordersComparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/ordersComparison.pdf  used on input l
+ine 529.
+(pdftex.def)             Requested size: 246.0pt x 133.36002pt.
+<Images/NormalPSD/ResidualsComparison.pdf, id=923, 779.53624pt x 424.55914pt>
+File: Images/NormalPSD/ResidualsComparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/ResidualsComparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/ResidualsComparison.pdf  used on inpu
+t line 537.
+(pdftex.def)             Requested size: 246.0pt x 133.97653pt.
+ [10pdfTeX warning (ext4): destination with the same identifier (name{figure.11
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.545 
+      pdfTeX warning (ext4): destination with the same identifier (name{figure.
+12}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.545 
+      pdfTeX warning (ext4): destination with the same identifier (name{figure.
+13}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.545 
+       <./Images/NormalPSD/NormalPSDcomparison.pdf> <./Images/NormalPSD/ordersC
+omparison.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/ordersComparison.pdf
+): PDF inclusion: multiple pdfs with page group included in a single page
+> <./Images/NormalPSD/ResidualsComparison.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/ResidualsComparison.
+pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+<Images/LIGOsimulate/LigoPSDoriginal.pdf, id=1051, 935.1738pt x 484.209pt>
+File: Images/LIGOsimulate/LigoPSDoriginal.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/LigoPSDoriginal.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/LigoPSDoriginal.pdf  used on input
+ line 549.
+(pdftex.def)             Requested size: 246.0pt x 127.36905pt.
+<Images/LIGOsimulate/PSD.pdf, id=1055, 800.19514pt x 425.89224pt>
+File: Images/LIGOsimulate/PSD.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/PSD.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/PSD.pdf  used on input line 563.
+(pdftex.def)             Requested size: 246.0pt x 130.92696pt.
+
+Overfull \hbox (40.30647pt too wide) detected at line 570
+[][][] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0426%\OML/cmm/m/it/
+10 ;  [] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 129%\OML/cmm/m/it
+/10 ;  [] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0211%
+ []
+
+<Images/LIGOsimulate/1stPeakComparison.pdf, id=1057, 935.1738pt x 484.209pt>
+File: Images/LIGOsimulate/1stPeakComparison.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/1stPeakComparison.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/1stPeakComparison.pdf  used on inp
+ut line 573.
+(pdftex.def)             Requested size: 246.0pt x 127.36905pt.
+<Images/LIGOsimulate/2ndPeakComparison.pdf, id=1058, 935.1738pt x 484.209pt>
+File: Images/LIGOsimulate/2ndPeakComparison.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/2ndPeakComparison.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/2ndPeakComparison.pdf  used on inp
+ut line 583.
+(pdftex.def)             Requested size: 246.0pt x 127.36905pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11pdfTeX warning (ext4): destination with the same identifier (name{figure.14}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.592 \subsubsection
+                    {Statistical properties of single realizations}pdfTeX warni
+ng (ext4): destination with the same identifier (name{figure.15}) has been alre
+ady used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.592 \subsubsection
+                    {Statistical properties of single realizations}pdfTeX warni
+ng (ext4): destination with the same identifier (name{figure.16}) has been alre
+ady used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.592 \subsubsection
+                    {Statistical properties of single realizations} <./Images/L
+IGOsimulate/LigoPSDoriginal.pdf> <./Images/LIGOsimulate/PSD.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/PSD.pdf): PDF inc
+lusion: multiple pdfs with page group included in a single page
+> <./Images/LIGOsimulate/1stPeakComparison.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/1stPeakComparison
+.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+
+LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
+ on input line 592.
+
+
+Overfull \hbox (28.96895pt too wide) detected at line 597
+[][][] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 13 \OMS/cmsy/m/n/10
+ ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 01;  [] = 0\OML/cmm/m/i
+t/10 :\OT1/cmr/m/n/10 17 \OMS/cmsy/m/n/10 ^^F \OML/cmm/m/it/10 :\OT1/cmr/m/n/10
+ 02;  [] = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4 \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m
+/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 1
+ []
+
+<Images/LIGOsimulate/orderVSerror.pdf, id=1202, 789.11891pt x 424.55914pt>
+File: Images/LIGOsimulate/orderVSerror.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/orderVSerror.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/orderVSerror.pdf  used on input li
+ne 602.
+(pdftex.def)             Requested size: 246.0pt x 132.3505pt.
+<Images/LIGOsimulate/LigoHists.pdf, id=1203, 795.50214pt x 424.55914pt>
+File: Images/LIGOsimulate/LigoHists.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/LigoHists.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/LigoHists.pdf  used on input line 
+609.
+(pdftex.def)             Requested size: 246.0pt x 131.28806pt.
+[12pdfTeX warning (ext4): destination with the same identifier (name{figure.17}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.627 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{figure.18}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.627 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{figure.19}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.627 \begin{equation}
+                       <./Images/LIGOsimulate/2ndPeakComparison.pdf> <./Images/
+LIGOsimulate/orderVSerror.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/orderVSerror.pdf)
+: PDF inclusion: multiple pdfs with page group included in a single page
+> <./Images/LIGOsimulate/LigoHists.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/LigoHists.pdf): P
+DF inclusion: multiple pdfs with page group included in a single page
+>]
+Overfull \hbox (9.69865pt too wide) detected at line 644
 [][][] \OT1/cmr/m/n/10 = [] [][] \OML/cmm/m/it/10 S\OT1/cmr/m/n/10 (\OML/cmm/m/
 it/10 f\OT1/cmr/m/n/10 )[]\OML/cmm/m/it/10 e[]df \OT1/cmr/m/n/10 = \OML/cmm/m/i
 t/10 ^^U[] \OT1/cmr/m/n/10 = 0[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 s\OMS/cmsy/m
 /n/10 j \OML/cmm/m/it/10 > N:
  []
 
-[5] [6pdfTeX warning (ext4): destination with the same identifier (name{equatio
-n.9.33}) has been already used, duplicate ignored
+[13pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+2.38}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.437 \end{equation}
-                    pdfTeX warning (ext4): destination with the same identifier
- (name{equation.9.35}) has been already used, duplicate ignored
+l.696 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.12.40}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.437 \end{equation}
-                    pdfTeX warning (ext4): destination with the same identifier
- (name{equation.9.36}) has been already used, duplicate ignored
+l.696 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.12.41}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.437 \end{equation}
-                    pdfTeX warning (ext4): destination with the same identifier
- (name{equation.9.36}) has been already used, duplicate ignored
+l.696 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.12.41}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.437 \end{equation}
-                    ]
-Overfull \hbox (99.14009pt too wide) detected at line 502
+l.696 \end{align}
+                 ]
+Overfull \hbox (99.14009pt too wide) detected at line 796
 [][] [] [] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 c[] [] \OT1/cmr/m/n/10 = [] \OML/
 cmm/m/it/10 : \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 c[] [] :
  []
 
 
-LaTeX Warning: Reference `app:Burg' on page 7 undefined on input line 520.
+LaTeX Warning: Reference `app:Burg' on page 14 undefined on input line 814.
 
-[7pdfTeX warning (ext4): destination with the same identifier (name{equation.9.
-46}) has been already used, duplicate ignored
+[14pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+2.51}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.523 a
+l.817 a
        pdfTeX warning (ext4): destination with the same identifier (name{equati
-on.9.46}) has been already used, duplicate ignored
+on.12.51}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.523 a
-       ] [8pdfTeX warning (ext4): destination with the same identifier (name{eq
-uation.11.48}) has been already used, duplicate ignored
+l.817 a
+       ] [15pdfTeX warning (ext4): destination with the same identifier (name{e
+quation.14.53}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.584 \begin{equation}
+l.878 \begin{equation}
                       ]pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.11.48}) has been already used, duplicate ignored
+ier (name{equation.14.53}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.584 \begin{equation}
+l.878 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.48}) has been already used, duplicate ignored
+er (name{equation.14.53}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.584 \begin{equation}
+l.878 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.48}) has been already used, duplicate ignored
+er (name{equation.14.53}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.584 \begin{equation}
+l.878 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.48}) has been already used, duplicate ignored
+er (name{equation.14.53}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.584 \begin{equation}
-                       [9pdfTeX warning (ext4): destination with the same ident
-ifier (name{equation.11.49}) has been already used, duplicate ignored
+l.878 \begin{equation}
+                       [16pdfTeX warning (ext4): destination with the same iden
+tifier (name{equation.14.54}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.636 \centering
+l.930 \centering
                 ]pdfTeX warning (ext4): destination with the same identifier (n
-ame{equation.11.51}) has been already used, duplicate ignored
+ame{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.642 \begin{equation}
+l.936 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.642 \begin{equation}
+l.936 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.642 \begin{equation}
+l.936 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.642 \begin{equation}
+l.936 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.649 \begin{equation}
+l.943 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.649 \begin{equation}
+l.943 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.649 \begin{equation}
+l.943 \begin{equation}
                       pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.51}) has been already used, duplicate ignored
+er (name{equation.14.56}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.649 \begin{equation}
-                       [10pdfTeX warning (ext4): destination with the same iden
-tifier (name{equation.11.55}) has been already used, duplicate ignored
+l.943 \begin{equation}
+                       [17pdfTeX warning (ext4): destination with the same iden
+tifier (name{equation.14.60}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.706 \end{equation}
-                    pdfTeX warning (ext4): destination with the same identifier
- (name{equation.11.57}) has been already used, duplicate ignored
+l.1000 \end{equation}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.14.62}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.706 \end{equation}
-                    pdfTeX warning (ext4): destination with the same identifier
- (name{equation.11.57}) has been already used, duplicate ignored
+l.1000 \end{equation}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.14.62}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.706 \end{equation}
-                    ]
-Overfull \hbox (35.20659pt too wide) detected at line 724
+l.1000 \end{equation}
+                     ]
+Overfull \hbox (35.20659pt too wide) detected at line 1018
 [][]\OML/cmm/m/it/10 p [] \OT1/cmr/m/n/10 = [] [] [] \OML/cmm/m/it/10 :
  []
 
 
-Overfull \hbox (3.28317pt too wide) detected at line 747
+Overfull \hbox (3.28317pt too wide) detected at line 1041
 []
  []
 
-[11pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-1.60}) has been already used, duplicate ignored
+[18pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+4.65}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.60}) has been already used, duplicate ignored
+l.1056 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.14.65}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.60}) has been already used, duplicate ignored
+l.1056 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.14.65}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.11.60}) has been already used, duplicate ignored
+l.1056 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.14.65}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.12.62}) has been already used, duplicate ignored
+l.1056 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.15.67}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      pdfTeX warning (ext4): destination with the same identifi
-er (name{equation.12.62}) has been already used, duplicate ignored
+l.1056 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.15.67}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.762 \begin{equation}
-                      ]
+l.1056 \begin{equation}
+                       ]
 
-LaTeX Warning: Reference `app:Toeplitz' on page 12 undefined on input line 783.
+LaTeX Warning: Reference `app:Toeplitz' on page 19 undefined on input line 1077
+.
 
 
-
-Overfull \hbox (95.2163pt too wide) detected at line 825
+Overfull \hbox (95.2163pt too wide) detected at line 1119
 [][]\OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]; t[]\OT1/cmr/m/n/10
  ; [] ; \OML/cmm/m/it/10 x[]; t[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 I\OT1/cmr/m
 /n/10 ) = \OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]; t[]\OMS/cmsy
@@ -1178,7 +1677,7 @@ Overfull \hbox (95.2163pt too wide) detected at line 825
  []
 
 
-Overfull \hbox (58.53604pt too wide) detected at line 833
+Overfull \hbox (58.53604pt too wide) detected at line 1127
 [][] [] \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x
 []; t[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 x[]; t[]; I\OT1/cmr/m/n/10 )\OML/cmm/
 m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]; t[]\OMS/cmsy/m/n/10 j\OML/cmm/m
@@ -1187,109 +1686,109 @@ cmm/m/it/10 x[]; t[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 I\OT1/cmr/m/n/10 )\OML/c
 mm/m/it/10 ;
  []
 
-[12pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-2.64}) has been already used, duplicate ignored
+[19pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+5.69}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.833 \end{equation}
-                    ]
-Underfull \hbox (badness 10000) in paragraph at lines 852--853
+l.1127 \end{equation}
+                     ]
+Underfull \hbox (badness 10000) in paragraph at lines 1146--1147
 
  []
 
-[13pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-2.73}) has been already used, duplicate ignored
+[20pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+5.78}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
+l.1182 ...correlation, written as \begin{equation}
                                                   pdfTeX warning (ext4): destin
-ation with the same identifier (name{equation.12.73}) has been already used, du
+ation with the same identifier (name{equation.15.78}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
+l.1182 ...correlation, written as \begin{equation}
                                                   pdfTeX warning (ext4): destin
-ation with the same identifier (name{equation.12.73}) has been already used, du
+ation with the same identifier (name{equation.15.78}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
+l.1182 ...correlation, written as \begin{equation}
                                                   pdfTeX warning (ext4): destin
-ation with the same identifier (name{equation.12.75}) has been already used, du
+ation with the same identifier (name{equation.15.80}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
+l.1182 ...correlation, written as \begin{equation}
                                                   pdfTeX warning (ext4): destin
-ation with the same identifier (name{equation.12.75}) has been already used, du
+ation with the same identifier (name{equation.15.80}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
+l.1182 ...correlation, written as \begin{equation}
                                                   pdfTeX warning (ext4): destin
-ation with the same identifier (name{equation.12.76}) has been already used, du
+ation with the same identifier (name{equation.15.81}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.888 ...ocorrelation, written as \begin{equation}
-                                                  ] [14] [15pdfTeX warning (ext
-4): destination with the same identifier (name{equation.13.83}) has been alread
+l.1182 ...correlation, written as \begin{equation}
+                                                  ] [21] [22pdfTeX warning (ext
+4): destination with the same identifier (name{equation.16.88}) has been alread
 y used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1005 \begin{equation}
+l.1299 \begin{equation}
                        \label{eq:Forward}pdfTeX warning (ext4): destination wit
-h the same identifier (name{equation.13.85}) has been already used, duplicate i
+h the same identifier (name{equation.16.90}) has been already used, duplicate i
 gnored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1005 \begin{equation}
+l.1299 \begin{equation}
                        \label{eq:Forward}pdfTeX warning (ext4): destination wit
-h the same identifier (name{equation.13.86}) has been already used, duplicate i
+h the same identifier (name{equation.16.91}) has been already used, duplicate i
 gnored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1005 \begin{equation}
+l.1299 \begin{equation}
                        \label{eq:Forward}pdfTeX warning (ext4): destination wit
-h the same identifier (name{equation.13.86}) has been already used, duplicate i
+h the same identifier (name{equation.16.91}) has been already used, duplicate i
 gnored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1005 \begin{equation}
+l.1299 \begin{equation}
                        \label{eq:Forward}]
-Overfull \hbox (99.14009pt too wide) detected at line 1083
+Overfull \hbox (99.14009pt too wide) detected at line 1377
 [][] [] [] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 c[] [] \OT1/cmr/m/n/10 = [] \OML/
 cmm/m/it/10 : \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 c[] [] :
  []
 
 
-LaTeX Warning: Reference `app:Burg' on page 16 undefined on input line 1101.
+LaTeX Warning: Reference `app:Burg' on page 23 undefined on input line 1395.
 
-[16pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-3.96}) has been already used, duplicate ignored
+[23pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+6.101}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1130 \begin{equation}
+l.1424 \begin{equation}
                        pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.13.96}) has been already used, duplicate ignored
+ier (name{equation.16.101}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1130 \begin{equation}
+l.1424 \begin{equation}
                        ]
-Overfull \hbox (67.49251pt too wide) detected at line 1136
+Overfull \hbox (67.49251pt too wide) detected at line 1430
 [][]\OML/cmm/m/it/10 E [] \OT1/cmr/m/n/10 = [] \OML/cmm/m/it/10 c[]E [] c[] \OT
 1/cmr/m/n/10 = [] \OML/cmm/m/it/10 c[]R\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 j \OMS
 /cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 i\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 c[] > \OT1
@@ -1297,471 +1796,414 @@ Overfull \hbox (67.49251pt too wide) detected at line 1136
  []
 
 
-Overfull \hbox (10.62769pt too wide) detected at line 1152
+Overfull \hbox (10.62769pt too wide) detected at line 1446
 []
  []
 
-[17pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-4.103}) has been already used, duplicate ignored
+[24pdfTeX warning (ext4): destination with the same identifier (name{equation.1
+7.108}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1191     \end{equation}
+l.1485     \end{equation}
                          ]
-<Images/Noise and PSD/NormalPSDautocorr.pdf, id=615, 793.91025pt x 424.55914pt>
-
 File: Images/Noise and PSD/NormalPSDautocorr.pdf Graphic file (type pdf)
 <use Images/Noise and PSD/NormalPSDautocorr.pdf>
 Package pdftex.def Info: Images/Noise and PSD/NormalPSDautocorr.pdf  used on in
-put line 1224.
-(pdftex.def)             Requested size: 341.37474pt x 182.55687pt.
-
-Overfull \hbox (95.37474pt too wide) in paragraph at lines 1224--1225
- [][] 
- []
+put line 1518.
+(pdftex.def)             Requested size: 246.0pt x 131.55367pt.
 
 
-LaTeX Warning: Reference `app:Toeplitz' on page 18 undefined on input line 1228
+LaTeX Warning: Reference `app:Toeplitz' on page 25 undefined on input line 1522
 .
 
+[25pdfTeX warning (ext4): destination with the same identifier (name{equation.2
+1.116}) has been already used, duplicate ignored
 
-Underfull \hbox (badness 10000) in paragraph at lines 1231--1233
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1525 \end{equation}
+                     ]
+
+LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
+ on input line 1525.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1525--1527
 
  []
 
-[18pdfTeX warning (ext4): destination with the same identifier (name{equation.1
-8.111}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1233 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.18.111}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1233 \begin{equation}
-                       ]
-
-LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1233.
-
-<Images/NormalPSD/NormalNoise.pdf, id=627, 935.1738pt x 484.209pt>
 File: Images/NormalPSD/NormalNoise.pdf Graphic file (type pdf)
 <use Images/NormalPSD/NormalNoise.pdf>
 Package pdftex.def Info: Images/NormalPSD/NormalNoise.pdf  used on input line 1
-246.
+540.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 1246--1247
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 1540--1541
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1250--1253
+Underfull \hbox (badness 10000) in paragraph at lines 1544--1547
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1250--1253
+Underfull \hbox (badness 10000) in paragraph at lines 1544--1547
 
  []
 
-<Images/NormalPSD/FPEpsdAndResiduals.pdf, id=630, 790.8598pt x 425.89224pt>
 File: Images/NormalPSD/FPEpsdAndResiduals.pdf Graphic file (type pdf)
 <use Images/NormalPSD/FPEpsdAndResiduals.pdf>
 Package pdftex.def Info: Images/NormalPSD/FPEpsdAndResiduals.pdf  used on input
- line 1257.
+ line 1551.
 (pdftex.def)             Requested size: 316.33832pt x 170.35387pt.
 
-Overfull \hbox (70.33832pt too wide) in paragraph at lines 1257--1258
+Overfull \hbox (70.33832pt too wide) in paragraph at lines 1551--1552
  [][] 
  []
 
-[19pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1260 \end{figure}
-                   pdfTeX warning (ext4): destination with the same identifier 
-(name{figure.2}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1260 \end{figure}
-                    <./Images/Noise and PSD/NormalPSDautocorr.pdf> <./Images/No
-rmalPSD/NormalNoise.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/NormalNoise.pdf): PD
-F inclusion: multiple pdfs with page group included in a single page
->]
-<Images/NormalPSD/FPEoptimizer.pdf, id=722, 1146.17235pt x 561.03125pt>
-File: Images/NormalPSD/FPEoptimizer.pdf Graphic file (type pdf)
-<use Images/NormalPSD/FPEoptimizer.pdf>
-Package pdftex.def Info: Images/NormalPSD/FPEoptimizer.pdf  used on input line 
-1291.
-(pdftex.def)             Requested size: 343.85435pt x 168.31067pt.
-
-Overfull \hbox (97.85435pt too wide) in paragraph at lines 1289--1292
- [] 
- []
-
-<Images/NormalPSD/OBDpsdAndResiduals.pdf, id=725, 790.8598pt x 425.89224pt>
-File: Images/NormalPSD/OBDpsdAndResiduals.pdf Graphic file (type pdf)
-<use Images/NormalPSD/OBDpsdAndResiduals.pdf>
-Package pdftex.def Info: Images/NormalPSD/OBDpsdAndResiduals.pdf  used on input
- line 1301.
-(pdftex.def)             Requested size: 355.88362pt x 191.64973pt.
-
-Overfull \hbox (109.88362pt too wide) in paragraph at lines 1301--1302
- [][] 
- []
-
-
-Underfull \hbox (badness 2828) in paragraph at lines 1298--1304
-[]\OT1/cmr/m/n/10 The sec-ond op-ti-mizer in con-sid-er-a-tion is OBD.
- []
-
-[20pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1304 \end{figure}
-                   pdfTeX warning (ext4): destination with the same identifier 
-(name{equation.19.112}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1304 \end{figure}
-                   pdfTeX warning (ext4): destination with the same identifier 
-(name{equation.19.112}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1304 \end{figure}
-                   pdfTeX warning (ext4): destination with the same identifier 
-(name{equation.19.112}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1304 \end{figure}
-                   pdfTeX warning (ext4): destination with the same identifier 
-(name{figure.4}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1304 \end{figure}
-                    <./Images/NormalPSD/FPEpsdAndResiduals.pdf> <./Images/Norma
-lPSD/FPEoptimizer.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/FPEoptimizer.pdf): P
-DF inclusion: multiple pdfs with page group included in a single page
->]pdfTeX warning (ext4): destination with the same identifier (name{equation.19
-.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1307 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1307 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1307 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1307 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1312 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1312 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1312 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1312 \begin{equation}
-                       
-<Images/NormalPSD/OBDoptimizer.pdf, id=812, 1149.03717pt x 561.03125pt>
-File: Images/NormalPSD/OBDoptimizer.pdf Graphic file (type pdf)
-<use Images/NormalPSD/OBDoptimizer.pdf>
-Package pdftex.def Info: Images/NormalPSD/OBDoptimizer.pdf  used on input line 
-1320.
-(pdftex.def)             Requested size: 344.7138pt x 168.31067pt.
-
-Overfull \hbox (98.7138pt too wide) in paragraph at lines 1320--1321
- [][] 
- []
-
-pdfTeX warning (ext4): destination with the same identifier (name{equation.19.1
-12}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1324 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1324 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1324 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.19.112}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1324 \begin{equation}
-                       
-<Images/CAT/CATnormal.pdf, id=815, 790.8598pt x 425.89224pt>
-File: Images/CAT/CATnormal.pdf Graphic file (type pdf)
-<use Images/CAT/CATnormal.pdf>
-Package pdftex.def Info: Images/CAT/CATnormal.pdf  used on input line 1332.
-(pdftex.def)             Requested size: 340.0631pt x 183.13008pt.
-
-Overfull \hbox (94.0631pt too wide) in paragraph at lines 1332--1333
- [][] 
- []
-
-[21pdfTeX warning (ext4): destination with the same identifier (name{figure.5})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1335 \end{figure} a
-                     nd also tails are well captured by the average spectrum...
-pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
-s been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1335 \end{figure} a
-                     nd also tails are well captured by the average spectrum...
- <./Images/NormalPSD/OBDpsdAndResiduals.pdf> <./Images/NormalPSD/OBDoptimizer.p
-df
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/OBDoptimizer.pdf): P
-DF inclusion: multiple pdfs with page group included in a single page
->]
-<Images/CAT/CAToptimizer1.pdf, id=905, 782.73569pt x 428.37025pt>
-File: Images/CAT/CAToptimizer1.pdf Graphic file (type pdf)
-<use Images/CAT/CAToptimizer1.pdf>
-Package pdftex.def Info: Images/CAT/CAToptimizer1.pdf  used on input line 1349.
-
-(pdftex.def)             Requested size: 336.56978pt x 184.19562pt.
-
-Overfull \hbox (90.56978pt too wide) in paragraph at lines 1349--1350
- [][] 
- []
-
-<Images/NormalPSD/Gaussmedian.pdf, id=910, 935.1738pt x 484.209pt>
-File: Images/NormalPSD/Gaussmedian.pdf Graphic file (type pdf)
-<use Images/NormalPSD/Gaussmedian.pdf>
-Package pdftex.def Info: Images/NormalPSD/Gaussmedian.pdf  used on input line 1
-360.
-(pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
-
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1360--1361
- [][] 
- []
-
-<Images/NormalPSD/Normal Residuals.pdf, id=911, 1176.87555pt x 558.1141pt>
-File: Images/NormalPSD/Normal Residuals.pdf Graphic file (type pdf)
-<use Images/NormalPSD/Normal Residuals.pdf>
-Package pdftex.def Info: Images/NormalPSD/Normal Residuals.pdf  used on input l
-ine 1367.
-(pdftex.def)             Requested size: 353.06538pt x 167.43552pt.
-
-Overfull \hbox (107.06538pt too wide) in paragraph at lines 1367--1368
- [][] 
- []
-
-[22pdfTeX warning (ext4): destination with the same identifier (name{figure.7})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1376 \begin{align*}
-                     pdfTeX warning (ext4): destination with the same identifie
-r (name{equation.19.113}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1376 \begin{align*}
-                     pdfTeX warning (ext4): destination with the same identifie
-r (name{figure.8}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1376 \begin{align*}
-                      <./Images/CAT/CATnormal.pdf> <./Images/CAT/CAToptimizer1.
-pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/CAT/CAToptimizer1.pdf): PDF in
-clusion: multiple pdfs with page group included in a single page
->]
-
-LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1376.
-
-<Images/NormalPSD/NormalPSDcomparison.pdf, id=1000, 1136.27074pt x 561.03125pt>
-
-File: Images/NormalPSD/NormalPSDcomparison.pdf Graphic file (type pdf)
-<use Images/NormalPSD/NormalPSDcomparison.pdf>
-Package pdftex.def Info: Images/NormalPSD/NormalPSDcomparison.pdf  used on inpu
-t line 1400.
-(pdftex.def)             Requested size: 340.88385pt x 168.31067pt.
-
-Overfull \hbox (94.88385pt too wide) in paragraph at lines 1400--1401
- [][] 
- []
-
-<Images/NormalPSD/ordersComparison.pdf, id=1001, 789.11891pt x 427.79753pt>
-File: Images/NormalPSD/ordersComparison.pdf Graphic file (type pdf)
-<use Images/NormalPSD/ordersComparison.pdf>
-Package pdftex.def Info: Images/NormalPSD/ordersComparison.pdf  used on input l
-ine 1407.
-(pdftex.def)             Requested size: 355.10022pt x 192.5071pt.
-
-Overfull \hbox (109.10022pt too wide) in paragraph at lines 1405--1408
- [] 
- []
-
-<Images/NormalPSD/ResidualsComparison.pdf, id=1004, 779.53624pt x 424.55914pt>
-File: Images/NormalPSD/ResidualsComparison.pdf Graphic file (type pdf)
-<use Images/NormalPSD/ResidualsComparison.pdf>
-Package pdftex.def Info: Images/NormalPSD/ResidualsComparison.pdf  used on inpu
-t line 1415.
-(pdftex.def)             Requested size: 358.59102pt x 195.29958pt.
-
-Overfull \hbox (112.59102pt too wide) in paragraph at lines 1415--1416
- [][] 
- []
-
-[23pdfTeX warning (ext4): destination with the same identifier (name{figure.9})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1421 
-       pdfTeX warning (ext4): destination with the same identifier (name{figure
-.10}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1421 
-       pdfTeX warning (ext4): destination with the same identifier (name{figure
-.11}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.1421 
-        <./Images/NormalPSD/Gaussmedian.pdf> <./Images/NormalPSD/Normal Residua
-ls.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/Normal Residuals.pdf
-): PDF inclusion: multiple pdfs with page group included in a single page
-> <./Images/NormalPSD/NormalPSDcomparison.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/NormalPSDcomparison.
-pdf): PDF inclusion: multiple pdfs with page group included in a single page
->]
-
-LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1421.
-
-<Images/LIGOsimulate/LigoPSDoriginal.pdf, id=1130, 935.1738pt x 484.209pt>
-File: Images/LIGOsimulate/LigoPSDoriginal.pdf Graphic file (type pdf)
-<use Images/LIGOsimulate/LigoPSDoriginal.pdf>
-Package pdftex.def Info: Images/LIGOsimulate/LigoPSDoriginal.pdf  used on input
- line 1427.
-(pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
-
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1427--1428
- [][] 
- []
-
-<Images/LIGOsimulate/PSD.pdf, id=1134, 800.19514pt x 425.89224pt>
-File: Images/LIGOsimulate/PSD.pdf Graphic file (type pdf)
-<use Images/LIGOsimulate/PSD.pdf>
-Package pdftex.def Info: Images/LIGOsimulate/PSD.pdf  used on input line 1441.
-(pdftex.def)             Requested size: 360.08449pt x 191.64973pt.
-
-Overfull \hbox (114.08449pt too wide) in paragraph at lines 1441--1442
- [][] 
- []
-
-[24pdfTeX warning (ext4): destination with the same identifier (name{figure.12}
+[26pdfTeX warning (ext4): destination with the same identifier (name{figure.20}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1446 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{figure.13}) has been already used, duplicate ignored
+l.1554 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{equation.21.116}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1446 \begin{equation}
-                       pdfTeX warning (ext4): destination with the same identif
-ier (name{figure.14}) has been already used, duplicate ignored
+l.1554 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{figure.21}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1446 \begin{equation}
-                        <./Images/NormalPSD/ordersComparison.pdf> <./Images/Nor
-malPSD/ResidualsComparison.pdf
+l.1554 \end{figure}
+                   ]
+File: Images/NormalPSD/FPEoptimizer.pdf Graphic file (type pdf)
+<use Images/NormalPSD/FPEoptimizer.pdf>
+Package pdftex.def Info: Images/NormalPSD/FPEoptimizer.pdf  used on input line 
+1585.
+(pdftex.def)             Requested size: 343.85435pt x 168.31067pt.
 
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/NormalPSD/ResidualsComparison.
-pdf): PDF inclusion: multiple pdfs with page group included in a single page
-> <./Images/LIGOsimulate/LigoPSDoriginal.pdf
+Overfull \hbox (97.85435pt too wide) in paragraph at lines 1583--1586
+ [] 
+ []
 
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/LigoPSDoriginal.p
-df): PDF inclusion: multiple pdfs with page group included in a single page
->]
-Overfull \hbox (40.30647pt too wide) detected at line 1448
+File: Images/NormalPSD/OBDpsdAndResiduals.pdf Graphic file (type pdf)
+<use Images/NormalPSD/OBDpsdAndResiduals.pdf>
+Package pdftex.def Info: Images/NormalPSD/OBDpsdAndResiduals.pdf  used on input
+ line 1595.
+(pdftex.def)             Requested size: 355.88362pt x 191.64973pt.
+
+Overfull \hbox (109.88362pt too wide) in paragraph at lines 1595--1596
+ [][] 
+ []
+
+
+Underfull \hbox (badness 2828) in paragraph at lines 1592--1598
+[]\OT1/cmr/m/n/10 The sec-ond op-ti-mizer in con-sid-er-a-tion is OBD.
+ []
+
+[27pdfTeX warning (ext4): destination with the same identifier (name{figure.22}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1598 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{equation.22.117}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1598 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{equation.22.117}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1598 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{equation.22.117}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1598 \end{figure}
+                   pdfTeX warning (ext4): destination with the same identifier 
+(name{figure.23}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1598 \end{figure}
+                   ]pdfTeX warning (ext4): destination with the same identifier
+ (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1601 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1601 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1601 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1601 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1606 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1606 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1606 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1606 \begin{equation}
+                       
+File: Images/NormalPSD/OBDoptimizer.pdf Graphic file (type pdf)
+<use Images/NormalPSD/OBDoptimizer.pdf>
+Package pdftex.def Info: Images/NormalPSD/OBDoptimizer.pdf  used on input line 
+1614.
+(pdftex.def)             Requested size: 344.7138pt x 168.31067pt.
+
+Overfull \hbox (98.7138pt too wide) in paragraph at lines 1614--1615
+ [][] 
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{equation.22.1
+17}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1618 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1618 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1618 \begin{equation}
+                       pdfTeX warning (ext4): destination with the same identif
+ier (name{equation.22.117}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.1618 \begin{equation}
+                       
+File: Images/CAT/CATnormal.pdf Graphic file (type pdf)
+<use Images/CAT/CATnormal.pdf>
+Package pdftex.def Info: Images/CAT/CATnormal.pdf  used on input line 1626.
+(pdftex.def)             Requested size: 340.0631pt x 183.13008pt.
+
+Overfull \hbox (94.0631pt too wide) in paragraph at lines 1626--1627
+ [][] 
+ []
+
+[28pdfTeX warning (ext4): destination with the same identifier (name{figure.24}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1629 \end{figure} a
+                     nd also tails are well captured by the average spectrum...
+pdfTeX warning (ext4): destination with the same identifier (name{figure.25}) h
+as been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1629 \end{figure} a
+                     nd also tails are well captured by the average spectrum...
+]
+File: Images/CAT/CAToptimizer1.pdf Graphic file (type pdf)
+<use Images/CAT/CAToptimizer1.pdf>
+Package pdftex.def Info: Images/CAT/CAToptimizer1.pdf  used on input line 1643.
+
+(pdftex.def)             Requested size: 336.56978pt x 184.19562pt.
+
+Overfull \hbox (90.56978pt too wide) in paragraph at lines 1643--1644
+ [][] 
+ []
+
+File: Images/NormalPSD/Gaussmedian.pdf Graphic file (type pdf)
+<use Images/NormalPSD/Gaussmedian.pdf>
+Package pdftex.def Info: Images/NormalPSD/Gaussmedian.pdf  used on input line 1
+654.
+(pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
+
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1654--1655
+ [][] 
+ []
+
+File: Images/NormalPSD/Normal Residuals.pdf Graphic file (type pdf)
+<use Images/NormalPSD/Normal Residuals.pdf>
+Package pdftex.def Info: Images/NormalPSD/Normal Residuals.pdf  used on input l
+ine 1661.
+(pdftex.def)             Requested size: 353.06538pt x 167.43552pt.
+
+Overfull \hbox (107.06538pt too wide) in paragraph at lines 1661--1662
+ [][] 
+ []
+
+[29pdfTeX warning (ext4): destination with the same identifier (name{figure.26}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1670 \begin{align*}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.22.118}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1670 \begin{align*}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{figure.27}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1670 \begin{align*}
+                     ]
+
+LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
+ on input line 1670.
+
+File: Images/NormalPSD/NormalPSDcomparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/NormalPSDcomparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/NormalPSDcomparison.pdf  used on inpu
+t line 1694.
+(pdftex.def)             Requested size: 340.88385pt x 168.31067pt.
+
+Overfull \hbox (94.88385pt too wide) in paragraph at lines 1694--1695
+ [][] 
+ []
+
+File: Images/NormalPSD/ordersComparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/ordersComparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/ordersComparison.pdf  used on input l
+ine 1701.
+(pdftex.def)             Requested size: 355.10022pt x 192.5071pt.
+
+Overfull \hbox (109.10022pt too wide) in paragraph at lines 1699--1702
+ [] 
+ []
+
+File: Images/NormalPSD/ResidualsComparison.pdf Graphic file (type pdf)
+<use Images/NormalPSD/ResidualsComparison.pdf>
+Package pdftex.def Info: Images/NormalPSD/ResidualsComparison.pdf  used on inpu
+t line 1709.
+(pdftex.def)             Requested size: 358.59102pt x 195.29958pt.
+
+Overfull \hbox (112.59102pt too wide) in paragraph at lines 1709--1710
+ [][] 
+ []
+
+[30pdfTeX warning (ext4): destination with the same identifier (name{figure.28}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1715 
+       pdfTeX warning (ext4): destination with the same identifier (name{figure
+.29}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1715 
+       ]
+
+LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
+ on input line 1715.
+
+File: Images/LIGOsimulate/LigoPSDoriginal.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/LigoPSDoriginal.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/LigoPSDoriginal.pdf  used on input
+ line 1721.
+(pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
+
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1721--1722
+ [][] 
+ []
+
+[31pdfTeX warning (ext4): destination with the same identifier (name{figure.30}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1730 \subsubsection
+                     {Properties for the average spectrum}pdfTeX warning (ext4)
+: destination with the same identifier (name{figure.31}) has been already used,
+ duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1730 \subsubsection
+                     {Properties for the average spectrum}pdfTeX warning (ext4)
+: destination with the same identifier (name{figure.32}) has been already used,
+ duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1730 \subsubsection
+                     {Properties for the average spectrum}pdfTeX warning (ext4)
+: destination with the same identifier (name{figure.33}) has been already used,
+ duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1730 \subsubsection
+                     {Properties for the average spectrum}]
+File: Images/LIGOsimulate/PSD.pdf Graphic file (type pdf)
+<use Images/LIGOsimulate/PSD.pdf>
+Package pdftex.def Info: Images/LIGOsimulate/PSD.pdf  used on input line 1735.
+(pdftex.def)             Requested size: 360.08449pt x 191.64973pt.
+
+Overfull \hbox (114.08449pt too wide) in paragraph at lines 1735--1736
+ [][] 
+ []
+
+
+Overfull \hbox (40.30647pt too wide) detected at line 1742
 [][][] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0426%\OML/cmm/m/it/
 10 ;  [] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 129%\OML/cmm/m/it
 /10 ;  [] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0211%
  []
 
-<Images/LIGOsimulate/1stPeakComparison.pdf, id=1259, 935.1738pt x 484.209pt>
 File: Images/LIGOsimulate/1stPeakComparison.pdf Graphic file (type pdf)
 <use Images/LIGOsimulate/1stPeakComparison.pdf>
 Package pdftex.def Info: Images/LIGOsimulate/1stPeakComparison.pdf  used on inp
-ut line 1451.
+ut line 1745.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1451--1452
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1745--1746
  [][] 
  []
 
-<Images/LIGOsimulate/2ndPeakComparison.pdf, id=1260, 935.1738pt x 484.209pt>
 File: Images/LIGOsimulate/2ndPeakComparison.pdf Graphic file (type pdf)
 <use Images/LIGOsimulate/2ndPeakComparison.pdf>
 Package pdftex.def Info: Images/LIGOsimulate/2ndPeakComparison.pdf  used on inp
-ut line 1461.
+ut line 1755.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1461--1462
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1755--1756
  [][] 
  []
 
@@ -1771,37 +2213,28 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[25pdfTeX warning (ext4): destination with the same identifier (name{figure.15}
+[32pdfTeX warning (ext4): destination with the same identifier (name{figure.34}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1470 \subsubsection
+l.1764 \subsubsection
                      {Statistical properties of single realizations}pdfTeX warn
-ing (ext4): destination with the same identifier (name{figure.16}) has been alr
+ing (ext4): destination with the same identifier (name{figure.35}) has been alr
 eady used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1470 \subsubsection
+l.1764 \subsubsection
                      {Statistical properties of single realizations}pdfTeX warn
-ing (ext4): destination with the same identifier (name{figure.17}) has been alr
+ing (ext4): destination with the same identifier (name{figure.36}) has been alr
 eady used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1470 \subsubsection
-                     {Statistical properties of single realizations} <./Images/
-LIGOsimulate/PSD.pdf> <./Images/LIGOsimulate/1stPeakComparison.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/1stPeakComparison
-.pdf): PDF inclusion: multiple pdfs with page group included in a single page
-> <./Images/LIGOsimulate/2ndPeakComparison.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/2ndPeakComparison
-.pdf): PDF inclusion: multiple pdfs with page group included in a single page
->]
-Overfull \hbox (28.96895pt too wide) detected at line 1475
+l.1764 \subsubsection
+                     {Statistical properties of single realizations}]
+Overfull \hbox (28.96895pt too wide) detected at line 1769
 [][][] \OT1/cmr/m/n/10 = 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 13 \OMS/cmsy/m/n/10
  ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 01;  [] = 0\OML/cmm/m/i
 t/10 :\OT1/cmr/m/n/10 17 \OMS/cmsy/m/n/10 ^^F \OML/cmm/m/it/10 :\OT1/cmr/m/n/10
@@ -1809,72 +2242,65 @@ t/10 :\OT1/cmr/m/n/10 17 \OMS/cmsy/m/n/10 ^^F \OML/cmm/m/it/10 :\OT1/cmr/m/n/10
 /n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 1
  []
 
-<Images/LIGOsimulate/orderVSerror.pdf, id=1392, 789.11891pt x 424.55914pt>
 File: Images/LIGOsimulate/orderVSerror.pdf Graphic file (type pdf)
 <use Images/LIGOsimulate/orderVSerror.pdf>
 Package pdftex.def Info: Images/LIGOsimulate/orderVSerror.pdf  used on input li
-ne 1480.
+ne 1774.
 (pdftex.def)             Requested size: 339.31451pt x 182.55687pt.
 
-Overfull \hbox (93.31451pt too wide) in paragraph at lines 1480--1481
+Overfull \hbox (93.31451pt too wide) in paragraph at lines 1774--1775
  [][] 
  []
 
-<Images/LIGOsimulate/LigoHists.pdf, id=1393, 795.50214pt x 424.55914pt>
 File: Images/LIGOsimulate/LigoHists.pdf Graphic file (type pdf)
 <use Images/LIGOsimulate/LigoHists.pdf>
 Package pdftex.def Info: Images/LIGOsimulate/LigoHists.pdf  used on input line 
-1487.
+1781.
 (pdftex.def)             Requested size: 342.05925pt x 182.55687pt.
 
-Overfull \hbox (96.05925pt too wide) in paragraph at lines 1487--1488
+Overfull \hbox (96.05925pt too wide) in paragraph at lines 1781--1782
  [][] 
  []
 
-<Images/AlternativeCAT/AlternativeCAT.pdf, id=1395, 935.1738pt x 484.209pt>
+<Images/AlternativeCAT/AlternativeCAT.pdf, id=1607, 935.1738pt x 484.209pt>
 File: Images/AlternativeCAT/AlternativeCAT.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/AlternativeCAT.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/AlternativeCAT.pdf  used on inpu
-t line 1504.
+t line 1798.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1504--1505
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1798--1799
  [][] 
  []
 
-[26pdfTeX warning (ext4): destination with the same identifier (name{figure.18}
+[33pdfTeX warning (ext4): destination with the same identifier (name{figure.37}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1511 
+l.1805 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
-.19}) has been already used, duplicate ignored
+.38}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1511 
-        <./Images/LIGOsimulate/orderVSerror.pdf> <./Images/LIGOsimulate/LigoHis
-ts.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Images/LIGOsimulate/LigoHists.pdf): P
-DF inclusion: multiple pdfs with page group included in a single page
->]
-<Images/AlternativeCAT/histACatVSFpe.pdf, id=1481, 935.1738pt x 484.209pt>
+l.1805 
+       ]
+<Images/AlternativeCAT/histACatVSFpe.pdf, id=1615, 935.1738pt x 484.209pt>
 File: Images/AlternativeCAT/histACatVSFpe.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/histACatVSFpe.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/histACatVSFpe.pdf  used on input
- line 1516.
+ line 1810.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1516--1517
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1810--1811
  [][] 
  []
 
 ! Argument of \mathaccentV has an extra }.
 <inserted text> 
                 \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -1887,7 +2313,7 @@ Runaway argument?
 ! Paragraph ended before \mathaccentV was complete.
 <to be read again> 
                    \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
@@ -1896,7 +2322,7 @@ My plan is to forget the whole thing and hope for the best.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -1904,7 +2330,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1915,7 +2341,7 @@ my insertion and my current dilemma will both disappear.
 ! Extra }, or forgotten $.
 <recently read> }
                  
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1926,7 +2352,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -1934,7 +2360,7 @@ you left one out. Proceed, with fingers crossed.
 ! Argument of \mathaccentV has an extra }.
 <inserted text> 
                 \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -1947,7 +2373,7 @@ Runaway argument?
 ! Paragraph ended before \mathaccentV was complete.
 <to be read again> 
                    \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
@@ -1956,7 +2382,7 @@ My plan is to forget the whole thing and hope for the best.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -1964,7 +2390,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1975,7 +2401,7 @@ my insertion and my current dilemma will both disappear.
 ! Extra }, or forgotten $.
 <recently read> }
                  
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1986,7 +2412,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -1994,7 +2420,7 @@ you left one out. Proceed, with fingers crossed.
 ! Argument of \mathaccentV has an extra }.
 <inserted text> 
                 \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -2007,7 +2433,7 @@ Runaway argument?
 ! Paragraph ended before \mathaccentV was complete.
 <to be read again> 
                    \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
@@ -2016,7 +2442,7 @@ My plan is to forget the whole thing and hope for the best.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -2024,7 +2450,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -2035,7 +2461,7 @@ my insertion and my current dilemma will both disappear.
 ! Extra }, or forgotten $.
 <recently read> }
                  
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2046,7 +2472,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -2054,7 +2480,7 @@ you left one out. Proceed, with fingers crossed.
 ! Argument of \mathaccentV has an extra }.
 <inserted text> 
                 \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -2067,7 +2493,7 @@ Runaway argument?
 ! Paragraph ended before \mathaccentV was complete.
 <to be read again> 
                    \par 
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
@@ -2076,7 +2502,7 @@ My plan is to forget the whole thing and hope for the best.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -2084,7 +2510,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -2095,7 +2521,7 @@ my insertion and my current dilemma will both disappear.
 ! Extra }, or forgotten $.
 <recently read> }
                  
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2106,65 +2532,65 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1529 \end{align}
+l.1823 \end{align}
                   
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-<Images/AlternativeCAT/FPEaCATwhole.pdf, id=1484, 935.1738pt x 484.209pt>
+<Images/AlternativeCAT/FPEaCATwhole.pdf, id=1618, 935.1738pt x 484.209pt>
 File: Images/AlternativeCAT/FPEaCATwhole.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/FPEaCATwhole.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/FPEaCATwhole.pdf  used on input 
-line 1533.
+line 1827.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1533--1534
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1827--1828
  [][] 
  []
 
-<Images/AlternativeCAT/FPEaCAT7000.pdf, id=1487, 935.1738pt x 484.209pt>
+<Images/AlternativeCAT/FPEaCAT7000.pdf, id=1621, 935.1738pt x 484.209pt>
 File: Images/AlternativeCAT/FPEaCAT7000.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/FPEaCAT7000.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/FPEaCAT7000.pdf  used on input l
-ine 1542.
+ine 1836.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 1542--1543
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 1836--1837
  [][] 
  []
 
-[27pdfTeX warning (ext4): destination with the same identifier (name{figure.20}
+[34pdfTeX warning (ext4): destination with the same identifier (name{figure.39}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1550 \subsection
+l.1844 \subsection
                   {Alternative VS Standard CAT} <./Images/AlternativeCAT/Altern
 ativeCAT.pdf>]
 
 LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1550.
+ on input line 1844.
 
-[28pdfTeX warning (ext4): destination with the same identifier (name{figure.21}
+[35pdfTeX warning (ext4): destination with the same identifier (name{figure.40}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1550 \subsection
+l.1844 \subsection
                   {Alternative VS Standard CAT}pdfTeX warning (ext4): destinati
-on with the same identifier (name{figure.22}) has been already used, duplicate 
+on with the same identifier (name{figure.41}) has been already used, duplicate 
 ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1550 \subsection
+l.1844 \subsection
                   {Alternative VS Standard CAT}pdfTeX warning (ext4): destinati
-on with the same identifier (name{figure.23}) has been already used, duplicate 
+on with the same identifier (name{figure.42}) has been already used, duplicate 
 ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1550 \subsection
+l.1844 \subsection
                   {Alternative VS Standard CAT} <./Images/AlternativeCAT/histAC
 atVSFpe.pdf> <./Images/AlternativeCAT/FPEaCATwhole.pdf
 
@@ -2175,86 +2601,86 @@ f): PDF inclusion: multiple pdfs with page group included in a single page
 pdfTeX warning: /usr/bin/pdflatex (file ./Images/AlternativeCAT/FPEaCAT7000.pdf
 ): PDF inclusion: multiple pdfs with page group included in a single page
 >]
-<Images/AlternativeCAT/AlternativeVSstandard.pdf, id=1657, 935.1738pt x 484.209
+<Images/AlternativeCAT/AlternativeVSstandard.pdf, id=1791, 935.1738pt x 484.209
 pt>
 File: Images/AlternativeCAT/AlternativeVSstandard.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/AlternativeVSstandard.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/AlternativeVSstandard.pdf  used 
-on input line 1554.
+on input line 1848.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1554--1555
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1848--1849
  [][] 
  []
 
-<Images/AlternativeCAT/CATvsALTerrors.pdf, id=1659, 935.1738pt x 484.209pt>
+<Images/AlternativeCAT/CATvsALTerrors.pdf, id=1793, 935.1738pt x 484.209pt>
 File: Images/AlternativeCAT/CATvsALTerrors.pdf Graphic file (type pdf)
 <use Images/AlternativeCAT/CATvsALTerrors.pdf>
 Package pdftex.def Info: Images/AlternativeCAT/CATvsALTerrors.pdf  used on inpu
-t line 1561.
+t line 1855.
 (pdftex.def)             Requested size: 420.82433pt x 217.89203pt.
 
-Overfull \hbox (174.82433pt too wide) in paragraph at lines 1561--1562
+Overfull \hbox (174.82433pt too wide) in paragraph at lines 1855--1856
  [][] 
  []
 
-<Images/WelchVSfpe.pdf, id=1663, 1151.93375pt x 575.5175pt>
+<Images/WelchVSfpe.pdf, id=1797, 1151.93375pt x 575.5175pt>
 File: Images/WelchVSfpe.pdf Graphic file (type pdf)
 <use Images/WelchVSfpe.pdf>
-Package pdftex.def Info: Images/WelchVSfpe.pdf  used on input line 1574.
+Package pdftex.def Info: Images/WelchVSfpe.pdf  used on input line 1868.
 (pdftex.def)             Requested size: 345.5828pt x 172.65659pt.
 
-Overfull \hbox (99.5828pt too wide) in paragraph at lines 1574--1575
+Overfull \hbox (99.5828pt too wide) in paragraph at lines 1868--1869
  [][] 
  []
 
-[29pdfTeX warning (ext4): destination with the same identifier (name{figure.24}
+[36pdfTeX warning (ext4): destination with the same identifier (name{figure.43}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1578 
+l.1872 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
-.25}) has been already used, duplicate ignored
+.44}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1578 
+l.1872 
         <./Images/AlternativeCAT/AlternativeVSstandard.pdf> <./Images/Alternati
 veCAT/CATvsALTerrors.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./Images/AlternativeCAT/CATvsALTerrors.
 pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >]
-<Images/WelchErrors.pdf, id=1754, 1179.52608pt x 562.36435pt>
+<Images/WelchErrors.pdf, id=1889, 1179.52608pt x 562.36435pt>
 File: Images/WelchErrors.pdf Graphic file (type pdf)
 <use Images/WelchErrors.pdf>
-Package pdftex.def Info: Images/WelchErrors.pdf  used on input line 1588.
+Package pdftex.def Info: Images/WelchErrors.pdf  used on input line 1882.
 (pdftex.def)             Requested size: 353.86055pt x 168.7106pt.
 
-Overfull \hbox (107.86055pt too wide) in paragraph at lines 1588--1589
+Overfull \hbox (107.86055pt too wide) in paragraph at lines 1882--1883
  [][] 
  []
 
-[30pdfTeX warning (ext4): destination with the same identifier (name{figure.27}
+[37pdfTeX warning (ext4): destination with the same identifier (name{figure.46}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1598 
+l.1892 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
-.26}) has been already used, duplicate ignored
+.45}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1598 
+l.1892 
         <./Images/WelchErrors.pdf> <./Images/WelchVSfpe.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./Images/WelchVSfpe.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
 >]
 ! Undefined control sequence.
-l.1599 \chapter
+l.1893 \chapter
                {Solar Spots Analysis}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2262,59 +2688,59 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<Images/SunSpots/SunSpotsNumbers.pdf, id=1853, 785.91946pt x 424.55914pt>
+<Images/SunSpots/SunSpotsNumbers.pdf, id=1988, 785.91946pt x 424.55914pt>
 File: Images/SunSpots/SunSpotsNumbers.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsNumbers.pdf>
 Package pdftex.def Info: Images/SunSpots/SunSpotsNumbers.pdf  used on input lin
-e 1623.
+e 1917.
 (pdftex.def)             Requested size: 353.66049pt x 191.04985pt.
 
-Overfull \hbox (107.66049pt too wide) in paragraph at lines 1623--1624
+Overfull \hbox (107.66049pt too wide) in paragraph at lines 1917--1918
  [][] 
  []
 
-<Images/SunSpots/SunSpotsPSD&ACR.pdf, id=1855, 780.94777pt x 418.72484pt>
+<Images/SunSpots/SunSpotsPSD&ACR.pdf, id=1990, 780.94777pt x 418.72484pt>
 File: Images/SunSpots/SunSpotsPSD&ACR.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsPSD&ACR.pdf>
 Package pdftex.def Info: Images/SunSpots/SunSpotsPSD&ACR.pdf  used on input lin
-e 1631.
+e 1925.
 (pdftex.def)             Requested size: 351.42325pt x 188.42444pt.
 
-Overfull \hbox (105.42325pt too wide) in paragraph at lines 1631--1632
+Overfull \hbox (105.42325pt too wide) in paragraph at lines 1925--1926
  [][] 
  []
 
-[31pdfTeX warning (ext4): destination with the same identifier (name{figure.28}
+[38pdfTeX warning (ext4): destination with the same identifier (name{figure.47}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1639 \begin{equation}
+l.1933 \begin{equation}
                        pdfTeX warning (ext4): destination with the same identif
-ier (name{figure.29}) has been already used, duplicate ignored
+ier (name{figure.48}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1639 \begin{equation}
+l.1933 \begin{equation}
                         <./Images/SunSpots/SunSpotsNumbers.pdf> <./Images/SunSp
 ots/SunSpotsPSD&ACR.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./Images/SunSpots/SunSpotsPSD&ACR.pdf):
  PDF inclusion: multiple pdfs with page group included in a single page
 >]
-<Images/SunSpots/SunSpotsFit.pdf, id=1943, 805.06914pt x 427.6807pt>
+<Images/SunSpots/SunSpotsFit.pdf, id=2077, 805.06914pt x 427.6807pt>
 File: Images/SunSpots/SunSpotsFit.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsFit.pdf>
-Package pdftex.def Info: Images/SunSpots/SunSpotsFit.pdf  used on input line 16
-44.
+Package pdftex.def Info: Images/SunSpots/SunSpotsFit.pdf  used on input line 19
+38.
 (pdftex.def)             Requested size: 362.27777pt x 192.45453pt.
 
-Overfull \hbox (116.27777pt too wide) in paragraph at lines 1644--1645
+Overfull \hbox (116.27777pt too wide) in paragraph at lines 1938--1939
  [][] 
  []
 
 
-Overfull \hbox (156.86308pt too wide) detected at line 1659
+Overfull \hbox (156.86308pt too wide) detected at line 1953
 [][][] \OT1/cmr/m/n/10 = (3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 35 \OMS/cmsy/m/n/1
 0 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 02) \OMS/cmsy/m/n/10 ^
 ^A \OT1/cmr/m/n/10 10[];  [] = (8\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 104 \OMS/cms
@@ -2324,76 +2750,76 @@ m/n/10 ^^A \OT1/cmr/m/n/10 10[][][];  [] = (5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10
 \OMS/cmsy/m/n/10 ^^A \OT1/cmr/m/n/10 10[][][]
  []
 
-<Images/SunSpots/SunSpotsTotalFit.pdf, id=1946, 805.06914pt x 424.55914pt>
+<Images/SunSpots/SunSpotsTotalFit.pdf, id=2080, 805.06914pt x 424.55914pt>
 File: Images/SunSpots/SunSpotsTotalFit.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsTotalFit.pdf>
 Package pdftex.def Info: Images/SunSpots/SunSpotsTotalFit.pdf  used on input li
-ne 1672.
+ne 1966.
 (pdftex.def)             Requested size: 378.38255pt x 199.54282pt.
 
-Overfull \hbox (132.38255pt too wide) in paragraph at lines 1672--1673
+Overfull \hbox (132.38255pt too wide) in paragraph at lines 1966--1967
  [][] 
  []
 
-<Images/SunSpots/SunSpotsARcoefficients.pdf, id=1948, 782.73569pt x 424.55914pt
+<Images/SunSpots/SunSpotsARcoefficients.pdf, id=2082, 782.73569pt x 424.55914pt
 >
 File: Images/SunSpots/SunSpotsARcoefficients.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsARcoefficients.pdf>
 Package pdftex.def Info: Images/SunSpots/SunSpotsARcoefficients.pdf  used on in
-put line 1682.
+put line 1976.
 (pdftex.def)             Requested size: 367.88582pt x 199.54282pt.
 
-Overfull \hbox (121.88582pt too wide) in paragraph at lines 1682--1683
+Overfull \hbox (121.88582pt too wide) in paragraph at lines 1976--1977
  [][] 
  []
 
-[32pdfTeX warning (ext4): destination with the same identifier (name{figure.30}
+[39pdfTeX warning (ext4): destination with the same identifier (name{figure.49}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1688 \begin{equation}
+l.1982 \begin{equation}
                        pdfTeX warning (ext4): destination with the same identif
-ier (name{figure.31}) has been already used, duplicate ignored
+ier (name{figure.50}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1688 \begin{equation}
+l.1982 \begin{equation}
                        pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.24.120}) has been already used, duplicate ignored
+ier (name{equation.27.125}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1688 \begin{equation}
+l.1982 \begin{equation}
                         <./Images/SunSpots/SunSpotsFit.pdf> <./Images/SunSpots/
 SunSpotsTotalFit.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./Images/SunSpots/SunSpotsTotalFit.pdf)
 : PDF inclusion: multiple pdfs with page group included in a single page
 >]
-<Images/SunSpots/SunSpotsForecast.pdf, id=2038, 795.07213pt x 424.55914pt>
+<Images/SunSpots/SunSpotsForecast.pdf, id=2172, 795.07213pt x 424.55914pt>
 File: Images/SunSpots/SunSpotsForecast.pdf Graphic file (type pdf)
 <use Images/SunSpots/SunSpotsForecast.pdf>
 Package pdftex.def Info: Images/SunSpots/SunSpotsForecast.pdf  used on input li
-ne 1696.
+ne 1990.
 (pdftex.def)             Requested size: 373.68396pt x 199.54282pt.
 
-Overfull \hbox (127.68396pt too wide) in paragraph at lines 1696--1697
+Overfull \hbox (127.68396pt too wide) in paragraph at lines 1990--1991
  [][] 
  []
 
-[33pdfTeX warning (ext4): destination with the same identifier (name{figure.32}
+[40pdfTeX warning (ext4): destination with the same identifier (name{figure.51}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1707 \section
+l.2001 \section
                {Conclusions}pdfTeX warning (ext4): destination with the same id
-entifier (name{figure.33}) has been already used, duplicate ignored
+entifier (name{figure.52}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1707 \section
+l.2001 \section
                {Conclusions} <./Images/SunSpots/SunSpotsARcoefficients.pdf> <./
 Images/SunSpots/SunSpotsForecast.pdf
 
@@ -2401,7 +2827,7 @@ pdfTeX warning: /usr/bin/pdflatex (file ./Images/SunSpots/SunSpotsForecast.pdf)
 : PDF inclusion: multiple pdfs with page group included in a single page
 >]
 ! Undefined control sequence.
-l.1717 \chapter
+l.2011 \chapter
                {Sinusoidal Signals}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2410,175 +2836,175 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1734--1738
+Underfull \hbox (badness 10000) in paragraph at lines 2028--2032
 
  []
 
-[34]
-Overfull \hbox (139.40259pt too wide) detected at line 1756
+[41]
+Overfull \hbox (139.40259pt too wide) detected at line 2050
 []
  []
 
 
-Overfull \hbox (14.11711pt too wide) detected at line 1765
+Overfull \hbox (14.11711pt too wide) detected at line 2059
 []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1774--1777
+Underfull \hbox (badness 10000) in paragraph at lines 2068--2071
 
  []
 
-[35pdfTeX warning (ext4): destination with the same identifier (name{equation.2
-8.124}) has been already used, duplicate ignored
+[42pdfTeX warning (ext4): destination with the same identifier (name{equation.3
+1.129}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1778 \section
+l.2072 \section
                {Power Spectral density Computation}pdfTeX warning (ext4): desti
-nation with the same identifier (name{equation.28.126}) has been already used, 
+nation with the same identifier (name{equation.31.131}) has been already used, 
 duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1778 \section
-               {Power Spectral density Computation}] [36pdfTeX warning (ext4): 
-destination with the same identifier (name{equation.29.129}) has been already u
+l.2072 \section
+               {Power Spectral density Computation}] [43pdfTeX warning (ext4): 
+destination with the same identifier (name{equation.32.134}) has been already u
 sed, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1828 
+l.2122 
        ]pdfTeX warning (ext4): destination with the same identifier (name{equat
-ion.29.131}) has been already used, duplicate ignored
+ion.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1838     \begin{equation}
+l.2132     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1838     \begin{equation}
+l.2132     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1838     \begin{equation}
+l.2132     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1838     \begin{equation}
+l.2132     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1855 \begin{equation}
+l.2149 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1855 \begin{equation}
+l.2149 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1855 \begin{equation}
+l.2149 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1855 \begin{equation}
+l.2149 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1860 \begin{equation}
+l.2154 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1860 \begin{equation}
+l.2154 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1860 \begin{equation}
+l.2154 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1860 \begin{equation}
+l.2154 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.29.131}) has been already used, duplicate ignored
+e identifier (name{equation.32.136}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.1878     \begin{equation}
+l.2172     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1878     \begin{equation}
+l.2172     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1878     \begin{equation}
+l.2172     \begin{equation}
                            \nonumberpdfTeX warning (ext4): destination with the
- same identifier (name{equation.29.131}) has been already used, duplicate ignor
+ same identifier (name{equation.32.136}) has been already used, duplicate ignor
 ed
 <to be read again> 
                    \relax 
-l.1878     \begin{equation}
+l.2172     \begin{equation}
                            \nonumber
-Underfull \hbox (badness 2538) in paragraph at lines 1882--1883
+Underfull \hbox (badness 2538) in paragraph at lines 2176--2177
  []\OT1/cmr/m/n/10 Compute power spec-tral den-sity $\OML/cmm/m/it/10 S[]$ \OT1
 /cmr/m/n/10 ap-ply-ing
  []
 
-[37]
-<Images/BrownData/BrownData.pdf, id=2177, 787.94264pt x 424.55914pt>
+[44]
+<Images/BrownData/BrownData.pdf, id=2311, 787.94264pt x 424.55914pt>
 File: Images/BrownData/BrownData.pdf Graphic file (type pdf)
 <use Images/BrownData/BrownData.pdf>
-Package pdftex.def Info: Images/BrownData/BrownData.pdf  used on input line 192
-5.
+Package pdftex.def Info: Images/BrownData/BrownData.pdf  used on input line 221
+9.
 (pdftex.def)             Requested size: 315.17148pt x 169.82065pt.
 
-Overfull \hbox (69.17148pt too wide) in paragraph at lines 1925--1926
+Overfull \hbox (69.17148pt too wide) in paragraph at lines 2219--2220
  [][] 
  []
 
-<Images/BrownData/OffSource_PSDcomparison.pdf, id=2178, 935.1738pt x 484.209pt>
+<Images/BrownData/OffSource_PSDcomparison.pdf, id=2312, 935.1738pt x 484.209pt>
 
 File: Images/BrownData/OffSource_PSDcomparison.pdf Graphic file (type pdf)
 <use Images/BrownData/OffSource_PSDcomparison.pdf>
 Package pdftex.def Info: Images/BrownData/OffSource_PSDcomparison.pdf  used on 
-input line 1934.
+input line 2228.
 (pdftex.def)             Requested size: 374.0629pt x 193.68016pt.
 
-Overfull \hbox (128.0629pt too wide) in paragraph at lines 1934--1935
+Overfull \hbox (128.0629pt too wide) in paragraph at lines 2228--2229
  [][] 
  []
 
-<Images/BrownData/BrownOffPosteriors.pdf, id=2183, 935.1738pt x 484.209pt>
+<Images/BrownData/BrownOffPosteriors.pdf, id=2317, 935.1738pt x 484.209pt>
 File: Images/BrownData/BrownOffPosteriors.pdf Graphic file (type pdf)
 <use Images/BrownData/BrownOffPosteriors.pdf>
 Package pdftex.def Info: Images/BrownData/BrownOffPosteriors.pdf  used on input
- line 1944.
+ line 2238.
 (pdftex.def)             Requested size: 439.53175pt x 227.57825pt.
 
-Overfull \hbox (193.53175pt too wide) in paragraph at lines 1944--1945
+Overfull \hbox (193.53175pt too wide) in paragraph at lines 2238--2239
  [][] 
  []
 
 
-Overfull \hbox (73.29732pt too wide) detected at line 1952
+Overfull \hbox (73.29732pt too wide) detected at line 2246
 [][][] \OT1/cmr/m/n/10 = 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 86 \OMS/cmsy/m/n/10
  ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 04;  [] = 7\OML/cmm/m/i
 t/10 :\OT1/cmr/m/n/10 10 \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10
@@ -2586,25 +3012,25 @@ t/10 :\OT1/cmr/m/n/10 10 \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10
 n/10 ^^F \OT1/cmr/m/n/10 4 \OMS/cmsy/m/n/10 ^^A \OT1/cmr/m/n/10 10[]
  []
 
-[38pdfTeX warning (ext4): destination with the same identifier (name{figure.34}
+[45pdfTeX warning (ext4): destination with the same identifier (name{figure.53}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1954 \begin{equation}
+l.2248 \begin{equation}
                        pdfTeX warning (ext4): destination with the same identif
-ier (name{equation.30.132}) has been already used, duplicate ignored
+ier (name{equation.33.137}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1954 \begin{equation}
+l.2248 \begin{equation}
                         <./Images/BrownData/BrownData.pdf>]
 
 LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1954.
+ on input line 2248.
 
 
-Overfull \hbox (79.4883pt too wide) detected at line 1958
+Overfull \hbox (79.4883pt too wide) detected at line 2252
 [][][] \OT1/cmr/m/n/10 = 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 94 \OMS/cmsy/m/n/10
  ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 07;  [] = 6\OML/cmm/m/i
 t/10 :\OT1/cmr/m/n/10 96 \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10
@@ -2612,70 +3038,70 @@ t/10 :\OT1/cmr/m/n/10 96 \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10
 m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 00005
  []
 
-<Images/BrownData/BrownOnPosteriors.pdf, id=2222, 782.73569pt x 427.25197pt>
+<Images/BrownData/BrownOnPosteriors.pdf, id=2356, 782.73569pt x 427.25197pt>
 File: Images/BrownData/BrownOnPosteriors.pdf Graphic file (type pdf)
 <use Images/BrownData/BrownOnPosteriors.pdf>
 Package pdftex.def Info: Images/BrownData/BrownOnPosteriors.pdf  used on input 
-line 1964.
+line 2258.
 (pdftex.def)             Requested size: 367.88582pt x 200.80844pt.
 
-Overfull \hbox (121.88582pt too wide) in paragraph at lines 1964--1965
+Overfull \hbox (121.88582pt too wide) in paragraph at lines 2258--2259
  [][] 
  []
 
 
-Underfull \hbox (badness 1178) in paragraph at lines 1961--1969
+Underfull \hbox (badness 1178) in paragraph at lines 2255--2263
 []\OT1/cmr/m/n/10 On source es-ti-mate is per-formed di-rectly on the
  []
 
-<Images/BrownData/On_Source_PSDposterior.pdf, id=2224, 790.8598pt x 425.89224pt
+<Images/BrownData/On_Source_PSDposterior.pdf, id=2358, 790.8598pt x 425.89224pt
 >
 File: Images/BrownData/On_Source_PSDposterior.pdf Graphic file (type pdf)
 <use Images/BrownData/On_Source_PSDposterior.pdf>
 Package pdftex.def Info: Images/BrownData/On_Source_PSDposterior.pdf  used on i
-nput line 1977.
+nput line 2271.
 (pdftex.def)             Requested size: 340.0631pt x 183.13008pt.
 
-Overfull \hbox (94.0631pt too wide) in paragraph at lines 1977--1978
+Overfull \hbox (94.0631pt too wide) in paragraph at lines 2271--2272
  [][] 
  []
 
-<Images/BrownData/OnSource_ReconstructedNoise.pdf, id=2226, 787.94264pt x 424.5
+<Images/BrownData/OnSource_ReconstructedNoise.pdf, id=2360, 787.94264pt x 424.5
 5914pt>
 File: Images/BrownData/OnSource_ReconstructedNoise.pdf Graphic file (type pdf)
 <use Images/BrownData/OnSource_ReconstructedNoise.pdf>
 Package pdftex.def Info: Images/BrownData/OnSource_ReconstructedNoise.pdf  used
- on input line 1984.
+ on input line 2278.
 (pdftex.def)             Requested size: 338.80873pt x 182.55687pt.
 
-Overfull \hbox (92.80873pt too wide) in paragraph at lines 1984--1985
+Overfull \hbox (92.80873pt too wide) in paragraph at lines 2278--2279
  [][] 
  []
 
-[39pdfTeX warning (ext4): destination with the same identifier (name{figure.35}
+[46pdfTeX warning (ext4): destination with the same identifier (name{figure.54}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1989 \begin{equation}
+l.2283 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{figure.36}) has been already used, duplicate ignored
+e identifier (name{figure.55}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1989 \begin{equation}
+l.2283 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{equation.30.133}) has been already used, duplicate ignored
+e identifier (name{equation.33.138}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1989 \begin{equation}
+l.2283 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{figure.37}) has been already used, duplicate ignored
+e identifier (name{figure.56}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1989 \begin{equation}
+l.2283 \begin{equation}
                        \nonumber <./Images/BrownData/OffSource_PSDcomparison.pd
 f> <./Images/BrownData/BrownOffPosteriors.pdf
 
@@ -2688,20 +3114,20 @@ f): PDF inclusion: multiple pdfs with page group included in a single page
 >]
 
 LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 1989.
+ on input line 2283.
 
-[40pdfTeX warning (ext4): destination with the same identifier (name{figure.38}
+[47pdfTeX warning (ext4): destination with the same identifier (name{figure.57}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1995 \section
+l.2289 \section
                {Ligo Noise}pdfTeX warning (ext4): destination with the same ide
-ntifier (name{figure.39}) has been already used, duplicate ignored
+ntifier (name{figure.58}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1995 \section
+l.2289 \section
                {Ligo Noise} <./Images/BrownData/On_Source_PSDposterior.pdf> <./
 Images/BrownData/OnSource_ReconstructedNoise.pdf
 
@@ -2709,63 +3135,63 @@ pdfTeX warning: /usr/bin/pdflatex (file ./Images/BrownData/OnSource_Reconstruct
 edNoise.pdf): PDF inclusion: multiple pdfs with page group included in a single
  page
 >]
-<Images/LigoOnSource/ObservedData.pdf, id=2438, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/ObservedData.pdf, id=2572, 935.1738pt x 484.209pt>
 File: Images/LigoOnSource/ObservedData.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/ObservedData.pdf>
 Package pdftex.def Info: Images/LigoOnSource/ObservedData.pdf  used on input li
-ne 2012.
+ne 2306.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2012--2013
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2306--2307
  [][] 
  []
 
-<Images/LigoOnSource/offPSDcomparison.pdf, id=2441, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/offPSDcomparison.pdf, id=2575, 935.1738pt x 484.209pt>
 File: Images/LigoOnSource/offPSDcomparison.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/offPSDcomparison.pdf>
 Package pdftex.def Info: Images/LigoOnSource/offPSDcomparison.pdf  used on inpu
-t line 2022.
+t line 2316.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2022--2023
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2316--2317
  [][] 
  []
 
-<Images/LigoOnSource/PosteriorsComparison.pdf, id=2443, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/PosteriorsComparison.pdf, id=2577, 935.1738pt x 484.209pt>
 
 File: Images/LigoOnSource/PosteriorsComparison.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/PosteriorsComparison.pdf>
 Package pdftex.def Info: Images/LigoOnSource/PosteriorsComparison.pdf  used on 
-input line 2029.
+input line 2323.
 (pdftex.def)             Requested size: 430.18517pt x 222.73883pt.
 
-Overfull \hbox (184.18517pt too wide) in paragraph at lines 2029--2030
+Overfull \hbox (184.18517pt too wide) in paragraph at lines 2323--2324
  [][] 
  []
 
 
-Overfull \hbox (0.76616pt too wide) detected at line 2040
+Overfull \hbox (0.76616pt too wide) detected at line 2334
 []
  []
 
-[41pdfTeX warning (ext4): destination with the same identifier (name{figure.40}
+[48pdfTeX warning (ext4): destination with the same identifier (name{figure.59}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2040 \end{align*}
+l.2334 \end{align*}
                    pdfTeX warning (ext4): destination with the same identifier 
-(name{figure.41}) has been already used, duplicate ignored
+(name{figure.60}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2040 \end{align*}
+l.2334 \end{align*}
                    pdfTeX warning (ext4): destination with the same identifier 
-(name{figure.42}) has been already used, duplicate ignored
+(name{figure.61}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2040 \end{align*}
+l.2334 \end{align*}
                     <./Images/LigoOnSource/ObservedData.pdf> <./Images/LigoOnSo
 urce/offPSDcomparison.pdf
 
@@ -2777,73 +3203,73 @@ pdfTeX warning: /usr/bin/pdflatex (file ./Images/LigoOnSource/PosteriorsCompari
 son.pdf): PDF inclusion: multiple pdfs with page group included in a single pag
 e
 >]
-Overfull \hbox (0.76616pt too wide) detected at line 2048
+Overfull \hbox (0.76616pt too wide) detected at line 2342
 []
  []
 
-<Images/LigoOnSource/PArametersPosteriors.pdf, id=2570, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/PArametersPosteriors.pdf, id=2704, 935.1738pt x 484.209pt>
 
 File: Images/LigoOnSource/PArametersPosteriors.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/PArametersPosteriors.pdf>
 Package pdftex.def Info: Images/LigoOnSource/PArametersPosteriors.pdf  used on 
-input line 2057.
+input line 2351.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2057--2058
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2351--2352
  [][] 
  []
 
-pdfTeX warning (ext4): destination with the same identifier (name{equation.31.1
-36}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{equation.34.1
+41}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.2067 \end{align}
+l.2361 \end{align}
                   
-<Images/LigoOnSource/PSDestimate.pdf, id=2572, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/PSDestimate.pdf, id=2706, 935.1738pt x 484.209pt>
 File: Images/LigoOnSource/PSDestimate.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/PSDestimate.pdf>
 Package pdftex.def Info: Images/LigoOnSource/PSDestimate.pdf  used on input lin
-e 2073.
+e 2367.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2073--2074
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2367--2368
  [][] 
  []
 
-<Images/LigoOnSource/ErrorEstimate.pdf, id=2574, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/ErrorEstimate.pdf, id=2708, 935.1738pt x 484.209pt>
 File: Images/LigoOnSource/ErrorEstimate.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/ErrorEstimate.pdf>
 Package pdftex.def Info: Images/LigoOnSource/ErrorEstimate.pdf  used on input l
-ine 2080.
+ine 2374.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2080--2081
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2374--2375
  [][] 
  []
 
-<Images/LigoOnSource/NoiseEstimateBisect.pdf, id=2576, 935.1738pt x 484.209pt>
+<Images/LigoOnSource/NoiseEstimateBisect.pdf, id=2710, 935.1738pt x 484.209pt>
 File: Images/LigoOnSource/NoiseEstimateBisect.pdf Graphic file (type pdf)
 <use Images/LigoOnSource/NoiseEstimateBisect.pdf>
 Package pdftex.def Info: Images/LigoOnSource/NoiseEstimateBisect.pdf  used on i
-nput line 2088.
+nput line 2382.
 (pdftex.def)             Requested size: 402.1169pt x 208.20581pt.
 
-Overfull \hbox (156.1169pt too wide) in paragraph at lines 2088--2089
+Overfull \hbox (156.1169pt too wide) in paragraph at lines 2382--2383
  [][] 
  []
 
-[42pdfTeX warning (ext4): destination with the same identifier (name{figure.43}
+[49pdfTeX warning (ext4): destination with the same identifier (name{figure.62}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2094 \begin{equation}
+l.2388 \begin{equation}
                        \nonumberpdfTeX warning (ext4): destination with the sam
-e identifier (name{figure.44}) has been already used, duplicate ignored
+e identifier (name{figure.63}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2094 \begin{equation}
+l.2388 \begin{equation}
                        \nonumber <./Images/LigoOnSource/PArametersPosteriors.pd
 f> <./Images/LigoOnSource/PSDestimate.pdf
 
@@ -2852,26 +3278,26 @@ pdfTeX warning: /usr/bin/pdflatex (file ./Images/LigoOnSource/PSDestimate.pdf):
 >]
 
 LaTeX Warning: A float is stuck (cannot be placed); try class option [floatfix]
- on input line 2094.
+ on input line 2388.
 
-[43pdfTeX warning (ext4): destination with the same identifier (name{figure.45}
+[50pdfTeX warning (ext4): destination with the same identifier (name{figure.64}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2109 
+l.2403 
        pdfTeX warning (ext4): destination with the same identifier (name{equati
-on.31.137}) has been already used, duplicate ignored
+on.34.142}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2109 
+l.2403 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
-.46}) has been already used, duplicate ignored
+.65}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2109 
+l.2403 
         <./Images/LigoOnSource/ErrorEstimate.pdf> <./Images/LigoOnSource/NoiseE
 stimateBisect.pdf
 
@@ -2880,7 +3306,7 @@ ct.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 
 >]
 ! Undefined control sequence.
-l.2111 \chapter
+l.2405 \chapter
                *{Conclusions and future developments}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2888,18 +3314,18 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[44] [45]
-Underfull \hbox (badness 2591) in paragraph at lines 2142--2151
+[51] [52]
+Underfull \hbox (badness 2591) in paragraph at lines 2436--2445
 []\OT1/cmr/m/n/10 R. G. ac-knowl-edges sup-port from the Deutsche
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2142--2151
+Underfull \hbox (badness 10000) in paragraph at lines 2436--2445
 \OT1/cmr/m/n/10 Forschungs-ge-mein-schaft (DFG) un-der Grant No.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2142--2151
+Underfull \hbox (badness 10000) in paragraph at lines 2436--2445
 \OT1/cmr/m/n/10 Forschungs-ge-mein-schaft (DFG) un-der Grant No.
  []
 
@@ -2914,7 +3340,7 @@ Underfull \hbox (badness 2213) in paragraph at lines 47--49
  []\OT1/cmr/m/n/9 K. Vos, ``A Fast Im-ple-men-ta-tion of Burg's Al-go-
  []
 
-[46]
+[53]
 ! Undefined control sequence.
 l.145   ``johnveitch/cpnest: Fix for python \<
                                                3.8 versioning,'' 2020.
@@ -2929,14 +3355,14 @@ Underfull \hbox (badness 1320) in paragraph at lines 144--146
  []\OT1/cmr/m/n/9 J. Veitch, W. D. Pozzo, M. Williams, C. Tal-bot,
  []
 
-) [47]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2165.
+) [54]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2459.
  (./mesa.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2165.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2165.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2459.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2459.
 
 Package rerunfilecheck Info: File `mesa.out' has not changed.
-(rerunfilecheck)             Checksum: 3917422A701B8DF4F92DD65B7865A823;4903.
+(rerunfilecheck)             Checksum: F9E76A1A017520B7CC75BBA8DAE76288;5780.
 
 
 LaTeX Warning: There were undefined references.
@@ -2946,10 +3372,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14336 strings out of 481239
- 253190 string characters out of 5920377
- 564136 words of memory out of 5000000
- 28914 multiletter control sequences out of 15000+600000
+ 14391 strings out of 481239
+ 253784 string characters out of 5920377
+ 566414 words of memory out of 5000000
+ 28926 multiletter control sequences out of 15000+600000
  548764 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  35i,10n,40p,1378b,960s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -2976,10 +3402,10 @@ b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb></usr/sh
 are/texmf/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on mesa.pdf (47 pages, 3275325 bytes).
+Output written on mesa.pdf (54 pages, 3308069 bytes).
 PDF statistics:
- 2949 PDF objects out of 2984 (max. 8388607)
- 1289 compressed objects within 13 object streams
- 368 named destinations out of 1000 (max. 500000)
- 791 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3092 PDF objects out of 3580 (max. 8388607)
+ 1419 compressed objects within 15 object streams
+ 411 named destinations out of 1000 (max. 500000)
+ 879 words of extra memory for PDF output out of 10000 (max. 10000000)
 

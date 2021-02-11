@@ -322,7 +322,301 @@ PARLARE QUI DELL'EARLY STOP?
 The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
 
 \section{Analysis of the optimizers}
+ \section{Analysis of optimizers - Introduction}
+To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
+In either cases, we will quantify the agreement between the reconstructed quantities and the expected ones.\\
+A short description of the principle of the algorithm used to construct the time series is also given. 
+
+\section{Gaussian noise} 
+This section is devoted to the analysis of the optimizations methods, applied on pure Gaussian noise process $\vec n = (n_1, n_2, \dots, n_N),\text{ with } n_i = n(t_i)$, assuming our process to be a wide-sense stationary process, i.e. autocorrelation matrix is a Toeplitz matrix depending only on time intervals.\\ 
+The spectrum chosen for our first analysis is a Gaussian distribution
+\begin{equation}
+    \nonumber
+    S(f) = \frac{1}{\sqrt{2 \pi} \sigma}e^{-\frac{(f - \mu)^2}{2 \sigma ^2}}
+\end{equation}
+with mean $\mu =2.5 \quad a.u.$ and standard deviation $\sigma =  0.5 \quad  a.u.$. 
+To generate noise with a power spectrum that is known, we have to first understand what is the role played by the PSD. \\ 
+Via MAXENT principle, we can state that noise in normally distributed with 0 mean and some covariance matrix $C_{ij} = C(t_i, t_j)$, i.e.
+\begin{equation}
+    \nonumber
+    p(\vec{n}(t) \vert I) \propto \exp{\left\{-\frac{1}{2}n_i C^{-1}_{ij}n_j\right\}},
+\end{equation}
+\begin{figure}
+    \centering
+        \includegraphics[width = \linewidth]{Images/Noise and PSD/NormalPSDautocorr.pdf}
+        \caption{A priori spectrum (left) and autocorrelation (right)}
+        \label{fig:autocorr}
+\end{figure}and, since process has zero mean, autocovariance and autocorrelation matrices are identical. \\ 
+Using the properties of Toeplitz matrices (see appendix \ref{app:Toeplitz}) and the relation between autocorrelation and power spectral density, it is immediate to verify that, in the limit of large number of time samples, the distribution of noise in frequency domain is given by:
+\begin{equation}
+    p(\tilde{n}(f_i) \vert I) \propto \exp{\left\{-\frac{1}{2}\sum_i\frac{n_i ^2}{S(f_i)}\right\}},
+\end{equation}
+so that the role of PSD appears to be clear: it is the diagonal covariance matrix for the noise distribution in Fourier Domain: \\
+\begin{equation}
+    \nonumber
+    <\tilde n_i \tilde n_j > = S(f_i)\delta_{ij}.
+\end{equation}
+With this information, it is easy to generate any time series with power spectral density of any shape.
+Choosing a priori values for sampling interval $dt$ and total time of observation $T$, recalling Nyquist theory of sampling, we generate arrays of given length N / 2 in frequency domain from 0 to the Nyquist Frequency $f_{Ny} = \frac{1}{2 dt}$. We then convert noise to the time domain using an Inverse Fast Fourier Transform.\cite{oliphant2006guide}\cite{van2011numpy} \\ Basic idea for fast algorithm used to construct noise can be found in ~\cite{noiseGen}. We worked it out in a slightly different way, the imaginary component is not obtained sampling a random complex phase from a uniform distribution. We choose to sample both real and imaginary part from two identical normal distribution distributing variance in a proper way between real and imaginary components. 
+\section{Test on Time Series}
+It is now possible to test the three methods on a given time series. We will concentrate on a power spectral density that is a normal distribution with mean $\mu = 2.5 \quad units$ and standard deviation $\sigma = 0.5 \quad units$.
+We will apply Burg method with each optimizer on a large amount of simulated dataset, obtaining a variety of estimate for PSD. We will study statistical properties for both single reproductions and ensemble average. In many cases, such as gravitational waves, one cannot observe multiple time series realizations for a fixed process, so that single reproduction studies are probably more useful. Still, study of ensemble average is important to highlight some interesting properties. In this way we can fully characterize the performance of each optimizer 
+We will attentively study the role of the filter length estimate M in determining the accuracy of the reconstruction. We will consider every optimizer separately and compare result only at the end of this section. We will then study in depth the Advanced LIGO design sensitivity power spectrum \cite{Ligo}
+\subsection{Normal Power Spectral Density}
+\begin{figure}
+    \centering
+        \includegraphics[width = \linewidth]{Images/NormalPSD/NormalNoise.pdf}
+    \caption{Noise in both time and frequency domain. Frequency noise behaviour is representative of the chosen spectrum, having its maximum amplitude around $f = 2.5 au$}
+    \label{fig:noise}
+\end{figure}
+Fig \ref{fig:noise} shows a realization of the gaussian process in the frequency (left panel) and time domain (right panel).   \\ 
+To study noise with normal-shaped PSD, we generate 1000 datasets of 3000 points each. This will provide a number of samples that is large enough to perform statistical analysis. For every dataset we will reproduce its spectrum with every optimization method. We will show that the quality of reconstruction is very different in different parts of the spectrum: the minimum of the error will be achieved around the peaks, increasing fastly in the tails
+ \\ \\ 
+\subsubsection{Final Prediction Error (FPE)}
+The estimate of the recursive order obtained with FPE on the 1000 realization of noise, is found to lay between 30 and 70. Qualitatively, there is a good agreement between the reconstructed spectrum and the true spectrum: a logarithmic plot of the mean of all the spectra versus the true spectrum is reported in \textbf{Figure \ref{fig:FPEmean}} with 90\% credible regions. It is evident that, despite not too large error bars, the tail of the normal distribution is not comprised in the interval of the estimation. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/FPEpsdAndResiduals.pdf}
+    \caption{Ensemble Average for FPE reconstruction with 90\% Credibility Regions (above) and percentage error (below)}
+    \label{fig:FPEmean}
+\end{figure}
+To assess the magnitude of the disagreement, we compute the relative error between the mean spectrum $\hat{S}$ and the true spectrum $S$ for every frequency bin
+\begin{equation}
+    \nonumber
+    r(f) = \frac{|\hat{S}(f) - S(f)|}{S(f)}\,.
+\end{equation}
+We found this to be a better choice than residuals since relative errors are not dependent on the magnitude of the data. Second Fig \ref{fig:FPEmean} (below) shows that the largest error in the reconstruction of the spectrum is in the tails, while in the bulk of the distribution we have a good approximation of the true function. 
+For the entire spectrum, the mean relative error $\Bar{r}$ is 
+\begin{equation}
+    \nonumber
+    \bar{r}_{\bar S, FPE} = 0.025.
+\end{equation}
+FPE performs well in reconstructing the spectrum even with relatively short time series, with a deviation from the true spectrum around 2\%, but it is evident that it is not able to capture all the features of the spectrum, since the reconstruction in the tails is inaccurate. If we compute the average percentage error in three standard deviations from the mean we gain an order of magnitude estimate of the accuracy of the reconstruction, obtaining: 
+\begin{equation}
+    \nonumber
+    \bar{r}_{\bar S, FPE}^{\mu \pm 3\sigma} = 0.005. 
+\end{equation}
+and we can state the the method is highly performant in this frequency window. 
+Since it is not always possible to work with more then one realization for a process, as in observational experiments, it is important to understand how this method behaves when we apply it on a single time series. In that case, the mean error and its standard deviation are: 
+\begin{equation}
+    \nonumber
+    \bar r_{FPE} = 0.16; \quad \sigma_{r} = 0.16\,.
+\end{equation}
+The average error of a reconstruction based on a single time series is bigger than the one obtained considering the average of all the reconstructions.
+Standard deviation of the errors assume small values and 90\% credibility regions (Cr.) in \ref{fig:FPEmean} are tight. This means that if we randomly take two of the reconstructed spectra, we expect their differences to be statistically small. These facts are evidence for FPE to be a relatively stable optimizer. 
+We already said that the estimate for filter's length lays in a well defined range of values. The quality of the reconstruction, as noted in Chapter 1, depends on the order of the reconstructed AR process. 
+To investigate this idea further, we plot the value of the optimizer for each recursion and the residuals as a function of the estimate for the order of the autoregressive process (\textbf{Figure \ref{fig:FPEErrorOrder}}),
+
+\begin{figure}[H]
+    \noindent
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/FPEoptimizer.pdf}
+    \caption{Stability of FPE, that results in a cluster of values in a small region (left), is due to the typical behaviour of the optimizer as a function of the AR order (right).}
+    \label{fig:FPEErrorOrder}
+\end{figure}
+Foremost evidence for the stability of this optimizer is found in its values as a function of the AR order. Figure \ref{fig:FPEErrorOrder} shows that Values tend to decrease monotonically until a sharp and well defined minimum is reached, to start growing again after this area. This is representative of the typical behaviour of this optimizer as a function of the length of the filter, and explains why the estimates for AR orders are confined in a small region. This plot also shows that most of the values collapsed in the region of AR orders comprised between 30 an 50. There are only few values outside this interval, and get fewer as order's estimate increases. In this region, there is no strong evidence of some correlation between the estimate for M and its associated relative error. It is important to notice that the estimate associated with the higher values of M (around $M > 60$) exhibit the highest 'mean' relative error. \\ 
+We conclude that the FPE shows good quality reconstruction for the spectrum and very desirable stability properties, its estimate for filter's length M is clustered in a region where there is no dependence of error from M. 
+\subsubsection{Optimum Bayes Decision Rule (OBD)}
+The second optimizer in consideration is OBD.  (\textbf{Figure \ref{fig:OBD3000}}) shows a good agreement between the average over the reconstructions and true spectrum.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/OBDpsdAndResiduals.pdf}
+    \caption{Reconstruction of the spectrum from 1000 simulations with OBD optimizer. Plot is mean of all the results with 90\% credibility regions (above) and percentage error (below)}
+    \label{fig:OBD3000}
+\end{figure}
+The same behaviour of FPE is observed, a good quality reconstruction at the center of the distribution with quite small Credibility regions (Cr.) at a $90$\% credibility level.
+Qualitatively they behave similarly but quantitatively the disagreement of this method is found to be even larger than the one obtained with FPE, as can be noticed in the plot of relative errors in figure \ref{fig:OBD3000} (below) where at the extremes the inaccuracy is even larger than 300\% with respect to the real value of the spectrum. For the overall spectrum and within three standard deviation from the mean, we find that the reconstructed spectrum has a deviation of
+\begin{equation}
+    \nonumber
+    r_{\bar S, OBD} = 0.15, \qquad r^{\mu \pm 3\sigma}_{\bar S, OBD} = 0.018. 
+\end{equation}
+When applied to single realizations of the time series, we find
+\begin{equation}
+    \nonumber
+    \bar{r}_{OBD} = 0.237, \qquad \sigma_{r, OBD} = 0.0296.
+\end{equation}
+It is interesting to notice that overall relative error of the average spectrum is of the same order of magnitude of the average single reconstruction for the spectrum. Averaging over a 1000 realisations does not substantially improve our results. As a function of the filter length, the values taken by the OBD cluster in a small region, indicating the stability of the reconstructed process order $M$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/OBDoptimizer.pdf}
+    \caption{Stability of OBD, that results in a cluster of values in a small region (left), is due to the typical behaviour of the optimizer as a function of the AR order (right)}
+       \label{fig:OBDErrorOrder}
+\end{figure}we see that again our results are clustered in a very small region, due to the behaviour of the optimizer that converge in a small area before growing again. The estimate of the length of the filter is around $p = 20 \div 30$.Note the difference compared to FPE (see \ref{fig:FPEErrorOrder}); for OBD the mean relative error depends on $M$ as
+\begin{equation}
+    \hat r \sim M ^ {-2.016 \pm 0.006}.
+\end{equation}
+In summary, OBD shows greater error wherever in the spectrum, due to the fact that it choose filters that are too short and in a region where quality drastically change when changing M. In this case we can say that we have a stable estimate for M, but due to this dependence, the estimate is not as stable as FPE's. 
+\subsubsection{Criterion Autoregressive Transfer function (CAT)}
+This last criterion differs substantially from the two other optimizers. Figure \ref{fig:CATmean} (above) shows a good agreement between the estimate of the spectrum for every frequency
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{Images/CAT/CATnormal.pdf}
+    \caption{Mean spectrum for CAT optimizer, 1000 simulations for 3000 points datasets}
+    \label{fig:CATmean}
+\end{figure} and also tails are well captured by the average spectrum. However, the variance of the reconstructed spectrum is quite large, much larger than for FPE and OBD. In general, the relative error is nearly constant, $\sim 10\%$ over all frequencies, see  Fig. \ref{fig:CATmean} (below). The residuals, averaged over all frequencies, are: 
+\begin{equation}
+    \nonumber
+    \bar r_{\bar S, CAT} = 0.016 \qquad \bar r^{\mu \pm \sigma}_{\bar S, CAT} = 0.017.
+\end{equation}
+the overall reconstruction is thus quite accurate, with deviations from the simulated spectrum of the order of $1\% \div 2\%$.\\
+The picture drastically changes in the case of individual time series realizations. The average residuals are, in fact
+\begin{equation}
+    \bar r_{CAT} = 0.42 \qquad \sigma_{CAT} = .44\,.
+\end{equation}
+The error is indeed $\sim 42\%$, hence much larger than in the case of FPE and OBD. Both large error bars and the large standard deviation are indications of the instability of this optimizer. This is exemplified by the variety of different spectra that can be obtained considering different time series. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{Images/CAT/CAToptimizer1.pdf}
+    \caption{CAT is not a stable optimizer since its optimizer do not converge to any specific region of the AR estimate order}
+    \label{fig:CAToptimizer}
+
+\end{figure}
+The reason for this behaviour, can be found in \textbf{Figure (\ref{fig:CAToptimizer})}. CAT does not converge to any specific value for the order of the autoregressive process. In turn, this results in estimates for the order that span a large range.  Figure \ref{fig:CAToptimizer} also shows a strong dependence of the error on the estimated length of the filter. The good quality of the reconstruction from the average spectrum can be explained as follows: long filters are able to capture features that short filters cannot see, like the big excursion in the size of datas of a normal distribution, but this length is also responsible of an augmented variance in the estimate, introducing spurious peaks in the reproduction (Figure \ref{fig:GaussMedian})
+
+Averaging, the noise in each spectrum is cancelled. It is interesting that the cancelling of errors in averaging is property of gaussian noise (the process is gaussian, after all). This implies, in a sense, that each estimate of the spectrum is independent of any other, as suggested by the huge variance in the residuals. This instability is not a good property for an estimation, so that this estimator might be found to be optimal for repeatable experiments and not for single observation of some process. Another approach to this method will be proposed in section \ref{sec:ACAT}
+
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/Gaussmedian.pdf}
+    \caption{Reconstructed power spectral density with the three method. The reported reconstruction is the one that shows the median percentage error (overall)}
+    \label{fig:GaussMedian}
+\end{figure}
+\subsection{Summary and Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/Normal Residuals.pdf}
+    \caption{Percentage error in the reconstruction for every optimizer, as a function of the frequency. Lower panel restricts the domain to three standard deviation to increase the definition}
+    \label{fig:NormalEnsembleResiduals}
+\end{figure}
+In our analysis, FPE and OBD optimizers are found to behave similarly while CAT shows completely different properties. Studying the average spectrum is not sufficient to choose which method behaves better. \\ 
+The bad behaviour in the reconstruction of the tails from OBD and FPE might be due to the fact that very small values require longer filters. 
+In fact when we consider the average for all the spectra we note that the shorter the filter the larger the error in the tails: OBD, which select the shortest filters, arrives to a $300 \%$ error at the extrema of the power spectral density, FPE which select intermediate order has got a $85\%$ error in same window, while CAT, that selects a wide range of long filters, has got a constant accuracy everywhere in the spectrum.  \\ 
+Figure \ref{fig:NormalEnsembleResiduals} shows that CAT is the method that minimizes errors in the tails (upper plot), but if one restrict to three standard deviations from the mean, FPE is found to reach best accuracy (lower plot). 
+The frequency averaged percentage error is reflecting this behaviour. Considering the whole reproduction, error's average and standard deviation are found to be: 
+\begin{align*}
+\centering
+&r_{\bar S, FPE} = 0.025; \quad \sigma_{\bar S, FPE} = 0.083;  \\
+&r_{\bar S, OBD} = 0.15;\quad \sigma_{\bar S, OBD} = 0.42 ; \\ 
+&r_{\bar S, CAT} = 0.015; \quad \sigma_{\bar S, CAT} = 0.012
+\end{align*}
+In is interesting to see that the average for FPE and OBD is strongly affected from the high value of the error in the tails of the distribution. If one consider the three standard deviations from the mean, the value of the error substantially decreases, 
+\begin{align*}
+\centering
+&r_{\bar S, FPE} = 0.005; \quad \sigma_{\bar S, FPE} = 0.004;  \\
+&r_{\bar S, OBD} = 0.018;\quad \sigma_{\bar S, OBD} = 0.019 ; \\ 
+&r_{\bar S, CAT} = 0.015; \quad \sigma_{\bar S, CAT} = 0.011
+\end{align*}
+showing that the overall percentage error is just a first indicator for the quality of the reproduction, but is not sufficient to perform a full characterization. \\
+It is evident that tails do not affect CAT  average error and standard deviation at all, so that it's accuracy is approximately constant everywhere in the spectrum. \\ \ 
+Since both FPE and CAT shows pros and cons, at this level, there is no reason to choose between them.\\ 
+Analyzing the resolution of the single reconstruction, figure \ref{fig:optcomparison} clearly shows that FPE minimize overall relative error giving a stable result.\\ 
+CAT instead shows a larger error and do not converge to any specific value. Almost every reproduction obtained with CAT is worst with respect to those obtained with FPE, but their mean is more precise. \\ 
+It's instability is probably the cause for this behaviour. Since it does not show a strong convergence to some order with respect to others, very different lengths are selected.
+Longer lengths are able to capture a lot of details but are more likely to introduce noise. In other words, long filters reduce bias but increment the variance of the result. 
+Taking the average, for central limit theorem the error decreases as $\sim \frac{1}{\sqrt{N}}$. In this way we compensate noise and obtain a spectrum with small bias and small fluctuations.
+Considering the average, CAT reconstruct precisely and with good accuracy every part of the spectrum, even if in "regular" parts best accuracy is reached from FPE. For a single reproduction, CAT is very noisy and unstable, while FPE performs the better. \ref{fig:optcomparison}
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/NormalPSDcomparison.pdf}
+    \caption{Relative error as function of the length of the filter.}
+    \label{fig:optcomparison}
+\end{figure}
+\begin{figure}
+    \hfill
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/ordersComparison.pdf}
+    \caption{Histogram of estimate orders for each method}
+    \label{fig:ordersCompairson}
+
+\end{figure}
+definitely shows that FPE gives the best results: it is a stable method that choose filters in the clustered area associated with minimum error, while both OBD and CAT result lies outside this area and show bigger errors. Two other interesting plots that stress this fact are reported in figure \ref{fig:ordersCompairson} and \ref{fig:residualsComparison}
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/NormalPSD/ResidualsComparison.pdf}
+    \caption{Histogram of residuals for each method}
+    \label{fig:residualsComparison}
+\end{figure}
+where the histograms for the errors and for order's estimate are reported. These graphs provide stronger evidence for our previous statements. As already noticed, FPE is very stable and provide the smallest 'overall relative error'. \\
+CAT histogram shows a very interesting behaviour. The histogram for the order show two different peaks,  a small one associated to 'short filters', and a second high peak at $m = M$. This means that CAT is most likely to not converge at all at some value for the regression order, and it is more likely selects a length that is comparable with the largest available.  If short filters are selected, the overall percentage error will be low, respectively represented by the first peak in the distribution of the errors, while if long filters are selected, the error is maximized. 
+
+So, even if in some cases CAT might be more accurate when taking the average over several spectra, FPE guarantees that minimum error will be reached. 
+
+\subsection{Analysis of Ligo Spectrum}
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/LIGOsimulate/LigoPSDoriginal.pdf}
+    \caption{Original power spectral density from Ligo}
+    \label{fig:LigoPSDOriginal}
+\end{figure}
+In this subsection we concentrate again on the reconstruction of a specific, known, power spectrum.
+We analyze the properties of reconstruction of this second spectrum whose shape is the Advanced LIGO design sensitivity theoretical spectral curve (Figure \ref{fig:LigoPSDOriginal}). 
+For this analysis we will study properties only for arrays of 40960 points. We consider a sampling rate of $2048 samples / second$ that means we can reconstruct a Nyquist frequency of $1024 Hz$. We chose a longer dataset than before because algorithm works with a 1 dimensional interpolation of spectrum, and with shorter datasets the interpolated spectrum is not consistent with the original spectrum and does not capture the height of the peaks. Shorter choices would result in noise extracted from a different power spectrum than the one in figure \ref{fig:LigoPSDOriginal}. \\ 
+We will study statistical properties from samples obtained with 500 simulations and compare the obtained results for each optimizer. 
+We start considering statistical properties of mean spectrum obtained averaging over all the simulations and conclude with an analysis for the statistics of the reproduction of single spectrum. 
+\subsubsection{Properties for the average spectrum}
+Here we report mean properties of the reproductions of the spectrum. The spectrum we want to reconstruct is reported in Figure \ref{fig:ligospectrum},
+\begin{figure}
+    \centering
+  
+        \includegraphics[width = \linewidth]{Images/LIGOsimulate/PSD.pdf}
+        \caption{A priori spectrum from Ligo database}
+        \label{fig:ligospectrum}
+\end{figure}
+shows the original power spectral density and the ensemble average of every method. For the mean, the relative errors are: 
+\begin{equation}
+    \bar r_{\bar S, FPE} = 0.0426\%, \qquad \bar r_{\bar S, OBD} = 0.129\%, \qquad \bar r_{\bar S, CAT} = 0.0211\%
+\end{equation}
+Again, if one only check overall accuracy for every method, CAT is outperforming. In fact, even in presence of very sharp peaks, CAT reconstruction seems to be almost perfectly coincident with each of them. To check this behaviour we take a look at the two peaks separately. For the first one a log plot of the reconstructed peaks and their relative errors are shown in Figure \ref{fig:ligo1peak} 
+\begin{figure}[h]
+        \includegraphics[width = \linewidth]{Images/LIGOsimulate/1stPeakComparison.pdf}
+        \caption{1st peak of the spectrum and it reconstruction with every optimizer (left) and associated percentage error (right)}
+        \label{fig:ligo1peak}
+\end{figure}
+and the results reinforce our previous statement. The behaviour of the error is very similar for CAT and FPE, showing similar shapes but very different sizes, while CAT is giving a different and way more precise result. Both FPE and OBD are not able to capture the width of the peak and also show larger errors, while CAT has a good behaviour in reconstructing width's also. 
+The reconstruction for very sharp peaks considering the average over all the spectra is found to be strongly inaccurate for both FPE and OBD, while a good accuracy is reached with CAT method. \\ 
+Considering the estimate for the position of the peak, whose true value is found to be $16.85 \quad a.u. $, within numerical accuracy both FPE and CAT find its exact position, while OBD shift the peak left at $16.7 a.u.$, with a $0.9\%$ inaccuracy.\\ 
+Second peak results are analogous, plotting the peak and the errors value around it
+\begin{figure}[h]
+    \centering
+        \includegraphics[width = \linewidth]{Images/LIGOsimulate/2ndPeakComparison.pdf}
+        \caption{2nd peak of the spectrum, Relative error around 2nd peak of the spectrum}
+        \label{fig:ligo2peak}
+\end{figure}
+we find again that FPE and OBD are performing similarly, the magnitude of the error is maximum for OBD and minimum for CAT. \\ 
+In this case even CAT shows large errors in some points, but they are reasonable in a large part of it, still, it remains the best reconstruction.  For this second peak, all the methods find maximum position to be at $438.05 \quad a.u.$, which is the true position of the maximum.
+Looking at Figure \ref{fig:ligo1peak} at \ref{fig:ligo2peak}, it appears to be clear that the least of the accuracy is not on the peak, but immediately around, so that one of the biggest deal is the reconstruction of peak's width, that only CAT is able to capture with high definition. \\ 
+Even if FPE shows larger error in the peaks than CAT, when the average over all the frequencies is considered, their percentage errors are of the same order of magnitude. This means that outside the peaks FPE is more accurate than CAT, i.e. CAT is still giving noisy results.\\ 
+As for the normal distributed noise, mean spectrum is not sufficient to declare what is the best optimizer to be used, since most of experiment are purely observational and mean spectrum over different realizations of the same stochastic process cannot be computed. So, it is important to also understand what is their behaviour for single realizations of the process.
+\subsubsection{Statistical properties of single realizations} 
+The errors for the single realizations behave very differently from the errors obtained when we considered the mean spectrum. In computing the mean of the overall errors for each single spectrum, the results we obtain are the following:
+\begin{equation}
+    \bar{r}_{FPE} = 0.13 \pm 0.01; \qquad \bar{r}_{OBD} = 0.17 \pm .02; \qquad 
+    \bar{r}_{CAT} = 0.4 \pm 0.1
+\end{equation}
+where the error is just the standard deviation of the samples.
+In this case we find a different result: FPE shows the best results and order's estimate is associated with least errors. Also, having found a smaller standard deviation of the datas, we can state that FPE and OBD are more stable optimizers then CAT. In fact, their properties as a function of filter's length are almost identical to those obtained in the study of normal spectrum. If we again plot the value of the errors as a function of the estimate of the order (Figure \ref{fig:LigoOrderError})
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/LIGOsimulate/orderVSerror.pdf}
+    \caption{Plot of relative error as a function of the estimate for filter's length}
+    \label{fig:LigoOrderError}
+\end{figure}
+it is immediate to see that, again, FPE results lies in the are of filter's length associated with a minimum of relative errors, OBD lies in a clustered window with a higher error and CAT is not convergent, but most of the results are outside the minimum error area. So, we arrive at the same conclusion we had when we considered the normal specturm. OBD has no general properties that make it a preferable optimizer then FPE or CAT while, what to choose beneath the last two is based on the problem we are dealing with: if we have one single realization for the process, we are mostly sure that FPE would catch the area associated with the best resolution possible, while CAT would result in a spurious result with, in general, a not so good resolution. But, in case we have several realization for the same process, this last property of CAT, together with its instability, result to be his luck and, taking the average errors tend to compensate noise in the result, originating a very well defined spectrum that show same resolution almost everywhere, no matter how small the values are (as for normal PSD case) or how sharp peaks can be, the result has got generally good accuracy, also if it is clear that we have to pay this fact with very large error bars. So a choice between these methods is a matter of convenience and interest for each specific problem. \\
+\begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{Images/LIGOsimulate/LigoHists.pdf}
+    \caption{Histograms showing the estimate for the autoregressive order and overall percentage error obtained with all the three optimizers.}
+    \label{fig:my_label}
+\end{figure}
  
+ 
+ 
+ 
+ 
+
+
 \section{Example} 
 
 \section{Comparison with Welch method}
@@ -1221,7 +1515,7 @@ Via MAXENT principle, we can state that noise in normally distributed with 0 mea
 \end{equation}
 \begin{figure}
     \centering
-        \includegraphics[scale = 0.43]{Images/Noise and PSD/NormalPSDautocorr.pdf}
+        \includegraphics[width = \linewidth]{Images/Noise and PSD/NormalPSDautocorr.pdf}
         \caption{A priori spectrum (left) and autocorrelation (right)}
         \label{fig:autocorr}
 \end{figure}and, since process has zero mean, autocovariance and autocorrelation matrices are identical. \\ 
