@@ -11,6 +11,7 @@ Algorithm for the computation of the power spectral density.
 import sys
 import numpy as np
 import warnings
+warnings.simplefilter('once', RuntimeWarning)
 from scipy.signal import correlate
 
 #############DEBUG LINE PROFILING
@@ -340,6 +341,7 @@ class MESA(object):
         """
         f_ny = .5 / dt 
         
+        self.N = len(self.a_k)
         spec, f_spec = self._spectrum(dt, self.N)
         
         if frequencies is None:
@@ -347,7 +349,7 @@ class MESA(object):
         
         elif isinstance(frequencies, np.ndarray):
             if np.max(frequencies) > f_ny *1.01: 
-                warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny))
+                warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny), UserWarning)
                 
             f_interp = np.interp(frequencies, f_spec[:int(self.N/2+0.5)], spec.real[:int(self.N/2+0.5)], left = 0., right = 0.)
         
@@ -355,6 +357,7 @@ class MESA(object):
         else:
             raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
 
+        return
         
     def solve(self,
               data,
@@ -409,7 +412,6 @@ class MESA(object):
             (Shape (N,))   
 
         """
-        
         data = np.array(data)
         data = np.squeeze(data)
         
@@ -419,11 +421,11 @@ class MESA(object):
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
         
         self.data = data
-        self.N    = len(data)
+        self.N  = len(data)
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*N/np.log(2.*N))
+            self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
             self.mmax = m
            
@@ -489,7 +491,7 @@ class MESA(object):
         for i in range(self.mmax):
             #Update prediction error filter and reflection error coefficient
             k, new_a = self._updateCoefficients(a[-1], g)
-            #Update variables. Check paper for indeces at j-th loop.
+            #Update variables. Check paper for indices at j-th loop.
             r = self._updateR(i, r, c[i + 2])
             #Construct the array in two different, equivalent ways.
             DrA = self._constructDr2(i, new_a)
@@ -499,18 +501,25 @@ class MESA(object):
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
             #Compute optimizer value for chosen method
-            optimization.append( self._optimizer(P, a[-1], self.N, i + 1) )
+            optimization.append( np.abs(self._optimizer(P, a[-1], self.N, i + 1)) )
             
+            is_nan = np.isnan(new_a).any() #checking for nans
+            if np.abs(k)>1 or is_nan:
+                warnings.warn("There is a numerical stability issue. Results might not be what you expect", RuntimeWarning)
+                
+                #dealing with stopping of the iteration
                 #checking if there is a minimum (every some iterations) if early_stop option is on
-            if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
-                idx = np.argmin(optimization) + 1
-                if old_idx < idx:
+            if is_nan and not self.early_stop:
+                idx = np.nanargmin(optimization) + 1
+                break
+            if ((i % 100 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
+                idx = np.nanargmin(optimization) + 1
+                if old_idx < idx: #if True, an improvement is made
                     old_idx = idx
                 else:
-                    old_idx = idx
                     break
         if not self.early_stop:
-            idx = np.argmin(optimization) + 1
+            idx = np.nanargmin(optimization) + 1
 
         return P[idx], a[idx], np.array(optimization)
    
@@ -536,6 +545,13 @@ class MESA(object):
 
         """
         a = np.concatenate((a, np.zeros(1)))
+                #regularizing? Doesn't really work unfortunately...        
+            # a -> a/alpha
+            # g -> g/gamma
+            # N = len(a)
+            # alpha = sqrt(N)*median_magnitude_of_a
+            # a*a ~ 1
+            # median_magnitude_of_a = a[0]
         k = - (np.dot(a.conj(), g[::-1])) / (np.dot(a, g))
         aUpd = a + k * a[::-1].conj()
         return k, aUpd
@@ -547,7 +563,6 @@ class MESA(object):
         return np.concatenate((rUp, rDown))
         
     def _constructDr(self, i, a):
-        #print(i, 'Outer')
         data1 = self.data[ : i + 2][::-1]
         data2 = self.data[self.N - i - 2 :]
         d1 = -np.outer(data1, data1.conj())
@@ -563,7 +578,7 @@ class MESA(object):
 
     def _updateG(self, g, k, r, a, Dra):
         gUp = g + (k * g[::-1]).conj() + Dra
-        gDown = np.array([np.dot(r ,a.conj())])
+        gDown = np.array([np.dot(r, a.conj())])
         return np.concatenate((gUp, gDown))
 
     def _Burg(self, **kwargs):
@@ -585,7 +600,7 @@ class MESA(object):
         """
         
         #initialization of variables
-        P_0 = (self.data ** 2).mean()
+        P_0 = np.var(self.data)#(self.data ** 2).mean()
         P = [P_0]
         a_0 = 1
         a_k = [np.array([a_0])]
