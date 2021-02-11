@@ -699,7 +699,7 @@ If one is able to compute the values of the coefficients $a_i$ the PSD is unique
 To compute the $a_i$-s, we substitute in equation
 (\ref{eq:MaxConstraint}) with the above representation for $S(f)$ in terms of the $a_i$ coefficients. Changing  variable from $f$ to $z(f) = e^{-\imath 2 \pi f \Delta t}$, the integral (\ref{eq:MaxConstraint}) becomes a contour integral in the unit circle centered at the origin of the complex plane: 
 \begin{equation}
-   \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}} = \bar r_s. 
+   \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}}dz = \bar r_s. 
 \end{equation}
 Sending $s \to s - r$, multiplying by $a^*_s$ and summing over all possible values for $s$ the equation becomes 
 \begin{align} \nonumber 
