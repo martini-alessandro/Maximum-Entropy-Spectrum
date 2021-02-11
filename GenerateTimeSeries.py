@@ -53,8 +53,7 @@ def generate_data(f,
     # f, psd = np.loadtxt(psd_file, unpack=True)
     if asd is True : psd *= psd
     # generate an interpolant for the PSD
-    #psd_int = interp1d(f, psd, bounds_error=False, fill_value= 'extrapolate')
-    psd_int = interp1d(f, psd, bounds_error=False, fill_value= 0.) #proposed change
+    psd_int = interp1d(f, psd, bounds_error=False, fill_value= 0.)
     df      = 1 / T
     N       = int(sampling_rate * T)
     times   = np.linspace(0, T, N) 
