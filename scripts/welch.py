@@ -12,19 +12,19 @@ def psd(strain,
     Computes the power spectral density of a time series using the Welch method
    
     :param strain: input time series
-    :type strain: array
+        :type strain: array
     :param sampling_rate: sampling rate of the input strain (Hz)
-    :type sampling_rate: float
+        :type sampling_rate: float
     :param segment_duration: length of each segment (in seconds) for the application of the Welch method
-    :type segment_duration: float
+        :type segment_duration: float
     :param window_function: window type
-    :type window_function: string, tuple or array-like
+        :type window_function: string, tuple or array-like
     :param overlap_fraction: overlap between segments (as a fraction of the segment duration)
-    :type overlap_fraction: float
+        :type overlap_fraction: float
     :param nfft: total number of points for the fft. If None is equal to the length of the dataset
-    :type nfft: int
+        :type nfft: int
     :param return_onesided: returns onesided (twoside) power spectral density if True (False) 
-    :type return_onesided: boolean 
+        :type return_onesided: boolean 
     
     :return: frequencies, corresponding power spectral density
     :rtype: array, array

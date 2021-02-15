@@ -11,7 +11,7 @@ import pandas as pd
 plot = True
 compute = False
 generate_fake_data = False
-use_fake_data = False
+use_fake_data = True
 
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
@@ -44,7 +44,8 @@ if compute:
 		print("Batch length: {}s".format(T))
 		data_T = data[:int(srate*T)]
 
-		freqs, PSD_Welch = psd(data_T, srate, T,
+		seglen = min(20.,T)
+		freqs, PSD_Welch = psd(data_T, srate, seglen,
 			window_function  = None,
 			overlap_fraction = 0.5,
 			nfft = None,
