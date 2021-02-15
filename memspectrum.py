@@ -12,7 +12,7 @@ import sys
 import numpy as np
 import warnings
 warnings.simplefilter('once', RuntimeWarning)
-from scipy.signal import correlate
+from scipy.signal import correlate, convolve
 
 #############DEBUG LINE PROFILING
 try:
@@ -394,7 +394,7 @@ class MESA(object):
                                        
         early_stop: 'boolean'          
             Default is True. Breaks the iteration if there is no new global 
-            maximum after 200 iterations. 
+            maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
 
         Returns
@@ -427,9 +427,9 @@ class MESA(object):
         else:
             self.mmax = m
            
-        if method == "Fast":
+        if method.lower() == "fast":
             self._method = self._FastBurg
-        elif method == "Standard":
+        elif method.lower() == "standard":
             self._method = self._Burg
         else:
             print("Method {0} unknown! Valid choices are 'Fast' and 'Standard'".format(method))
@@ -508,16 +508,16 @@ class MESA(object):
                 #dealing with stopping of the iteration
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if is_nan and not self.early_stop:
-                idx = np.nanargmin(optimization) + 1
+                idx = np.nanargmin(optimization)
                 break
             if ((i % 100 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
-                idx = np.nanargmin(optimization) + 1
+                idx = np.nanargmin(optimization)
                 if old_idx < idx: #if True, an improvement is made
                     old_idx = idx
                 else:
                     break
         if not self.early_stop:
-            idx = np.nanargmin(optimization) + 1
+            idx = np.nanargmin(optimization)
 
         return P[idx], a[idx], np.array(optimization)
    
@@ -605,15 +605,25 @@ class MESA(object):
         _f = np.array(self.data)
         _b = np.array(self.data)
         optimization = []
-        early_stop_step = self.mmax/50
+        early_stop_step = 100
         idx = None
         old_idx = 0
         #Burg's recursion
         for i in range(self.mmax):
             f = _f[1:]
             b = _b[:-1]
-            den = np.dot(f, f) + np.dot(b, b)
-            k = - 2 * np.dot(f.T, b) / den
+
+            den = convolve(f,f[::-1], 'valid')[0] + convolve(b,b[::-1], 'valid')[0]
+            k = - 2 * convolve(f,b[::-1], 'valid')[0] / den
+
+            if False:
+                print(len(f))
+                den_old = np.dot(f, f) + np.dot(b, b)
+                k_old = - 2 * np.dot(f.T, b) / den
+                print(den, den_old)
+                print(k, k_old)
+                print(np.allclose(den, den_old, atol = 0), np.allclose(k_old,k, atol = 0))
+            
             a_k.append(self._updatePredictionCoefficient(a_k[i], k))
             P.append(P[i] * (1 - k * k.conj()))
             _f = f + k * b
@@ -622,14 +632,15 @@ class MESA(object):
             optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
-                idx = np.argmin(optimization) + 1
-                if old_idx < idx:
+                idx = np.argmin(optimization) #+ 1
+                #print(i, optimization[idx]) #DEBUG
+                if old_idx < idx and optimization[idx]*1.01 < optimization[old_idx]:
                     old_idx = idx
                 else:
                     old_idx = idx
                     break
         if not self.early_stop:
-            idx = np.argmin(optimization) + 1
+            idx = np.argmin(optimization) #+ 1
 
         return P[idx], a_k[idx], optimization
     

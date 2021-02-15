@@ -20,6 +20,7 @@ true_PSD_file = 'GWTC1_GW150914_PSDs.dat'
 srate = 4096.
 
 T_list = [1,5, 10,100, 1000] #list of times to make the comparison at
+seglen = [512, 1024, 2048, 8192, 32768]
 
 if generate_fake_data:
 	PSD = np.loadtxt(true_PSD_file)
@@ -33,6 +34,7 @@ if compute:
 		print("Using fake data")
 		data = pd.read_csv("fake_data_4KHZ-1000.txt").to_numpy() #for fake data
 	else:
+		print("Using real data")
 		#data = np.loadtxt("../examples/data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt")
 		#data = pd.read_csv("../../GWAnomalyDetection/maxent/H-H1_GWOSC_16KHZ_R1-1126259447-32.txt.gz", skiprows = 3).to_numpy()
 		data = pd.read_csv("H-H1_GWOSC_4KHZ_R1-1247614487-4096.txt.gz", skiprows = 3).to_numpy()
@@ -43,15 +45,16 @@ if compute:
 	for i, T in enumerate(T_list):
 		print("Batch length: {}s".format(T))
 		data_T = data[:int(srate*T)]
+		
+		M = MESA()
+		M.solve(data_T, early_stop = True, method = 'Standard')
 
-		seglen = min(20.,T)
-		freqs, PSD_Welch = psd(data_T, srate, seglen,
+		freqs, PSD_Welch = psd(data_T, srate, seglen[i]/float(srate),
 			window_function  = None,
 			overlap_fraction = 0.5,
 			nfft = None,
 			return_onesided = True)
-		M = MESA()
-		M.solve(data_T, early_stop = True)
+		
 		PSD_MESA = M.spectrum(1./srate, freqs)
 		
 		np.savetxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data), np.column_stack([freqs, PSD_MESA, PSD_Welch]))
