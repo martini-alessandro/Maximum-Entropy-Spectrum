@@ -5,8 +5,10 @@ from welch import *
 import numpy as np
 import matplotlib.pyplot as plt
 from init_plotting import init_plotting
+import pandas as pd
 
-plot = False
+
+plot = True
 compute = True
 generate_fake_data = True
 use_fake_data = False
@@ -22,16 +24,16 @@ if generate_fake_data:
 	freqs, PSD = PSD[:,0], PSD[:,1]
 	import GenerateTimeSeries
 	times, time_series, frequencies, frequency_series, psd_int =GenerateTimeSeries.generate_data(freqs, PSD, 1000., srate, np.min(freqs), np.max(freqs))
-	np.savetxt('fake_data_4KHZ-32.txt', time_series)
+	np.savetxt('fake_data_4KHZ-1000.txt', time_series)
 	
 if use_fake_data:
-	data = np.loadtxt("fake_data_4KHZ-32.txt") #for fake data
+	data = pd.read_csv("fake_data_4KHZ-1000.txt").to_numpy() #for fake data
 else:
 	#data = np.loadtxt("../examples/data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt")
-	data = np.loadtxt("../../GWAnomalyDetection/maxent/H-H1_GWOSC_16KHZ_R1-1126259447-32.txt.gz")
+	data = np.loadtxt("../../GWAnomalyDetection/maxent/H-H1_GWOSC_16KHZ_R1-1126259447-32.txt.gz", skiprows = 3).to_numpy()
 
 
-T_list = [1,10,30] #list of times to make the comparison at
+T_list = [1,5, 10,100, 1000] #list of times to make the comparison at
 
 if compute:
 	for i, T in enumerate(T_list):
