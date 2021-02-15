@@ -514,7 +514,7 @@ class MESA(object):
                 break
             if ((i % 100 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.nanargmin(optimization)
-                if old_idx < idx and optimization[idx]*1.01 < optimization[old_idx]: #if True, an improvement is made
+                if old_idx < idx: #if True, an improvement is made
                     old_idx = idx
                 else:
                     break
