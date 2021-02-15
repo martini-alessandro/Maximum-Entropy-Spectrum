@@ -6,10 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from init_plotting import init_plotting
 
-plot = True
+plot = False
 compute = True
 generate_fake_data = True
-fake_data = False
+use_fake_data = False
 
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
@@ -21,10 +21,10 @@ if generate_fake_data:
 	PSD = np.loadtxt(true_PSD_file)
 	freqs, PSD = PSD[:,0], PSD[:,1]
 	import GenerateTimeSeries
-	times, time_series, frequencies, frequency_series, psd_int =GenerateTimeSeries.generate_data(freqs, PSD, 32., srate, np.min(freqs), np.max(freqs))
+	times, time_series, frequencies, frequency_series, psd_int =GenerateTimeSeries.generate_data(freqs, PSD, 1000., srate, np.min(freqs), np.max(freqs))
 	np.savetxt('fake_data_4KHZ-32.txt', time_series)
 	
-if generate_fake_data:
+if use_fake_data:
 	data = np.loadtxt("fake_data_4KHZ-32.txt") #for fake data
 else:
 	#data = np.loadtxt("../examples/data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt")
@@ -54,7 +54,7 @@ if compute:
 	
 	
 if plot:
-	if fake_data:
+	if use_fake_data:
 		true_PSD = np.loadtxt(true_PSD_file)
 	for i, T in enumerate(T_list):
 		PSDs = np.loadtxt("plot_data/plot_{}_{}.txt".format(T, fake_data))
@@ -65,7 +65,7 @@ if plot:
 		ax.set_title(r"$T = {}s$".format(T))
 		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0)
 		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1)
-		if fake_data:
+		if use_fake_data:
 			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2)
 		ax.set_xlabel(r"$f(Hz)$")
 		ax.set_ylabel(r"$PSD \left(\frac{1}{\sqrt{Hz}} \right)$")
