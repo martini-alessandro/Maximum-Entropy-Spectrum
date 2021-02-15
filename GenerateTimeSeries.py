@@ -65,7 +65,7 @@ def generate_data(f,
     
 
     # generate the FD noise
-    frequencies = df * np.linspace(kmin, kmax, int(N / 2 + 1)) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
+    frequencies = df * np.arange(kmin, kmax) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
     frequency_series = np.zeros(len(frequencies), dtype = np.complex128)
 
 
