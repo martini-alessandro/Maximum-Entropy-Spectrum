@@ -340,8 +340,6 @@ class MESA(object):
             
         """
         f_ny = .5 / dt 
-        
-        self.N = len(self.a_k)
         spec, f_spec = self._spectrum(dt, self.N)
         
         if frequencies is None:
