@@ -327,8 +327,9 @@ The application of MESA is not limited to spectral estimates, but it also provid
 of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
 An autoregressive stationary process of order $p$ (AR(p)) is a time series whose values satisfy the following expression: 
 \begin{equation} \label{eq:AR_p}
-    x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_p x_{t - p} = \nu_t.
+    x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_p x_{t - p} = \nu_t
 \end{equation}
+where $b_1, \ldots, b_p$ are real coefficients and $\nu_t$ is white noise with a given variance $\sigma^2$.
 Thus, an AR(p) process models the dependence on every point on the $p$ past observation, thus being potentially able to model complex autocorrelation between data.
 \par
 To show the analogy, we compute the PSD of such process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}.
@@ -386,7 +387,11 @@ Moving $P_N$ on the left hand side, it becomes
 Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
 
 \subsection{Forecasting} \label{sec:forecasting}
-
+The link between MESA and autoregressive process allow us to forecast from a given time series, thus providing plausible future observation for the data.
+Indeed, an autoregressive process of order $p$ models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
+\begin{equation}
+	$p(x_t|x_{t-1}, \ldots , x_{t-p})$
+\end{equation}
 
 
 \section{Validation of the model}
