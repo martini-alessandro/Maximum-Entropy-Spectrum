@@ -39,7 +39,6 @@ def psd(strain,
     # number of samples per segments
     N = int(segment_duration*sampling_rate)
     
-    if nfft is None: nfft = len(strain)
     # compute the PSD and its frequencies
     frequencies, psd = welch(strain,
                              fs              = sampling_rate,
