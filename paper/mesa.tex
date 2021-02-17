@@ -389,10 +389,12 @@ Being all the quantities positive definite, the left hand side is minimized by t
 \subsection{Forecasting} \label{sec:forecasting}
 The link between MESA and autoregressive process allow us to forecast from a given time series, thus providing plausible future observation for the data.
 Indeed, an autoregressive process of order $p$ models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
-\begin{equation}
-	$p(x_t|x_{t-1}, \ldots , x_{t-p})$
-\end{equation}
-
+\begin{align}\label{eq:p_forecast}
+	p&(x_t|x_{t-1}, \ldots , x_{t-p}) \nonumber\\
+	&= \frac{1}{\sigma\sqrt{2\pi}} \exp\left[-\frac{1}{2} \left(\frac{x_t - \sum_{i = 1}^p b_i x_{t-i}}{\sigma}\right)^2\right].
+\end{align}
+The interpretation of eq.~\ref{eq:p_forecast} is straightforward: $x_t$ follows a Guassian distribution with a fixed variance an a mean value $m_t = \sum_{i = 1}^p b_i x_{t-i}$ computed from past observations.
+Equation~\ref{eq:p_forecast} provides then a well defined probability framework for predicting future observations: this is a very useful feature of the method, which does not have an equivalent in any other spectral analysis computation.
 
 \section{Validation of the model}
 \subsection{Choosing an autoregressive order}\label{sec:optimizers} 
@@ -431,10 +433,8 @@ The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR01
 Once an optimizer is chosen to select the best recursion order $M$, we then proceed as follows:  we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value. \\
 PARLARE QUI DELL'EARLY STOP? 
 The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
-
-<<<<<<< HEAD
 \section{Analysis of the optimizers}
- \section{Analysis of optimizers - Introduction}
+\section{Analysis of optimizers - Introduction}
 To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
 In either cases, we will quantify the agreement between the reconstructed quantities and the expected ones.\\
 A short description of the principle of the algorithm used to construct the time series is also given. 
