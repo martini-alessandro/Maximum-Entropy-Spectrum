@@ -116,7 +116,7 @@ An ubiquitous method for such computation is due to Welch \cite{Welch} and it ba
     \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
 \end{equation}
 The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD. \\ 
-The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa. Another problem is that the final result depends on the choice of window function, hence begging the question of what the "real" PSD is. \\  
+The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa. Moreover, the final result depends on the choice of window function, hence begging the question of what the ``real" PSD is. \\  
 Another problem with this approach is the requirement for the window to be $0$ outside the interval: we are arbitrarily assuming $\rho_j = 0$ for $j > M$, and modifying the estimate if a non-rectangular window is chosen. Making assumptions on unobserved data and modifying the ones we have at our disposal introduces information about the process that is not really there. Moreover, this method requires a number of arbitrary choices to be made, e.g. the number of time slices, the kind of Window function, the overlap between consecutive slices, etc... All the knobs must be tuned by hand and their choice can dramatically affect the PSD estimation.
 \par
 An appealing alternative approach is due to Burg \cite{burg1975maximum} and it is based on the Maximum Entropy principle \cite{Jaynes}.
@@ -129,21 +129,29 @@ Our paper is organized as follows: blablabla...
 
 
 \section{Theoretical foundations}
-\subsection{Maximum Entropy Principle} 
-The Maximum Entropy principle (MAXENT) is one of the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series. After a short introduction to Jayne's MAXENT, we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form.
-To introduce MAXENT as a variational problem, we will workout some simple examples to understand how information's entropy and 'uncertainty' are related. \\ 
-The word 'information' will not be used to indicate our knowledge on the system under study: this is what we will call 'evidence'. Information will be intended as in communication theory: it specifies the quantity of details needed to provide a full description of the system under study. \\ 
-If we consider a perfectly sinusoidal signal, knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information entropy content . \\ 
+The Maximum Entropy principle (MAXENT) is among the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series.
+
+After a short introduction to Jayne's MAXENT (sec.~\ref{sec:MAXENT}), we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form (sec.~\ref{sec:MESA}).
+Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link to introduce a method for forecasting a time series.
+
+\subsection{Maximum Entropy Principle} \label{sec:MAXENT}
+
+To introduce MAXENT as a variational problem, we will workout some simple examples to understand how information's entropy and `uncertainty' are related\footnote{
+The word `information' will not be used to indicate our knowledge on the system under study: this is what we will call `evidence'. Information will be intended as in communication theory: it specifies the quantity of details needed to provide a full description of the system under study.
+}.
+
+If we consider a perfectly sinusoidal signal, knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information entropy content.
 Even less information is required if we are studying a system whose outcome is certain (has probability $p = 1$).
-If the quantity of information can be considered to be $I = 0$, a communication is not even needed.  
+If the amount of information $I$ can be considered to zero, a communication is not even needed.  
 Shannon \cite{Shannon} proposed the quantity
 \begin{equation}\label{eq:information}
-    I_i = \log_2 \frac{1}{p(x_i)}
+    I = \log_2 \frac{1}{p(x)}
 \end{equation}
-to represent the quantity of information brought by an outcome $x_i$ with probability $p_i$. It has the nice property of being an additive quantity and it is monotonically decreasing as a function of $p \in [0, 1]$. The more uncertain the outcome, the higher the information it brings. \\ 
-What happens if we consider not one outcome, but a larger set of different events? What is  the 'most uncertain' outcome?  Since we are intending probability as a representation of the state of knowledge, one of the first requirement for our assignment is the agreement with common sense. \\ 
-Consider an experiment based on the occurrence of one of two different outcomes $E_1, E_2$ with given probabilities $P_1$ and $P_2$. What are the values that make our outcome the most uncertain? \\ 
-If $P_1$ and $P_2$ are largely different, like $P_1 = 0.999$ and $P_2 = 0.001$, we have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome. \\ 
+to represent the quantity of information brought by an outcome $x$ with probability $p(x)$. It has the nice property of being an additive quantity and it is monotonically decreasing as a function of $p \in [0, 1]$. The more uncertain the outcome, the higher the information it brings.
+\par
+What happens if we consider a larger set of different events? What is  the `most uncertain' outcome?  Since we are intending probability as a representation of the state of knowledge, one of the first requirement for our assignment is the agreement with common sense.
+Consider an experiment based on the occurrence of one of two different outcomes $E_1, E_2$ with given probabilities $P_1$ and $P_2$. What are the values that make our outcome the most uncertain?
+If $P_1$ and $P_2$ are largely different, like $P_1 = 0.999$ and $P_2 = 0.001$, we have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome.
 The most unpredictable experiment is the one in which 
 \begin{equation}\nonumber
     P_1 = P_2 = \frac{1}{2}:
@@ -156,24 +164,28 @@ This can be generalized in the case of $N$ events. Assigning same probability
 for each outcome, i.e. appealing to the indifference principle (IP), is equivalent to the requirement for our experiment to be the most unpredictable. 
 All we know is that one over $N$ events is going to happen. With this evidence, we cannot expect one outcome to occur over the others. 
 To report the results of such an experiment, we need to communicate every single outcome: it 'carries' high information. 
-This description also makes clearer the role played by evidence: it has to be used in probability assignment in order to make the result 'more certain' or 'less informative'. It is clear from the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it. \\ 
+This description also makes clearer the role played by evidence: it has to be used in probability assignment in order to make the result 'more certain' or 'less informative'. It is clear from the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
+\par
 It is now clear that any assignment different from the 'most uncertain' is violating the hypothesis for it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. 
-Assigning probabilities requires maximization of uncertainty using evidence as constraint. This looks like a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a 'generalization' of information defined in equation (\ref{eq:information}) to be something like the 'expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.  \\ 
+Assigning probabilities requires maximization of uncertainty using evidence as constraint. This looks like a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a 'generalization' of information defined in equation (\ref{eq:information}) to be something like the 'expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
+
 Some properties for $H$ can be worked out easily. 
-From previous discussion, given a fixed number $N$ of possible outcomes, we want $H$ to be maximized by the choice $p_1 = \dots = p_N$. \\ 
+From previous discussion, given a fixed number $N$ of possible outcomes, we want $H$ to be maximized by the choice $p_1 = \dots = p_N$.
 Consider now the opposite situation, in which probability is assigned appealing to IP and we have a different number of possible outcomes.
 Intuitively, the most unpredictable experiment is the one with larger number of outcomes: probability of "getting it wrong" increases as $\frac{N -1}{N}$. So when equal probabilities are assigned, we want
 \begin{equation}
     \nonumber
     H\left[\frac{1}{N}, \dots, \frac{1}{N}\right]
 \end{equation}
-to increase monotonically with N. \\ 
+to increase monotonically with N.
+
 We also want our function to be continuous in its parameters: any small change in probability has to slightly affect uncertainty. \\
 Last is composition property. Consider three events with probability $p_1, p_2, p_3$ such that $p_2 + p_3 = 1 - p_1 = q$. We require 
 \begin{equation}
     H\left(p_1, p_2, p_3\right) = H(p_1, q) + qH\left(\frac{p_2}{q}, \frac{p_3}{q}\right),
 \end{equation}
-so that uncertainty is additive. \\ 
+so that uncertainty is additive.
+
 Shannon \cite{Shannon} showed that the only functional form satisfying our assumptions is given by:
 \begin{equation}\label{eq:entropy}
     H[p_1, \dots, p_N] = - \sum_{i = 1}^N p_i\log{p_i},
@@ -182,14 +194,23 @@ or, in the continuous case:
 \begin{equation}
     H[p(x)] = - \int p(x)\ln p(x) dx,
 \end{equation}
-and $H$ is what we will call entropy. This result is very interesting, if we compare it with Eq.~(\ref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being 'non committal' with unavailable evidence, since \ref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization. \\ It is easy to verify that this expression for entropy verifies the aforementioned properties. 
-Assigning the same value for each probability $p_i$, it is straightforward to verify $H$ increases with N: 
-\begin{equation}
-    -\sum_{i = 1}^N \frac{1}{N}\log{\frac{1}{N}} = - \log\frac{1}{N} = \log N.
-\end{equation}
-We want to show that, in case in which our only constraint is exhaustiveness \begin{equation}\nonumber 
-    \sum_{i = 1}^{N}p_i = 1,
-\end{equation}
+and $H$ is what we will call entropy.
+
+This interpretation is straigthforward: if we compare it with Eq.~(\ref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being `non committal' with unavailable evidence, since \ref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization.
+
+%It is easy to verify that this expression for entropy verifies the aforementioned properties. 
+%Assigning the same value for each probability $p_i$, it is straightforward to verify $H$ increases with N: 
+%\begin{equation}
+%    -\sum_{i = 1}^N \frac{1}{N}\log{\frac{1}{N}} = - \log\frac{1}{N} = \log N.
+%\end{equation}
+
+To show how the maximization of entropy, supplemented with additional evidence, can provide a unique probability assignment, we will work out three examples.
+In each of them, we will add more evindence (i.e. constraints), obtaining different results.
+
+First of all, we want to show that, in case in which our only constraint is exhaustiveness
+$
+    \sum_{i = 1}^{N}p_i = 1
+$,
 MAXENT reduces to indifference principle as it should be. The variational problem is defined as
 \begin{equation}\label{eq:entropyNormConst}
     \delta\left[H - \lambda\sum_{i = 1}^N (p_i - 1)\right] = 0 
@@ -210,8 +231,10 @@ Applying the normalization condition, it is immediate to show that
 \begin{equation}
     p_i = \frac{1}{N}.
 \end{equation}
-MAXENT reduces to the IP when only the normalization constraint is used. What happens if more than one constraint is used? \\
-For simplicity, we will work through the next examples in the continuous case. Suppose the mean of the distribution is known $\int xP(x) dx = \bar{x}$. The variational problem can be rewritten as: 
+MAXENT reduces to the IP when only the normalization constraint is used.
+
+In the second example, we will add the constraint that the distribution has a known mean value: $\int \d{x} x p(x) = \bar{x}$. For simplicity we will work in the continuos case.
+The variational problem can be rewritten as: 
 \begin{equation}
     \int \left[\log p(x) + 1 + \lambda + \mu x \right]\delta p(x) = 0
 \end{equation}
@@ -220,13 +243,13 @@ and its solution in term of $p_i$ is:
     p(x) = e^{-1 - \lambda - \mu x} 
 \end{equation}
 and constraints: 
-\begin{equation} \nonumber
-    \int p(x) dx  = 1 \text { and }
-    \int x p(x) dx = \bar x.
-\end{equation}
+\begin{equation*}
+    \int \d{x} \; p(x)  = 1 \text{  and  }
+    \int \d{x} \; x p(x) = \bar x.
+\end{equation*}
 For simplicity, we consider $x$ to be a variable ranging in the interval $(-\infty,+\infty)$, but this can be easily computed for every other interval. The normalization conditions implies 
 \begin{equation}\nonumber 
-   1 =  \int p(x \vert I) dx = e^{-1-\lambda}\int e^{-\mu x} dx, 
+   1 =  \int \d{x} \; p(x \vert I) = e^{-1-\lambda}\int e^{-\mu x} dx, 
 \end{equation}
 so that: 
 \begin{equation}\nonumber 
@@ -236,22 +259,32 @@ In the continuous case MAXENT assigns for $x$ an exponential distribution
 \begin{equation}
     p(x \vert I) = \mu e^{-\mu x}. \nonumber 
 \end{equation}
-It is clear from the functional form that the Lagrange multiplier has to be $\mu = \frac{1}{\bar x}$ to satisfy the second constraint. \\ 
-The most interesting and useful result of MAXENT is obtained when a constraint on the variance is also considered. Take a vector  $\vec x(t)$ with components in $\mathbb{R}^N$
-\begin{equation*}
-    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
-\end{equation*}
-We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C_(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
+It is clear from the functional form that the Lagrange multiplier has to be $\mu = \frac{1}{\bar x}$ to satisfy the second constraint.
+ 
+Lastly, and more interestingly, we also consider a constraint on the variance. For this reason, we set:
+\begin{align*}
+    \int \d{x} \; p(x)  = 1 \text{  and  }
+	\int \d{x} \; x p(x) = \bar{x} \\
+	\text{  and  }
+	\int \d{x} \; (x-\bar{x})^2 p(x)  = \sigma
+\end{align*}
+Performing the same computation as above, we obtain a well known result:
 \begin{equation}
-    p\left(\vec x(t)\vert I\right) = 
-    \frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right). 
+	p(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\bar{x}}{\sigma}\right)^2}
 \end{equation}
-With MAXENT, the often unjustified assumptions for the data to be normally distributed finds an elegant explanation. It is not only the central limit distribution for finite variance processes, it is also the distribution that maximizes the entropy and, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural 'statistical' evolution toward a configuration that maximizes entropy. 
 
+%Take a vector  $\vec x(t)$ with components in $\mathbb{R}^N$
+%\begin{equation*}
+%    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
+%\end{equation*}
+%We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C_(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
+%\begin{align}
+%    p&\left(\vec x(t)\vert I\right) = \nonumber \\
+%    &\frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right). 
+%\end{align}
+With MAXENT, the common assumption for the data to be normally distributed finds an elegant explanation. It is not only the central limit distribution for finite variance processes, it is also the distribution that maximizes the entropy and, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural 'statistical' evolution toward a configuration that maximizes entropy. 
 
-
-
-\subsection{Maximum Entropy Spectral Analysis} 
+\subsection{Maximum Entropy Spectral Analysis} \label{sec:MESA}
 The computation of the power spectral density is an important component in time series analysis and characterization. Also, if the process is at least wide sense stationary, PSD is related to the autocorrelation function via a Fourier Transform.
 Since we are dealing with a finite number of samples $N$, it is not possible to have an accurate computation of the autocorrelation function for every time interval. Also, the error $\sigma$ in the estimate increases with the time interval $k$ as $\sigma \sim \frac{1}{\sqrt{N - k}}$, so that only a few values for the autocorrelation function can actually be computed. \\ 
 The problem we want to address is how to compute a PSD from the partial knowledge of the autocorrelation function. \\
@@ -284,7 +317,7 @@ This approach on power spectral density estimate was developed by Burg \cite{bur
 \end{equation}
 with $\Delta t$ the sampling interval $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The explicit solution can be found in Appendix REF
 
-\subsection{Autoregressive Process Analogy} 
+\subsection{Autoregressive Process Analogy} \label{sec:autoregr}
 The application of MESA is not limited to spectral estimates, but it also provides a link between spectral analysis and the analysis
 of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
 Consider an autoregressive stationary process of order $p$ (AR(p)): 
@@ -343,7 +376,7 @@ Being all the quantities positive definite, the left hand side is minimized by t
 
 
 
-\subsection{Forecasting} 
+\subsection{Forecasting} \label{sec:forecasting}
 
 \section{Validation of the model}
 \subsection{Choosing an autoregressive order}\label{sec:optimizers} 
@@ -958,7 +991,8 @@ A python implementation of Standard Burg's Method can be found in Appendix \ref{
 
 
 \section{Introduction}
-The Maximum Entropy principle (MAXENT) is one of the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series. After a short introduction to Jayne's MAXENT, we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form. Since its natural domain of application are time series, we will also provide a brief explanation of the basic concepts in stochastic processes that are needed to fully understand the method and the cases in which it can be correctly applied. 
+The Maximum Entropy principle (MAXENT) is one of the most important results in Bayesian Statistics. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series.
+After a short introduction to Jayne's MAXENT, we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form. Since its natural domain of application are time series, we will also provide a brief explanation of the basic concepts in stochastic processes that are needed to fully understand the method and the cases in which it can be correctly applied. 
 \section{Maximum Entropy}
 One of the main problems in statistics is the assignment of a probability for an event. There have been several proposals from both 'objective' and 'subjective' approaches to probability and statistic. The former assert that concept of probability is intrinsic to the event itself and can be computed as the 'percentage of occurrences of an attribute in a given ensemble':
 speaking of probability only makes sense when an ensemble is considered. 
