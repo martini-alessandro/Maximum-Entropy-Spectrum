@@ -79,31 +79,40 @@ We find that, when compared to the Welch's method, the Burg's method provides a 
 
 \section{Introduction}
 
-The study of the proprerties of a noisy process is a crucial task in many fields of physics and mathematical physics [Here we should make some examples...].
-It is very common that the noisy behaviour under study satisfy a \textit{stationariety} property, i.e. the noise is invariant under time translation.
-Under such assumption, it can be shown [cite something] that the problem of characterizing the noise properties is greatly simplified and its properties are summarized by a single \textit{autocorrelation function}, which describes how an observation at a given time correlates with another observation a later time. More formally, the properties of a zero mean time series $x_t$ are described by the function:
+The study of the properties of a noisy process is a crucial task in many fields of physics and mathematical physics [Here we should make some examples...].
+A particularly interesting class of stochastic processes are the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the auto-covariance function 
 \begin{equation}
-	R(\tau) = \mathbr{E}[x_t \cdot x_{t+\tau}]
+	R(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
 \end{equation}
-where the average is computed on different times $t$.
-Thus, a stationary noise time series is completely characterized by the autocorellation function.
-\par
-More often, the study is performed in frequency domain: indeed, for stationary noise the components in frequency $\tilde{x}(f)$ of a stationary time series are conditionally independent from each other. It can be shown that:
+or equivalently by the knowledge of their \emph{power spectral density} (PSD) $S(f)$. Thanks to the Wiener-Khinchin theorem the two are related by a Fourier transform: 
 \begin{equation}
-	\mathbr{E}[\tilde{x}(f) \cdot \tilde{x}(f^\prime)] = S(f) \delta(f-f^\prime)
+	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau R(\tau) e^{-i 2 \pi f \tau}\,.
 \end{equation}
-This equation defines the function \textit{power spectral density} (PSD) $S(f)$.
-The PSD has a straightforward interpretation: it measures how much signal ``power" is located in each frequency bin. Furthermore, it is not difficult to show that it is the Fourier transform of the autocorrelation function:
-\begin{equation}
-	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau R(\tau) e^{-i 2 \pi f \tau}
+In some literature, the PSD is introduced as  
+\begin{equation}\label{eq:psd-f-definition}
+	\mathbf{E}[\tilde{x}(f) \cdot \tilde{x}(f^\prime)] = S(f) \delta(f-f^\prime)
 \end{equation}
-A power spectral density fully describes a stationary noisy time series and this shows how important is in the study of noise.
-\par
-Thus, in many real application, the knowledge of the PSD is crucial for the understanding of the process and indeed algorithms for PSD computation are a standard part of every software package for computational physics.
-The ubiquitous method for such computation is due to Welch \cite{Welch} and it based on the method of peridiograms. Basically, the PSD is obtained by slicing the  into many windowed batches and averaging their Fourier transforms.
-
-
-The standard approach of peridiograms \cite{Lomb} \cite{Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
+without highlighting its connection with the time structure of the process itself, thus masking some important properties that will explore further in what follows. The latter definition in (\ref{eq:psd-f-definition}) gives, however, i) a straightforward interpretation of the PSD: it measures how much signal ``power" is located in each frequency; ii) an operative way of estimating for an unknown process.  
+%Under such assumption, it can be shown [cite something] that the problem of characterizing the noise properties is greatly simplified and its properties are summarized by a single \textit{autocorrelation function}, which describes how an observation at a given time correlates with another observation a later time. More formally, the properties of a zero mean time series $x_t$ are described by the function:
+%\begin{equation}
+%	R(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
+%\end{equation}
+%where the average is computed on different times $t$.
+%Thus, a stationary noise time series is completely characterized by the autocorellation function.
+%\par
+%More often, the study is performed in frequency domain: indeed, for stationary noise the components in frequency $\tilde{x}(f)$ of a stationary time series are conditionally independent from each other. It can be shown that:
+%\begin{equation}
+%	\mathbf{E}[\tilde{x}(f) \cdot \tilde{x}(f^\prime)] = S(f) \delta(f-f^\prime)
+%\end{equation}
+%This equation defines the function \textit{power spectral density} (PSD) $S(f)$.
+%The PSD has a straightforward interpretation: it measures how much signal ``power" is located in each frequency bin. Furthermore, it is not difficult to show that it is the Fourier transform of the autocorrelation function:
+%\begin{equation}
+%	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau R(\tau) e^{-i 2 \pi f \tau}
+%\end{equation}
+%A power spectral density fully describes a stationary noisy time series and this shows how important is in the study of noise.
+%\par
+%Thus, in many real application, the knowledge of the PSD is crucial for the understanding of the process and indeed algorithms for PSD computation are a standard part of every software package for computational physics.
+The ubiquitous method for such computation is due to Welch \cite{Welch} and it based on the method of periodograms. Basically, the PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many windowed batches and averaging the squared moduli of their Fourier transforms. The standard approach of periodograms \cite{Lomb,Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
     \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
 \end{equation}
 The sequence $W$ is a window function that can be chosen in several different way, each method having pros and cons for the final estimate of the power spectral density. \\ 
