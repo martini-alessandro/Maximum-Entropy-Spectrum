@@ -15,10 +15,9 @@ def generate_data(f,
                   sampling_rate = 1.,
                   fmin = None,
                   fmax = None,
-                  zero_noise = False,
                   asd = False):
     """
-    Generate a time series with a given power spectraul density 
+    Generate a time series with a given power spectral density 
 
     Parameters
     ----------
@@ -53,7 +52,7 @@ def generate_data(f,
     # f, psd = np.loadtxt(psd_file, unpack=True)
     if asd is True : psd *= psd
     # generate an interpolant for the PSD
-    psd_int = interp1d(f, psd, bounds_error=False, fill_value= 0.)
+    psd_int = interp1d(f, psd, bounds_error=False, fill_value='extrapolate')
     df      = 1 / T
     N       = int(sampling_rate * T)
     times   = np.linspace(0, T, N) 
@@ -73,9 +72,7 @@ def generate_data(f,
     frequency_series = sigma * (np.random.normal(0, 1, len(sigma)) + 1j * np.random.normal(0, 1, len(sigma)))
       
     # inverse FFT to return the TD strain
-    time_series = np.fft.irfft(frequency_series) * df * N 
+    time_series = np.fft.irfft(frequency_series, n=N) * df * N
     return times, time_series, frequencies, frequency_series, psd_int(frequencies)
 
 
-
-    
