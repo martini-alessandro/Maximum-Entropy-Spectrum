@@ -10,7 +10,7 @@ from scipy.interpolate import interp1d
 
 plot = True
 compute = True
-generate_fake_data = True
+generate_fake_data = False
 use_fake_data = True
 
 	#folder to save the plot at
@@ -20,7 +20,7 @@ true_PSD_file = 'GWTC1_GW150914_PSDs.dat'
 srate = 4096.
 
 T_list = [1, 5, 10,100]#, 1000] #list of times to make the comparison at
-seglen = [512, 1024, 2048, 8192]#, 32768]
+seglen = [512, 1024, 2048, 8192, 32768]
 
 if generate_fake_data:
 	PSD = np.loadtxt(true_PSD_file)
@@ -48,20 +48,16 @@ if compute:
 		
 		M = MESA()
 		M.solve(data_T, early_stop = True, method = 'Fast')
-
+		print("\tDone MESA")
 		freqs, PSD_Welch = psd(data_T, srate, seglen[i]/float(srate),
 			window_function  = None,
 			overlap_fraction = 0.5,
 			nfft = None,
 			return_onesided = False)
-		
+		print("\tDone Welch")
 		PSD_MESA = M.spectrum(1./srate, freqs)
 		
 		np.savetxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data), np.column_stack([freqs, PSD_MESA, PSD_Welch]))
-		
-		#plt.loglog(freqs, PSD_Welch)
-		#plt.loglog(freqs, PSD_MESA)
-		#plt.show()
 	
 	
 if plot:
@@ -69,15 +65,17 @@ if plot:
 		true_PSD = np.loadtxt(true_PSD_file)
 	for i, T in enumerate(T_list):
 		PSDs = np.loadtxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data))
-		freqs, PSD_MESA, PSD_Welch = PSDs[:,0], PSDs[:,1], PSDs[:,2]
+		N = PSDs.shape[0]
+		freqs, PSD_MESA, PSD_Welch = PSDs[:int(N/2),0], PSDs[:int(N/2),1], PSDs[:int(N/2),2]
 		
 		fig = init_plotting()
 		ax = fig.gca()
 		ax.set_title(r"$T = {}s$".format(T))
-		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0);psd_int = interp1d(true_PSD[:,0], true_PSD[:,1], bounds_error=False, fill_value='extrapolate')
-		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1);ax.loglog(freqs,psd_int(freqs), c='g',ls='dotted',zorder=10)
+		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0)
+		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1)
 		if use_fake_data:
-			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2);ax.set_xlim(10,np.max(freqs))
+			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2)
+		ax.set_xlim(10,np.max(true_PSD[:,0]))
 		ax.set_xlabel(r"$f(Hz)$")
 		ax.set_ylabel(r"$PSD \left(\frac{1}{\sqrt{Hz}} \right)$")
 		#fig.subplots_adjust(left = 0.25, bottom = 0.25)
