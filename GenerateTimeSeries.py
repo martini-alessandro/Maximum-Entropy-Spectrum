@@ -15,10 +15,9 @@ def generate_data(f,
                   sampling_rate = 1.,
                   fmin = None,
                   fmax = None,
-                  zero_noise = False,
                   asd = False):
     """
-    Generate a time series with a given power spectraul density 
+    Generate a time series with a given power spectral density 
 
     Parameters
     ----------
@@ -77,5 +76,3 @@ def generate_data(f,
     return times, time_series, frequencies, frequency_series, psd_int(frequencies)
 
 
-
-    
