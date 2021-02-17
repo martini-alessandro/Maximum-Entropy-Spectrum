@@ -24,6 +24,8 @@ def relative_error(real, estimate):
 
 
 if __name__ == '__main__': 
+    import os 
+    save_dir = os.getcwd() + '/comparisons_2/'
     #Sampling variables 
     dt = 1. / 4096
     times = np.array([1, 5, 10, 100])#, 1000])
@@ -49,7 +51,8 @@ if __name__ == '__main__':
     l_interp = interp1d(ligo_frequency, ligo_spectrum, fill_value = 'extrapolate')    
     M = MESA()
     
-
+    init_plotting()
+    
     for i, n in enumerate(segment_length):
         #White Noise
         w_welchFreq, w_welchSpectrum = welch.psd(Wtime_series[:int(N[i])], 1 / dt, n * dt)
@@ -65,13 +68,16 @@ if __name__ == '__main__':
         l_welchFreq, l_welchSpectrum = welch.psd(Ltime_series[:int(N[i])], 1 / dt, n * dt )
         M.solve(Ltime_series[:int(N[i])])
         l_mesaSpectrum, l_mesaFreq = M.spectrum(dt)
-        
+
         fig2, ax2 = plt.subplots()
         ax2.loglog(l_welchFreq[: n // 2], l_welchSpectrum[: n // 2], color = 'blue')
         ax2.loglog(l_mesaFreq[: int(N[i] // 2)], l_mesaSpectrum[:int(N[i] // 2)], color = 'red')
         ax2.loglog(ligo_frequency, ligo_spectrum, '--', color = 'k')
         ax2.set_title('Ligo Noise reconstrcution with {} points'.format(N[i]))
         ax2.set_xlim(10, 2048)
+        
+        fig.savefig(save_dir + 'White Noise {} points.pdf'.format(int(N[i])))
+        fig2.savefig(save_dir +'Ligo Noise {} points.pdf'.format(int(N[i])))
         
 
     
