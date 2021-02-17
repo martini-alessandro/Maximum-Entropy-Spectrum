@@ -6,11 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from init_plotting import init_plotting
 import pandas as pd
-
+from scipy.interpolate import interp1d
 
 plot = True
-compute = False
-generate_fake_data = False
+compute = True
+generate_fake_data = True
 use_fake_data = True
 
 	#folder to save the plot at
@@ -19,14 +19,14 @@ true_PSD_file = 'GWTC1_GW150914_PSDs.dat'
 #save_folder = 'comparison_LVC_data' #if on the cluster
 srate = 4096.
 
-T_list = [1,5, 10,100, 1000] #list of times to make the comparison at
-seglen = [512, 1024, 2048, 8192, 32768]
+T_list = [1, 5, 10,100]#, 1000] #list of times to make the comparison at
+seglen = [512, 1024, 2048, 8192]#, 32768]
 
 if generate_fake_data:
 	PSD = np.loadtxt(true_PSD_file)
 	freqs, PSD = PSD[:,0], PSD[:,1]
 	import GenerateTimeSeries
-	times, time_series, frequencies, frequency_series, psd_int =GenerateTimeSeries.generate_data(freqs, PSD, 1002., srate, np.min(freqs), np.max(freqs))
+	times, time_series, frequencies, frequency_series, psd_int = GenerateTimeSeries.generate_data(freqs, PSD, 1002., srate)#, np.min(freqs), np.max(freqs))
 	np.savetxt('fake_data_4KHZ-1000.txt', time_series)
 	
 if compute:
@@ -40,20 +40,20 @@ if compute:
 		data = pd.read_csv("H-H1_GWOSC_4KHZ_R1-1247614487-4096.txt.gz", skiprows = 3).to_numpy()
 
 	data = np.squeeze(data)
-	print("Loaded data: shape {}; srate {}; length {}s".format(data.shape,srate, len(data)/srate))
+	print("Loaded data: shape {}; srate {}; length {}s".format(data.shape, srate, len(data)/srate))
 
 	for i, T in enumerate(T_list):
 		print("Batch length: {}s".format(T))
 		data_T = data[:int(srate*T)]
 		
 		M = MESA()
-		M.solve(data_T, early_stop = True, method = 'Standard')
+		M.solve(data_T, early_stop = True, method = 'Fast')
 
 		freqs, PSD_Welch = psd(data_T, srate, seglen[i]/float(srate),
 			window_function  = None,
 			overlap_fraction = 0.5,
 			nfft = None,
-			return_onesided = True)
+			return_onesided = False)
 		
 		PSD_MESA = M.spectrum(1./srate, freqs)
 		
@@ -74,10 +74,10 @@ if plot:
 		fig = init_plotting()
 		ax = fig.gca()
 		ax.set_title(r"$T = {}s$".format(T))
-		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0)
-		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1)
+		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0);psd_int = interp1d(true_PSD[:,0], true_PSD[:,1], bounds_error=False, fill_value='extrapolate')
+		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1);ax.loglog(freqs,psd_int(freqs), c='g',ls='dotted',zorder=10)
 		if use_fake_data:
-			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2)
+			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2);ax.set_xlim(10,np.max(freqs))
 		ax.set_xlabel(r"$f(Hz)$")
 		ax.set_ylabel(r"$PSD \left(\frac{1}{\sqrt{Hz}} \right)$")
 		#fig.subplots_adjust(left = 0.25, bottom = 0.25)
