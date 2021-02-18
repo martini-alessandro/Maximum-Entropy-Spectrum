@@ -438,6 +438,16 @@ The interpretation of eq.~\ref{eq:p_forecast} is straightforward: $x_t$ follows 
 Equation~\ref{eq:p_forecast} provides then a well defined probability framework for predicting future observations: this is a very useful feature of the method, which does not have an equivalent in any other spectral analysis computation.
 
 \section{Validation of the model}
+It is now clear that MESA algorithm provides a recursive formula for computing the coefficients $a_k$ in eq.~\ref{eq:MESApsd}. The number $N$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_n$. In a perfect scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $n$, the the estimation for  $\bar{n}_n$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{N - n}\right)^{-1}$.
+
+It is then clear that the choice of how many points of the autocorrelation to consider is important: on one hand it is advisable to include as many knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_n$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
+Indeed, the order $N$ of the autocorrelation to be considered (or equivalently the order $N$ of the underlying autoregressive process) is the only input required by the user and a careful balance between this two necessities must be made when applying the algorithm.
+
+This section is devoted to an extensive study on how to make such choice.
+First of all (\ref{sec:optimizers}), we are going to define three different ``metrics" to measure how well the algorithm is performed: we will refer to them as \textit{optimizers}. The basic idea is to monitor, as the autoregressive order considered increase, the performance of the algorithm (in some sense) and pick, among the orders the one that yields better results.
+Second, the performance of different optimizers will be assessed by performing the spectral analysis on different time series: a simple white gaussian noise (\ref{sec:gaussian_noise_validation}) and a more complicate PSD (\ref{sec:arp_validation}).
+In a last subsection~\ref{sec:LIGO_validation} real data from LIGO-Virgo gravitational waves observatory.
+
 \subsection{Choosing an autoregressive order}\label{sec:optimizers} 
 Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$. \\ 
 In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$. \\ 
@@ -474,13 +484,11 @@ The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR01
 Once an optimizer is chosen to select the best recursion order $M$, we then proceed as follows:  we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value. \\
 PARLARE QUI DELL'EARLY STOP? 
 The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
-\section{Analysis of the optimizers}
-\section{Analysis of optimizers - Introduction}
+\subsection{Choosing an optimizer - Gaussian Noise} \ref{sec:gaussian_noise_validation}
 To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
 In either cases, we will quantify the agreement between the reconstructed quantities and the expected ones.\\
 A short description of the principle of the algorithm used to construct the time series is also given. 
 
-\section{Gaussian noise} 
 This section is devoted to the analysis of the optimizations methods, applied on pure Gaussian noise process $\vec n = (n_1, n_2, \dots, n_N),\text{ with } n_i = n(t_i)$, assuming our process to be a wide-sense stationary process, i.e. autocorrelation matrix is a Toeplitz matrix depending only on time intervals.\\ 
 The spectrum chosen for our first analysis is a Gaussian distribution
 \begin{equation}
@@ -511,11 +519,11 @@ so that the role of PSD appears to be clear: it is the diagonal covariance matri
 \end{equation}
 With this information, it is easy to generate any time series with power spectral density of any shape.
 Choosing a priori values for sampling interval $dt$ and total time of observation $T$, recalling Nyquist theory of sampling, we generate arrays of given length N / 2 in frequency domain from 0 to the Nyquist Frequency $f_{Ny} = \frac{1}{2 dt}$. We then convert noise to the time domain using an Inverse Fast Fourier Transform.\cite{oliphant2006guide}\cite{van2011numpy} \\ Basic idea for fast algorithm used to construct noise can be found in ~\cite{noiseGen}. We worked it out in a slightly different way, the imaginary component is not obtained sampling a random complex phase from a uniform distribution. We choose to sample both real and imaginary part from two identical normal distribution distributing variance in a proper way between real and imaginary components. 
-\section{Test on Time Series}
+\subsection{Choosing an optimizer - AR(p) Time Series} \label{sec:arp_validation}
 It is now possible to test the three methods on a given time series. We will concentrate on a power spectral density that is a normal distribution with mean $\mu = 2.5 \quad units$ and standard deviation $\sigma = 0.5 \quad units$.
 We will apply Burg method with each optimizer on a large amount of simulated dataset, obtaining a variety of estimate for PSD. We will study statistical properties for both single reproductions and ensemble average. In many cases, such as gravitational waves, one cannot observe multiple time series realizations for a fixed process, so that single reproduction studies are probably more useful. Still, study of ensemble average is important to highlight some interesting properties. In this way we can fully characterize the performance of each optimizer .
 We will attentively study the role of the filter length estimate M in determining the accuracy of the reconstruction. We will consider every optimizer separately and compare result only at the end of this section. We will then study in depth the Advanced LIGO design sensitivity power spectrum \cite{Ligo}
-\subsection{Normal Power Spectral Density}
+
 \begin{figure}
     \centering
         \includegraphics[width = \linewidth]{Images/NormalPSD/NormalNoise.pdf}
@@ -636,7 +644,7 @@ Averaging, the noise in each spectrum is cancelled. It is interesting that the c
     \caption{Reconstructed power spectral density with the three method. The reported reconstruction is the one that shows the median percentage error (overall)}
     \label{fig:GaussMedian}
 \end{figure}
-\subsection{Summary and Comparison}
+\subsubsection{Conclusive Remarks}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/NormalPSD/Normal Residuals.pdf}
@@ -696,7 +704,7 @@ CAT histogram shows a very interesting behaviour. The histogram for the order sh
 
 So, even if in some cases CAT might be more accurate when taking the average over several spectra, FPE guarantees that minimum error will be reached. 
 
-\subsection{Analysis of Ligo Spectrum}
+\subsection{Analysis of Ligo Spectrum} \label{sec:LIGO_validation}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/LIGOsimulate/LigoPSDoriginal.pdf}
@@ -764,6 +772,9 @@ it is immediate to see that, again, FPE results lies in the are of filter's leng
     \label{fig:my_label}
 \end{figure}
 
+\section{Comparison with Welch method}
+
+\section{Final remarks and future prospects}
 
 \appendix
 \section{MESA solution} \label{sec:MESA_solution}
