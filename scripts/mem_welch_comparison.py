@@ -37,7 +37,7 @@ if __name__ == '__main__':
     times = np.array([1, 5, 10, 100, 1000])
     N = times // dt 
     segment_length = np.array([521, 1024, 2048, 8192, 32768]) 
-    segment_length *= seglen_factor
+    if seglen_factor != 1: segment_length *= seglen_factor
 
     
     #Generate normal PSD and import Ligo PSD 
