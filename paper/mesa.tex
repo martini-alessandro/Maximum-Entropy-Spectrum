@@ -40,7 +40,7 @@ superscriptaddress,10pt]{revtex4-1}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
 % comments command
-\newcommand{\wdp}[1]{{\textcolor{green}{\texttt{SS: #1}} }}
+\newcommand{\wdp}[1]{{\textcolor{magenta}{\texttt{WDP: #1}} }}
 \newcommand{\amartini}[1]{{\textcolor{blue}{\texttt{SS: #1}} }}
 \newcommand{\sschmidt}[1]{{\textcolor{red}{\texttt{SS: #1}} }}
 
@@ -204,9 +204,9 @@ To show how the maximization of entropy, supplemented with additional evidence, 
 we use a simple, pedagogical example. Consider the case in which we want assign a probability distribution $p(x)$ to a variable $x$ 
 for which we know mean $\mu$ and covariance $\Sigma$. Our `evidence' is then coded as the following constraints:
 \begin{align}
-$\sum_{i = 1}^{N}p_i &= 1 $\\
-$\sum_{i = 1}^{N}x_i p_i &= \mu $\\
-$\sum_{i = 1}^{N}(x_i - \mu)(x_j - \mu) p_i &= \Sigma$\,
+\sum_{i = 1}^{N}p_i &= 1 \\
+\sum_{i = 1}^{N}x_i p_i &= \mu \\
+\sum_{i = 1}^{N}(x_i - \mu)(x_j - \mu) p_i &= \Sigma\,
 \end{align}
 where the first row states the requirement of exhaustivity.
 \wdp{i think we want the multivariate case since i) the gaussian case is also on wikipedia ii) we actually will need that  later on.}
