@@ -57,7 +57,7 @@ We find that, when compared to the Welch's method, the Burg's method provides a 
 \end{abstract}
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
-	\title{Maximum Entropy Spectral Analysis}
+	\title{Maximum Entropy Spectral Analysis: a case study}
 	\author{Alessandro \surname{Martini}}
 		\email{martini.alessandr@gmail.com}
         \affiliation{Dipartimento di Fisica  Università di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy}        
@@ -76,14 +76,14 @@ We find that, when compared to the Welch's method, the Burg's method provides a 
 
 \section{Introduction}
 
-The study of the properties of a noisy process is a crucial task in many fields of physics and mathematical physics [Here we should make some examples...].
+The study of the properties of  stochastic processes is a crucial task in many fields of physics and mathematical physics [Here we should make some examples...].
 A particularly interesting class of stochastic processes are the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the auto-covariance function 
 \begin{equation}
-	R(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
+	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
 \end{equation}
 or equivalently by the knowledge of their \emph{power spectral density} (PSD) $S(f)$. Thanks to the Wiener-Khinchin theorem the two are related by a Fourier transform: 
 \begin{equation}
-	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau R(\tau) e^{-i 2 \pi f \tau}\,.
+	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau C(\tau) e^{-i 2 \pi f \tau}\,.
 \end{equation}
 In some literature, the PSD is introduced as  
 \begin{equation}\label{eq:psd-f-definition}
@@ -192,6 +192,37 @@ or, in the continuous case:
 \end{equation}
 and $H$ is what we will call (information) entropy.
 
+The maximisation of entropy, supplemented by evidence in the form of constraints to which the sought-for probability distribution must obey,
+gives rise to several of the most common probability distributions utilised commonly by data scientists. For instance, whenever the only constraint available is the normalisation of the probability distribution, the entropy is maximised by the uniform distribution. 
+If the information available is instead the expected value -- the mean -- entropy is maximised by the  exponential distribution. Of particular importance is 
+the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
+We retain this particularly interesting from the foundational point of view, since it provides a deeper insight into the ubiquitous Gaussian distribution.
+It is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy. 
+
+For this work, we are particularly interested in the mutli-dimensional case. Suppose we have a vector of measurements $(x(t_1),\ldots,x(t_n)) = (x_1, \ldots, x_n)$ that we conveniently express as a single realisation of an unknown stochastic process $x(t)$ and we have information about the expectation value of the process $\mu(t)$ and on the matrix of auto-covariances $C_{ij} \equiv C(t_i,t_j)$, then the MAXENT distribution is the $n$-dimensional multivariate Gaussian distribution\cite{gregory_2005}: 
+\begin{align}
+    p&\left((x_1, \ldots, x_n)\vert I\right) = \nonumber \\
+    &\frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right)\,. 
+\end{align}
+We have already seen that for a wide-sense stationary process the mean function is independent of time, hence redefined to be equal to zero without loss of generality, and the auto-covariance function is dependent only on the time lag $\tau \equiv t_i - t_j$. One can thus choose a sampling rate $\Delta t$ so that $C_{ij} = C((i-j)\Delta t)$. The autocovariance matrix thus becomes a Toeplitz matrix. Toeplitz matrices are asymptotically equivalent to circulant matrices and thus diagonalised by the discrete Fourier transform base\cite{Gray}.
+%R. M. Gray, Foundations and Trends⃝R in Communications and Information Theory 2, 155 (2005), URL https://doi.org/10.1561/0100000006.
+Some simple algebra shows that the time-domain multivariate Gaussian can be transformed into the equivalent frequency domain 
+probability distribution:
+\begin{align}
+p&\left((\tilde{x}_1, \ldots, \tilde{x}_n)\vert I\right) = \nonumber \\
+    &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i}(\tilde{x}_i^2S^{-1}_{i} \right)\,,
+\end{align}
+where the matrix $S$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
+Many readers will recognised the familiar form of the Whittle likelihood that stands at the basis of the \emph{matched filter} method\cite{woodward}
+%P. M. Woodward, D. W. Fry, and W. Higinbotham, Probability and information theory, with applications to radar; 2nd ed. (Pergamon Press, Oxford, 1964), URL http://cds.cern.ch/record/2031792.
+and of gravitational waves data analysis, e.g. \cite{finn:1992}.
+% L. S. Finn, Phys. Rev. D46, 5236 (1992), gr-qc/9209010
+Thanks to MAXENT, the problem of defining the probability distribution describing a wide-sense stationary process is thus 
+entirely reduced to the estimation of the PSD or, equivalently, the auto-covariance function.
+
+%
+%
+
 %This interpretation is straightforward: if we compare it with Eq.~(\ref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being `non committal' with unavailable evidence, since \ref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization.
 
 %It is easy to verify that this expression for entropy verifies the aforementioned properties. 
@@ -199,17 +230,17 @@ and $H$ is what we will call (information) entropy.
 %\begin{equation}
 %    -\sum_{i = 1}^N \frac{1}{N}\log{\frac{1}{N}} = - \log\frac{1}{N} = \log N.
 %\end{equation}
-\wdp{I need to review and correct the following}
-To show how the maximization of entropy, supplemented with additional evidence, can provide a unique probability assignment, 
-we use a simple, pedagogical example. Consider the case in which we want assign a probability distribution $p(x)$ to a variable $x$ 
-for which we know mean $\mu$ and covariance $\Sigma$. Our `evidence' is then coded as the following constraints:
-\begin{align}
-\sum_{i = 1}^{N}p_i &= 1 \\
-\sum_{i = 1}^{N}x_i p_i &= \mu \\
-\sum_{i = 1}^{N}(x_i - \mu)(x_j - \mu) p_i &= \Sigma\,
-\end{align}
-where the first row states the requirement of exhaustivity.
-\wdp{i think we want the multivariate case since i) the gaussian case is also on wikipedia ii) we actually will need that  later on.}
+%\wdp{I need to review and correct the following}
+%To show how the maximization of entropy, supplemented with additional evidence, can provide a unique probability assignment, 
+%we use a simple, pedagogical example. Consider the case in which we want assign a probability distribution $p(x)$ to a variable $x$ 
+%for which we know mean $\mu$ and covariance $\Sigma$. Our `evidence' is then coded as the following constraints:
+%\begin{align}
+%\sum_{i = 1}^{N}p_i &= 1 \\
+%\sum_{i = 1}^{N}x_i p_i &= \mu \\
+%\sum_{i = 1}^{N}(x_i - \mu)(x_j - \mu) p_i &= \Sigma\,
+%\end{align}
+%where the first row states the requirement of exhaustivity.
+%\wdp{i think we want the multivariate case since i) the gaussian case is also on wikipedia ii) we actually will need that  later on.}
 
 %First of all, we want to show that, in case in which our only constraint is exhaustiveness
 %$\sum_{i = 1}^{N}p_i = 1 $,
@@ -280,19 +311,18 @@ where the first row states the requirement of exhaustivity.
 %\begin{equation}
 %	p(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\bar{x}}{\sigma}\right)^2}
 %\end{equation}
+%
+%Take a vector  $\vec x(t)$ with components in $\mathbb{R}^N$
+%\begin{equation*}
+%    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
+%\end{equation*}
+%We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C_(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
+%\begin{align}
+%    p&\left(\vec x(t)\vert I\right) = \nonumber \\
+%    &\frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right). 
+%\end{align}
 
-Take a vector  $\vec x(t)$ with components in $\mathbb{R}^N$
-\begin{equation*}
-    \vec x(t) = \left(x_1, \dots, x_N \right), \quad \text{ with } x_i = x(t_i),
-\end{equation*}
-We assume $\vec x$ to be time dependent and real valued because we will work with time dependent single channel signals. If we put constraints in both mean $\vec \mu(t)$ and covariance matrix $C_(t_i, t_j)$, MAXENT allow us to assign for $\vec x(t)$ a multivariate normal distribution \cite{gregory_2005}: 
-\begin{align}
-    p&\left(\vec x(t)\vert I\right) = \nonumber \\
-    &\frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right). 
-\end{align}
 
-Thus MAXENT provide a deeper insight into the Gaussian distribution.
-It is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy. 
 
 \subsection{Maximum Entropy Spectral Analysis} \label{sec:MESA}
 The computation of the power spectral density is an important component in time series analysis and characterization.
