@@ -42,20 +42,18 @@ if __name__ == '__main__':
     
     #Generate normal PSD and import Ligo PSD 
     if white_noise: 
-        wnoise_frequency, wnoise_spectrum = np.arange(0, N[0] // 2 + 1) / times[0], np.repeat(1, N[0] // 2 + 1) * dt
         print('Generating white noise series')
+        wnoise_frequency, wnoise_spectrum = np.arange(0, N[0] // 2 + 1) / times[0], np.repeat(1, N[0] // 2 + 1) * dt
         Wtime, Wtime_series, Wfrequency, Wfrequency_series, Wpsd = generate_data(wnoise_frequency,
                                                                         wnoise_spectrum,
                                                                         times[-1],
                                                                         1/ dt)
         w_interp = interp1d(wnoise_frequency, wnoise_spectrum) 
         
-    #ligo_frequency, ligo_spectrum = np.loadtxt('LIGO-P1200087-v18-AdV_DESIGN_psd.dat', unpack=True)     
     if Ligo_noise: 
-        ligo_frequency, ligo_spectrum, _ = np.loadtxt('GWTC1_GW150914_PSDs.dat', unpack = True)
-    #Generating Noise 
-   
         print('Generating Ligo noise series')
+        #ligo_frequency, ligo_spectrum = np.loadtxt('LIGO-P1200087-v18-AdV_DESIGN_psd.dat', unpack=True)     
+        ligo_frequency, ligo_spectrum, _ = np.loadtxt('GWTC1_GW150914_PSDs.dat', unpack = True)
         Ltime, Ltime_series, Lfrequency, Lfrequency_series, Lpsd = generate_data(ligo_frequency,
                                                                              ligo_spectrum,
                                                                              times[-1],
@@ -92,7 +90,8 @@ if __name__ == '__main__':
             ax2.set_xlim(ligo_frequency.min(), ligo_frequency.max())
             if save: 
                 fig2.savefig(save_dir +'GW150914 {} points ({} seglen).pdf'.format(int(N[i]), seglen_factor))
-        
+                
+        plt.show() 
 
     
     
