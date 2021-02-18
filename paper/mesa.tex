@@ -438,53 +438,67 @@ The interpretation of eq.~\ref{eq:p_forecast} is straightforward: $x_t$ follows 
 Equation~\ref{eq:p_forecast} provides then a well defined probability framework for predicting future observations: this is a very useful feature of the method, which does not have an equivalent in any other spectral analysis computation.
 
 \section{Validation of the model}
-It is now clear that MESA algorithm provides a recursive formula for computing the coefficients $a_k$ in eq.~\ref{eq:MESApsd}. The number $N$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_n$. In a perfect scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $n$, the the estimation for  $\bar{n}_n$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{N - n}\right)^{-1}$.
+It is now clear that MESA algorithm provides a recursive formula for computing the coefficients $a_k$ in eq.~\ref{eq:MESApsd}. The number $M$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_m$. In a perfect scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $n$, the the estimation for  $\bar{n}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
 
-It is then clear that the choice of how many points of the autocorrelation to consider is important: on one hand it is advisable to include as many knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_n$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
-Indeed, the order $N$ of the autocorrelation to be considered (or equivalently the order $N$ of the underlying autoregressive process) is the only input required by the user and a careful balance between this two necessities must be made when applying the algorithm.
+%OR WE CAN KEEP THIS (SOMEHOW MODIFIED)
+%Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$.
+%In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$.
+%The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact.
+
+It is then clear that the choice of how many points of the autocorrelation to consider is important: on one hand it is advisable to include as many knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_m$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
+Indeed, the order $M$ of the autocorrelation to be considered (or equivalently the order $M$ of the underlying autoregressive process) is the only input required by the user and a careful balance between this two necessities must be made when applying the algorithm.
 
 This section is devoted to an extensive study on how to make such choice.
 First of all (\ref{sec:optimizers}), we are going to define three different ``metrics" to measure how well the algorithm is performed: we will refer to them as \textit{optimizers}. The basic idea is to monitor, as the autoregressive order considered increase, the performance of the algorithm (in some sense) and pick, among the orders the one that yields better results.
 Second, the performance of different optimizers will be assessed by performing the spectral analysis on different time series: a simple white gaussian noise (\ref{sec:gaussian_noise_validation}) and a more complicate PSD (\ref{sec:arp_validation}).
 In a last subsection~\ref{sec:LIGO_validation} real data from LIGO-Virgo gravitational waves observatory.
 
+\sschmidt{Qui ho provato a mettere un po' di ordine alla sezione. Ho scritto l'introduzione sopra per spiegare i passaggi logici della validation. Spero che vada bene. La parte sotto è tutta da rivedere e probabilmente c'è molto da asciugare: sono quasi 10 pagine! Mi metto a farlo subito}
+
 \subsection{Choosing an autoregressive order}\label{sec:optimizers} 
-Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$. \\ 
-In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$. \\ 
-The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact. A compromise between the two behaviour is proposed to be \cite{doi:10.1190/1.1440902}
+\sschmidt{optimizer è la parola giusta? Optimizer è un algoritmo... Si potrebbe chiamare optimizer ``metrica"?}
+A good choice for the autoregressive order $M$ is proposed to be \cite{doi:10.1190/1.1440902}
 \begin{equation}\label{eq:MMAx}
 M_{max} = 2N / \ln{(2N)}
 \end{equation}
-Still, this is not a satisfactory answer since it is an upper limit for the estimate of the length $M$.
-Various approaches to optimize the order $M$ have been proposed in literature; in the following we present them.
+However, this is just an upper limit for the estimate of the length $M$ and the optimal algorithm could employ much less points.
+We then need a more sophisticated method for computing the right value for $M$.
+Various optimizers to assess the algorithm performance have been proposed in literature. We summarize them below:
+
 \begin{itemize}
 \item \textbf{Final prediction Error (FPE)} 
 The first criterion is due to Akaike (1970) \cite{Akaike1970StatisticalPI}. He proposed that M has to be chosen as the length that reduces the error when the filter is used as a predictor: 
 \begin{equation}
-    FPE: \min_{M}E\left((x_t - \hat x_t) ^ 2\right)
+    FPE(m) = \mathbb{E}\left[ \left((x_t - \hat x_t) ^ 2\right) \right]
 \end{equation}
-with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.  This criterion is equivalent to the choice of $M$ such that 
+with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.
+Minimizing FPE is the same as minimizing the quantity: 
 \begin{equation}
-    \min_{M}P_{m} \frac{N + m + 1}{N - m - 1}
+    P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
-with $P_M$ defined by the prediction error filter equation. 
+with $P_M$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
 \item \textbf{Criterion Autoregressive Transfer function (CAT)}
-This second criterion is due to Parzen \cite{bhansali1986}, and requires $M$ to be chosen as the length $m$ the minimizes the quantity 
+This second optimizer is due to Parzen \cite{bhansali1986}, and it is defined as
 \begin{equation}
-    \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
+    CAT(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
 \end{equation}
 It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. 
 
 \item \textbf{Optimum Bayes Decision rule (OBD)} 
-The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, $M$ is proposed to be the length that maximizes the posterior distribution, condition met selecting $m$ that minimize 
+The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, th optimizer is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}: 
    \begin{equation}
-        (N - m - 2) \log(P_m) + m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2.
+        OBD(m) = (N - m - 2) \log(P_m) + m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2.
     \end{equation}
 \end{itemize}
-Once an optimizer is chosen to select the best recursion order $M$, we then proceed as follows:  we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value. \\
-PARLARE QUI DELL'EARLY STOP? 
-The following chapter will be devoted to the study of the statistical properties of the previous optimizers to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
-\subsection{Choosing an optimizer - Gaussian Noise} \ref{sec:gaussian_noise_validation}
+
+Once an optimizer is chosen, the choice of the best recursion order is straightforward: we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the chosen optimizer value.
+
+In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $M_{opt}<< M_{max}$ and in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
+In practice, we can apply an \textit{early stopping} procedure: every few iterations we look for the best order of $M_{opt}$; if this value does not change for a while, the computation is stopped and a good (local) minimum of the optimizer is found.
+
+The following sections will be devoted to the study of the statistical properties of the optimizers above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
+
+\subsection{Choosing an optimizer - Gaussian Noise} \label{sec:gaussian_noise_validation}
 To apply Burg's method, it is a fundamental task to understand what is the best choice for estimating the order for the autoregressive stochastic process. Before applying it to real datasets, we will study main properties of the three different optimizer, introduce in section \ref{sec:optimizers} on distinct, simulated, realizations of some AR(p) processes. We will generate different Gauss noise time series with a given known power spectral density (PSD) to understand how each method performs in different situation. The analysis will concern the quality, to be defined later, of the reconstruction of the spectrum itself. We will consider two different kinds of spectra: i) a Gaussian spectrum with a given mean and variance; ii) an Advanced LIGO design sensitivity theoretical spectral curve.  As a part of our investigation, we will consider both ensemble-averaged, indicated with $\bar S$ and non averaged quantities. \\ 
 In either cases, we will quantify the agreement between the reconstructed quantities and the expected ones.\\
 A short description of the principle of the algorithm used to construct the time series is also given. 
@@ -773,6 +787,9 @@ it is immediate to see that, again, FPE results lies in the are of filter's leng
 \end{figure}
 
 \section{Comparison with Welch method}
+
+\sschmidt{In questa sezione potremmo mettere i vari confronti con Welch}
+\sschmidt{Mettiamo da qualche parte una descrizione dettagliata del codice?}
 
 \section{Final remarks and future prospects}
 
