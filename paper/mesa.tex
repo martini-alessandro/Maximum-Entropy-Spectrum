@@ -361,7 +361,7 @@ This approach on power spectral density estimate was developed by Burg \cite{bur
 \begin{equation}\label{eq:MESApsd}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^s\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}, 
 \end{equation}
-with $\Delta t$ the sampling interval, $z=\exp{(2\pi i f)}$, $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The details of the derivation and the actual values of the coefficients $a_i$ can be found in appendix \ref{sec:MESA_solution}.
+with $\Delta t$ the sampling interval, $z=e^{-2\pi i f \Delta t}$, $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The details of the derivation and the actual values of the coefficients $a_i$ can be found in appendix \ref{sec:MESA_solution}.
 
 \subsection{Autoregressive Process Analogy} \label{sec:autoregr}
 
