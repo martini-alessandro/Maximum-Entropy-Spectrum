@@ -131,7 +131,7 @@ After a short introduction to Jayne's MAXENT (sec.~\ref{sec:MAXENT}), we will de
 Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link to introduce a method for forecasting a time series.
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
-\sschmidt{This section is yet to prune}
+
 Before introducing MAXENT as a variational problem, we will workout some simple examples to contexualise how information's entropy
 and `uncertainty' are related. First of all,  it is worth noting that the word `information' will not be used to indicate our knowledge on the system under study: this is what we will call `evidence'. Information will be intended as in communication theory: it specifies the length of the message necessary to provide
 a full description of the system under study.
@@ -325,56 +325,58 @@ entirely reduced to the estimation of the PSD or, equivalently, the auto-covaria
 
 
 \subsection{Maximum Entropy Spectral Analysis} \label{sec:MESA}
-The computation of the power spectral density is an important component in time series analysis and characterization.
+
 In principle, if the autocorrelation was known exactly (i.e. at every time $\tau \in (-\infty,+\infty)$), the computation of the PSD 
 would reduce to a single Fourier transform.
 However, in any realistic setting, we are dealing with a finite number of samples $N$ from the process, hence such computation
 is impossible.
-Moreover, the error $\sigma_k$ in the estimate of the autocorrelation after $k$ steps increases with $k$ as $\sigma \sim \frac{1}{\sqrt{N - k}}$, so that only a few values for the autocorrelation function can actually be computed reliably.
-This bring us the core of our problem: how to give an estimate from partial (and noisy) knowledge of the autocorrelation function? The Maximum Entropy Principle can guide use in this task without any a priori assumptions on the unavailable data\footnote{Indeed this is the largest difference with the most common Welch method. The latter assumes that the unknown values of the autocorrelation are $0$. Clearly, this assumption is unjustified and MAXENT is a good way to drop this assumption.}.
+Moreover, the error $\sigma_k$ in the estimate of the autocorrelation after $k$ steps increases with $k$ as $\sigma \sim 1/\sqrt{N - k}$, so that only a few values for the autocorrelation function can actually be computed reliably.
+This bring us the core of the problem: how to give an estimate from partial (and noisy) knowledge of the autocorrelation function? MAXENT can guide use in this task without any a priori assumptions on the unavailable data\footnote{Indeed this is the largest difference with the most common Welch method. The latter assumes that the unknown values of the autocorrelation are $0$. Clearly, this assumption is unjustified and MAXENT is a good way to drop this assumption.}.
 \par
-As in the previous examples, we need to set up a variational problem where the entropy eq.~\ref{eq:entropy} is maximized with some problem-specific constraints. 
+As in the previous examples, one needs to set up a variational problem where the entropy, Eq.~(\ref{eq:entropy}), is maximized 
+subject to some problem-specific constraints. 
 In our case, they are i) the PSD estimate has to be non-negative; ii) its Fourier transform has to match the sample autocorrelation (wherever an estimate of this is available).
 \par
-Before doing so, there is a technical problem to solve: our definition of entropy (eq.~\ref{eq:entropy}) depends on a probability distribution, not on the power spectrum. We then need to to formulate the variational problem in terms of the power spectral density $S(f)$ alone.
-A way out of this is considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. One can show that the 'entropy gain' obtained filtering white noise is: 
+Before doing so, there is a technical problem to solve: the definition of entropy (Eq.~\ref{eq:entropy}) depends on a probability distribution, 
+not on the PSD. The variational problem can be formulated in terms of the power spectral density $S(f)$ alone by
+considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. 
+The entropy gain obtained by filtering white noise is: 
 \begin{equation}\label{eq:EntropyGain}
     \Delta H = \int_{-\infty}^{\infty}\log S(f) df , 
 \end{equation}
-so that we can reformulate the variational problem requiring $S(f)$ to maximize the entropy gain \sschmidt{Non ho capito questa parte...:(}. In real examples we have no access to all frequencies but only on those between minus and plus the Nyquist frequency, defined from the sampling interval $\Delta t$ as 
-\begin{equation}
-    Ny = \frac{1}{2 \Delta t}.
-\end{equation}
-All our quantities are well defined in this range only, so that we are not going to maximize \ref{eq:EntropyGain}, but
+hence the variational problem can be stated by requiring that $S(f)$ maximises the entropy gain \sschmidt{Non ho capito questa parte...:(}. 
+Time-limited observations do not provide access to the full frequency range, but only between minus and plus the Nyquist frequency, 
+that, in turn is given by the sampling interval $\Delta t$ as $Ny \equiv \frac{1}{2 \Delta t}$. Hence, the finite-size entropy
+gain is 
 \begin{equation}\label{eq:EntropyGain2}
-    \Delta H = \int_{- Ny}^{Ny}\log S(f) df.
+    \Delta H = \int_{- Ny}^{Ny}\log S(f) df\,.
 \end{equation}
 
-Now the the objective to maximize is well defined, we can write down the constraints of our problem.
-Defining $\bar r_n$ as the sample autocorrelation, we require that the variational solution $S(f)$ for the PSD matches the empirical autocorrelation. This means:
+Consider a realisation of a stochastic process $(x_1,\ldots,x_n)$ with sample autocorrelations $\bar r_i,\,i=0,\ldots, n/2$, we require that the variational solution $S(f)$ for the PSD matches the empirical autocorrelation:
 \begin{equation}\label{eq:MaxConstraint}
-\int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}.
+\int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}\,.
 \end{equation}
-This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. Remarkably, it admits an analytical solution in a closed expression for $S(f)$. 
+This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. Remarkably, the variational problem admits a closed-form analytical expression for $S(f)$:
 
 \begin{equation}\label{eq:MESApsd}
-    S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}, 
+    S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^s\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}, 
 \end{equation}
-with $\Delta t$ the sampling interval $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The details of the derivation and the actual values of the coefficients $a_i$ can be found in appendix \ref{sec:MESA_solution}.
-
+with $\Delta t$ the sampling interval, $z=\exp{(2\pi i f)}$, $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The details of the derivation and the actual values of the coefficients $a_i$ can be found in appendix \ref{sec:MESA_solution}.
 
 \subsection{Autoregressive Process Analogy} \label{sec:autoregr}
+
 The application of MESA is not limited to spectral estimates, but it also provides a link between spectral analysis and the study
 of autoregressive processes.\cite{doi:10.1029/RG013i001p00183}.
-An autoregressive stationary process of order $p$ (AR(p)) is a time series whose values satisfy the following expression: 
+An autoregressive stationary process of order $p$ (AR($p$)) is a time series whose values satisfy the following expression: 
 \begin{equation} \label{eq:AR_p}
     x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_p x_{t - p} = \nu_t
 \end{equation}
 where $b_1, \ldots, b_p$ are real coefficients and $\nu_t$ is white noise with a given variance $\sigma^2$.
-Thus, an AR(p) process models the dependence on every point on the $p$ past observation, thus being potentially able to model complex autocorrelation between data.
+Thus, an AR($p$) process models the dependence of the value of the process at time $t$ on every past $p$ observations, 
+thus being potentially able to model complex autocorrelation between data.
 \par
 To show the analogy, we compute the PSD of such process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}.
-We start taking the z \sschmidt{What is the z transform} transform of the previous eq.~\ref{eq:AR_p}: 
+We start taking the z \sschmidt{What is the z transform} \wdp{it is a relative of the Fourier transform, z are the roots of the unit in the complex plane} transform of the previous eq.~\ref{eq:AR_p}: 
 \begin{align}
     \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t.
 \end{align}
@@ -389,7 +391,7 @@ Since we assumed a stationary process, $\tilde{x}(z)$ is analytic both on and in
     \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}.
 \end{equation}
 The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$.
-Equation~\ref{eq:ARspectrum} and eq.~\ref{eq:MESApsd}) are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
+Eq.~(\ref{eq:ARspectrum}) and Eq.~(\ref{eq:MESApsd}) are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
 This shows that the MAXENT estimation of the PSD computes the coefficients of the autoregressive process that is able to model the data faithfully.
 
 \sschmidt{I don't understand the next of this section...}
