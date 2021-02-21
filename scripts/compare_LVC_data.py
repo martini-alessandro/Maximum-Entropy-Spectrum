@@ -11,7 +11,7 @@ from scipy.interpolate import interp1d
 plot = True
 compute = False
 generate_fake_data = False
-use_fake_data = True
+use_fake_data = False
 
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
@@ -78,7 +78,7 @@ if plot:
 		#ax.set_xlim(10,np.max(true_PSD[:,0]))
 		ax.set_xlim(10,1024)
 		ax.set_xlabel(r"$f(Hz)$")
-		ax.set_ylabel(r"$PSD \left(\frac{1}{\sqrt{Hz}} \right)$")
+		ax.set_ylabel(r"$PSD \left(\frac{1}{Hz} \right)$")
 		#fig.subplots_adjust(left = 0.25, bottom = 0.25)
 		plt.tight_layout(pad = 0.5)
 		filename = save_folder+"comparison_LVC_data_T{}_fake_{}.pdf".format(T, use_fake_data)
