@@ -18,14 +18,17 @@ from scipy.interpolate import interp1d
 def relative_error(real, estimate): 
     return np.abs(real - estimate) / real 
 
-PSD = 'ligo' #normal or ligo 
-save = False
+PSD = 'normal' #normal or ligo 
+save = True
 savedir = '../paper/Images/optimisers_comparison/' + PSD + '/'
 simulate_data = False 
 methods = ['FPE', 'CAT', 'OBD']
 M = MESA() 
-init_plotting() 
+init_plotting()
+plt.close() 
 colors = {'FPE': 'r', 'CAT': 'k', 'OBD': 'green'}
+
+print("Dealing with ",PSD)
 
 #Initialize single spectrum dictionaries 
 spectra, optimisers, orders, errors = {}, {}, {}, {} 
@@ -57,19 +60,32 @@ if simulate_data:
             orders[method].append(M.a_k.size)
             spectra[method].append(M.spectrum(dt)[0][: number_of_points // 2])    
 
+        #saving data
+    s, o, orde = [], [], []
+    for i, method in enumerate(methods): #initializing data
+        s.append(spectra[method]); o.append(optimisers[method]); orde.append(orders[method])
+    np.save('plot_data/normal_spectra.npy', np.array(s))
+    np.save('plot_data/normal_optimisers.npy', np.array(o))
+    np.save('plot_data/normal_orders.npy', np.array(orde))
+    
 elif not simulate_data:
     frequency = np.linspace(0, .5 / dt, number_of_points // 2 + 1)
     psd_int = interp1d(f, spectrum, fill_value='extrapolate')
     psd = psd_int(frequency)
     
     if PSD.lower() == 'ligo': 
-        s = np.load('ligo_spectra.npy')
-        o = np.load('ligo_optimisers.npy')
-        orde = np.load('ligo_orders.npy')
-        
-        for i, method in enumerate(methods):
-            spectra[method] = s[i]; optimisers[method] = o[i]; orders[method] = orde[i]
-#Set unity measures 
+        s = np.load('plot_data/ligo_spectra.npy')
+        o = np.load('plot_data/ligo_optimisers.npy')
+        orde = np.load('plot_data/ligo_orders.npy')
+    if PSD.lower() == 'normal': 
+        s = np.load('plot_data/normal_spectra.npy')
+        o = np.load('plot_data/normal_optimisers.npy')
+        orde = np.load('plot_data/normal_orders.npy')
+    for i, method in enumerate(methods): #initializing data
+        spectra[method] = s[i]; optimisers[method] = o[i]; orders[method] = orde[i]
+
+
+#Set units of measures 
 if PSD == 'ligo': 
     y = r"$PSD \left(\frac{1}{Hz} \right)$"
 
@@ -108,12 +124,14 @@ for i, method in enumerate(methods):
     ax.plot(optimisers[method].mean(0), '.', color = 'k')
     ax.set_xlabel('Filter length')
     ax.set_ylabel('{} optimizer value'.format(method))
+    fig.tight_layout()
     
     #Plot error VS order 
     fig2, ax2 = plt.subplots() 
     ax2.plot(orders[method], errors[method], '.', color = 'k')
     ax2.set_xlabel('Filter order estimate')
     ax2.set_ylabel('Frequency averaged errors ({})'.format(method))
+    fig2.tight_layout()
     
     #plot order in one plot only
     ord_ax.plot(orders[method], errors[method], '.', color = colors[method], label = method)
@@ -127,7 +145,7 @@ for i, method in enumerate(methods):
     ax3[0].fill_between(frequency[:-1], p5[method], p95[method], color = 'blue', alpha = .5)
     ax3[1].loglog(frequency[:-1], ensemble_error[method], '.', color = 'k')
     ax3[1].set_xlabel(r'$f(Hz)$'); ax3[0].set_ylabel(y); ax3[1].set_ylabel('Percentage Error')
-    
+    fig3.tight_layout()
 
     
     #Plot histogram for errors and orders 
@@ -138,9 +156,9 @@ for i, method in enumerate(methods):
     ax4.loglog(frequency[:-1], median[method], color = colors[method], label = method)
     
     if save: 
-        fig.savefig(savedir + '{} optimizer values.pdf'.format(method), bbox_inches = 'tight')
-        fig2.savefig(savedir + '{} error VS order.pdf'.format(method), bbox_inches = 'tight')
-        fig3.savefig(savedir + '{} spectrum estim.pdf'.format(method), bbox_inches = 'tight')
+        fig.savefig(savedir + '{}_optimizer_values.pdf'.format(method), bbox_inches = 'tight')
+        fig2.savefig(savedir + '{}_error_VS_order.pdf'.format(method), bbox_inches = 'tight')
+        fig3.savefig(savedir + '{}_spectrum_estim.pdf'.format(method), bbox_inches = 'tight')
 
     print('{}; {}: r_ensemble: {}; sigma_r: {}\n'.format(PSD, method,
                                                      ensemble_error[method].mean(),
@@ -151,13 +169,59 @@ ax4.loglog(frequency, psd, '--', color = 'k')
 ax4.set_xlim(f.min(), .5 / dt)
 fig4.legend(loc = 'upper right')
 if save: 
-    err_fig.savefig(savedir + 'errors hist.pdf', bbox_inches = 'tight')
-    ord_fig.savefig(savedir + 'error VS order comparison.pdf', bbox_inches = 'tight')
-    aro_fig.savefig(savedir + 'orders hist.pdf', bbox_inches = 'tight')
-    fig4.savefig(savedir + 'compare estimates.pdf', bbox_inches = 'tight')
+    err_fig.savefig(savedir + 'errors_hist.pdf', bbox_inches = 'tight')
+    ord_fig.savefig(savedir + 'error_VS_order_comparison.pdf', bbox_inches = 'tight')
+    aro_fig.savefig(savedir + 'orders_hist.pdf', bbox_inches = 'tight')
+    fig4.savefig(savedir + 'compare_estimates.pdf', bbox_inches = 'tight')
+
+#plt.close('all')
+
+    ####### countour plot being done here!
+    # see: https://matplotlib.org/stable/gallery/lines_bars_and_markers/scatter_hist.html
+print("Doing countor plot")
+
+def scatter_hist(x, y, ax, ax_histx, ax_histy, label = None, c = 'k'):
+    # no labels
+    ax_histx.tick_params(axis="x", labelbottom=False)
+    ax_histy.tick_params(axis="y", labelleft=False)
+
+    # the scatter plot:
+    ax.scatter(x, y, label = label, c=c, s = 1)
+
+    n_bins = 20
+    bins_x = np.logspace(np.log10(np.min(x)),np.log10(np.max(x)), n_bins)
+    ax_histx.hist(x, bins=bins_x, fill = False, edgecolor=c,histtype = 'step')
+    ax_histy.hist(y, bins=n_bins, orientation='horizontal', fill = False, edgecolor=c,histtype = 'step')
+    ax.set_xscale('log')
+
+# definitions for the axes
+left, width = 0.2, 0.55
+bottom, height = 0.2, 0.55
+spacing = 0.005
+
+rect_scatter = [left, bottom, width, height]
+rect_histx = [left, bottom + height + spacing, width, 0.2]
+rect_histy = [left + width + spacing, bottom, 0.2, height]
+
+# start with a square Figure
+fig = plt.figure(figsize=(3.4,3.4))
+
+ax = fig.add_axes(rect_scatter)
+ax_histx = fig.add_axes(rect_histx, sharex=ax)
+ax_histy = fig.add_axes(rect_histy, sharey=ax)
+
+# use the previously defined function
+for method in methods:
+    y = errors[method]
+    x = orders[method]
+    scatter_hist(x, y, ax,  ax_histx, ax_histy, label = method, c = colors[method])
+ax.legend(loc = 'upper left')
+ax.set_xlabel("Filter Length estimate")
+ax.set_ylabel('Frequency averaged error')
+fig.savefig(savedir + 'error_length_contour.pdf', bbox_inches = 'tight')
 
         
-        
+plt.show()
 
 
       
