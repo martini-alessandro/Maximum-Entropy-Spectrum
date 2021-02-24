@@ -499,7 +499,7 @@ class MESA(object):
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
             #Compute optimizer value for chosen method
-            optimization.append( np.abs(self._optimizer(P, a[-1], self.N, i + 1)) )
+            optimization.append( self._optimizer(P, a[-1], self.N, i + 1))
             
             is_nan = np.isnan(new_a).any() #checking for nans
             if np.abs(k)>1 or is_nan:
