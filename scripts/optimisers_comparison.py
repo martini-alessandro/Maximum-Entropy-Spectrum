@@ -13,13 +13,15 @@ import numpy as np
 import scipy.stats 
 import matplotlib.pyplot as plt
 from init_plotting import init_plotting
+from scipy.interpolate import interp1d 
 
 def relative_error(real, estimate): 
     return np.abs(real - estimate) / real 
 
 PSD = 'ligo' #normal or ligo 
-save = True 
+save = False
 savedir = '../paper/Images/optimisers_comparison/' + PSD + '/'
+simulate_data = False 
 methods = ['FPE', 'CAT', 'OBD']
 M = MESA() 
 init_plotting() 
@@ -35,27 +37,38 @@ median, p5, p95, ensemble_error = {}, {}, {}, {}
 
 #Generating noise 
 if PSD.lower() == 'normal': 
-    number_of_simulations, dt, number_of_points = 1000, 1./10, 3000 
-    f = np.linspace(0, .5 / dt, number_of_points) 
-    spectrum = scipy.stats.norm.pdf(f, 2.5, .5)
-    
-elif PSD.lower() == 'ligo': 
-    number_of_simulations, dt, number_of_points = 500, 1./2048, 40960
-    f, spectrum = np.loadtxt('LIGO-P1200087-v18-AdV_DESIGN_psd.dat', unpack = True)
-    
+        number_of_simulations, dt, number_of_points = 1000, 1./10, 3000 
+        f = np.linspace(0, .5 / dt, number_of_points) 
+        spectrum = scipy.stats.norm.pdf(f, 2.5, .5)
 
+elif PSD.lower() == 'ligo':  
+        number_of_simulations, dt, number_of_points = 500, 1./2048, 40960
+        f, spectrum = np.loadtxt('LIGO-P1200087-v18-AdV_DESIGN_psd.dat', unpack = True)
+        
 T = number_of_points * dt 
 
+if simulate_data: 
+    for i in range(number_of_simulations): 
+        time, time_series, frequency, frequency_series, psd =\
+            generate_data(f, spectrum, T, 1 / dt)
+        for method in methods:
+            p, a_k, opt = M.solve(time_series, optimisation_method = method, early_stop = False)
+            optimisers[method].append(opt)
+            orders[method].append(M.a_k.size)
+            spectra[method].append(M.spectrum(dt)[0][: number_of_points // 2])    
 
-for i in range(number_of_simulations): 
-    time, time_series, frequency, frequency_series, psd =\
-        generate_data(f, spectrum, T, 1 / dt)
-    for method in methods:
-        p, a_k, opt = M.solve(time_series, optimisation_method = method, early_stop = False)
-        optimisers[method].append(opt)
-        orders[method].append(M.a_k.size)
-        spectra[method].append(M.spectrum(dt)[0][: number_of_points // 2])    
-
+elif not simulate_data:
+    frequency = np.linspace(0, .5 / dt, number_of_points // 2 + 1)
+    psd_int = interp1d(f, spectrum, fill_value='extrapolate')
+    psd = psd_int(frequency)
+    
+    if PSD.lower() == 'ligo': 
+        s = np.load('ligo_spectra.npy')
+        o = np.load('ligo_optimisers.npy')
+        orde = np.load('ligo_orders.npy')
+        
+        for i, method in enumerate(methods):
+            spectra[method] = s[i]; optimisers[method] = o[i]; orders[method] = orde[i]
 #Set unity measures 
 if PSD == 'ligo': 
     y = r"$PSD \left(\frac{1}{Hz} \right)$"
