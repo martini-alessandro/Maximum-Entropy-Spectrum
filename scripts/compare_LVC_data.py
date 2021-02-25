@@ -4,7 +4,8 @@ from memspectrum import MESA
 from welch import *
 import numpy as np
 import matplotlib.pyplot as plt
-from init_plotting import init_plotting
+#from init_plotting import init_plotting
+from style_sheet import *
 import pandas as pd
 from scipy.interpolate import interp1d
 
@@ -63,6 +64,10 @@ if compute:
 if plot:
 	if use_fake_data:
 		true_PSD = np.loadtxt(true_PSD_file)
+		
+	fig_overall = init_plotting()
+	fig_overall.clf()
+	fig_overall.set_size_inches(3.4,3.4*2)
 	for i, T in enumerate(T_list):
 		PSDs = np.loadtxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data))
 		N = PSDs.shape[0]
@@ -84,7 +89,28 @@ if plot:
 		filename = save_folder+"comparison_LVC_data_T{}_fake_{}.pdf".format(T, use_fake_data)
 		plt.savefig(filename)
 		print("Save file @ {}".format(filename))
-		plt.show()
+		
+			#overall plot
+		ax = fig_overall.add_subplot(5,1,i+1)#, sharex = True)
+#		set_ax_style(ax)
+		ax.set_title(r"$T = {}s$".format(T))
+		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0, label = "Welch")
+		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1, label = "MESA")
+		if use_fake_data:
+			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2, label = "True")
+		#ax.set_ylabel(r"$PSD \left(\frac{1}{Hz} \right)$") #No ylabel
+		ax.set_xlim(20,1024)
+		if i == len(T_list)-1:
+			ax.set_xlabel(r"$f(Hz)$")
+		if i == 0:
+			ax.legend(loc = 'upper center', ncol = 2+int(use_fake_data))#, fontsize='x-small')
+	fig_overall.tight_layout()
+	filename = save_folder+"comparison_LVC_data_overall_fake_{}.pdf".format(use_fake_data)
+	plt.savefig(filename)
+	print("Save file @ {}".format(filename))
+	fig_overall.savefig(filename)
+	
+	plt.show()
 
 		
 

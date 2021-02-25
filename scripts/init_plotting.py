@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 
 def init_plotting():
     """
-    Initialises matplotlib *rcParams*
+    Initialises matplotlib *rcParams* and opens a figure
     
-    :return: no return
+    :return: a figure
     """
     
     # plotting options
@@ -35,3 +35,5 @@ def init_plotting():
     plt.gca().xaxis.set_ticks_position('bottom')
     plt.gca().yaxis.set_ticks_position('left')
     return fig
+    
+

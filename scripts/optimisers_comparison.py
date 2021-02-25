@@ -12,13 +12,13 @@ from GenerateTimeSeries import generate_data
 import numpy as np
 import scipy.stats 
 import matplotlib.pyplot as plt
-from init_plotting import init_plotting
+from style_sheet import init_plotting
 from scipy.interpolate import interp1d 
 
 def relative_error(real, estimate): 
     return np.abs(real - estimate) / real 
 
-PSD = 'normal' #normal or ligo 
+PSD = 'ligo' #normal or ligo 
 save = True
 savedir = '../paper/Images/optimisers_comparison/' + PSD + '/'
 simulate_data = False 
@@ -51,7 +51,8 @@ elif PSD.lower() == 'ligo':
 T = number_of_points * dt 
 
 if simulate_data: 
-    for i in range(number_of_simulations): 
+    for i in range(number_of_simulations):
+        if i % 5 ==0: print("Simulating time series {}/{}".format(i, number_of_simulations))
         time, time_series, frequency, frequency_series, psd =\
             generate_data(f, spectrum, T, 1 / dt)
         for method in methods:
@@ -143,7 +144,7 @@ for i, method in enumerate(methods):
     if PSD == 'normal': ax3[0].set_xlim(ax3[0].get_xlim()[0], .5 / dt)
     elif PSD == 'ligo': ax3[0].set_xlim(f.min(), .5 / dt)
     ax3[0].fill_between(frequency[:-1], p5[method], p95[method], color = 'blue', alpha = .5)
-    ax3[1].loglog(frequency[:-1], ensemble_error[method], '.', color = 'k')
+    ax3[1].loglog(frequency[:-1], ensemble_error[method], '.', ms = 1,  color = 'k')
     ax3[1].set_xlabel(r'$f(Hz)$'); ax3[0].set_ylabel(y); ax3[1].set_ylabel('Percentage Error')
     fig3.tight_layout()
 
@@ -168,6 +169,7 @@ ord_fig.legend(loc = 'lower right')
 ax4.loglog(frequency, psd, '--', color = 'k') 
 ax4.set_xlim(f.min(), .5 / dt)
 fig4.legend(loc = 'upper right')
+fig4.tight_layout()
 if save: 
     err_fig.savefig(savedir + 'errors_hist.pdf', bbox_inches = 'tight')
     ord_fig.savefig(savedir + 'error_VS_order_comparison.pdf', bbox_inches = 'tight')

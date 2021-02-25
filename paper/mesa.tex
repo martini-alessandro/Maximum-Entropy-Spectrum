@@ -530,7 +530,7 @@ In section~\ref{sec:LIGO_validation}, we will perform the analysis again using t
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/Noise and PSD/NormalPSDautocorr.pdf}
-	\caption{A priori spectrum (left) and autocorrelation (right)}
+	\caption{A priori spectrum (left) and autocorrelation (right) \sschmidt{This should be done with the same style as the others}}
 	\label{fig:autocorr}
 \end{figure}
 
@@ -544,27 +544,27 @@ In section~\ref{sec:LIGO_validation}, we will perform the analysis again using t
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/FPE_spectrum_estim.pdf}
-	\caption{Ensemble Average for FPE reconstruction with 90\% Credibility Regions (above) and percentage error (below)}
+	\caption{Average spectrum for FPE loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:FPEmean}
 \end{figure}
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/OBD_spectrum_estim.pdf}
-	\caption{Reconstruction of the spectrum from 1000 simulations with OBD optimizer. Plot is mean of all the results with 90\% credibility regions (above) and percentage error (below)}
+	\caption{Average spectrum for OBD loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:OBDmean}
 \end{figure}
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/CAT_spectrum_estim.pdf}
-	\caption{Mean spectrum for CAT optimizer, 1000 simulations for 3000 points datasets}
+	\caption{Average spectrum for CAT loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:CATmean}
 \end{figure} 
 
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/error_length_contour.pdf}
-	\caption{Relative error as function of the length of the filter.}
+	\caption{For each of the $1000$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_erorr}) against the length $m$ of autoregressive process. The time series are randomly drawn with a gaussian PSD in fig.`\ref{fig:autocorr}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
 	\label{fig:optcomparison}
 \end{figure}
 
@@ -630,7 +630,7 @@ However, if we indeed can measure the PSD by averaging over different time serie
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/LIGOsimulate/LigoPSDoriginal.pdf}
-    \caption{Original power spectral density from Ligo}
+    \caption{Original power spectral density from Ligo \sschmidt{Remove this?? It's already in the other figure}}
     \label{fig:LigoPSDOriginal}
 \end{figure}
 In this subsection we concentrate again on the reconstruction of a specific, known, power spectrum: that is the Advanced LIGO design sensitivity theoretical spectral curve see fig.~\ref{fig:LigoPSDOriginal}.
@@ -640,8 +640,8 @@ We chose a longer dataset to capture the complicated structure of the PSD. A sho
 
 \begin{figure}
     \centering
-     \includegraphics[width = \linewidth]{Images/LIGOsimulate/PSD.pdf}
-      \caption{A priori spectrum from Ligo database}
+     \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/compare_estimates.pdf}
+      \caption{Average spectrum for the three different loss function as compared with the ``true" PSD. The average is computed with $1000$ realization of a $3000$ points long time series.}
        \label{fig:ligospectrum}
 \end{figure}
 In figure \ref{fig:ligospectrum}, we report the original spectrum and the ensemble averaged spectrum obtained with the three methods (no confidence level).
@@ -666,45 +666,50 @@ The choice of the loss function between CAT and FPE seems problem-dependent.
 
 \begin{figure}[t]
         \includegraphics[width = \linewidth]{Images/LIGOsimulate/1stPeakComparison.pdf}
-        \caption{1st peak of the spectrum and it reconstruction with every optimizer (left) and associated percentage error (right)}
+        \caption{1st peak of the spectrum and it reconstruction with every optimizer (left) and associated percentage error (right) \sschmidt{This should be done with the same style as the others}}
         \label{fig:ligo1peak}
 \end{figure}
 \begin{figure}[t]
     \centering
         \includegraphics[width = \linewidth]{Images/LIGOsimulate/2ndPeakComparison.pdf}
-        \caption{2nd peak of the spectrum, Relative error around 2nd peak of the spectrum}
+        \caption{2nd peak of the spectrum, Relative error around 2nd peak of the spectrum \sschmidt{This should be done with the same style as the others}}
         \label{fig:ligo2peak}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/error_length_contour.pdf}
-    \caption{Plot of relative error as a function of the estimate for filter's length}
+    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_erorr}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
     \label{fig:LigoOrderError}
 \end{figure}
 
 \section{Comparison with Welch method}
 
 It is really interesting to have a qualitative comparison between the performance of the MESA and of the standard Welch algorithm.
-We perform such comparison on the spectrum of LIGO (even though similar conclusions can be drawn from any other shape of the PSD).
+We perform such comparison on the spectrum of LIGO (even though similar conclusions can be drawn from any other PSD).
 
 We perform two sets of experiments.
-In the first one (see fig.~), we simulate data from an analytical PSD and we make the comparison with them: this is to endure the we have a baseline PSD to compare the data with.
+In the first one (see fig.~), we simulate data from an analytical PSD and we make the comparison with them: this is to ensure the we have a baseline PSD to compare the data with.
 In a second experiment (see fig.~), we employ the data released to the public byt the LIGO/Virgo collaboration.
 In each experiment, we vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
 For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we employ a Tukey window, an overlap fraction of $0.5$ for the segments and a length of segments $L = 512, 1024, 2048, 8192, 32768$ datapoints.
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
 
 First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time length is large.
+
 Turning to the comparison between MESA and Welch's method, we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA. The different behavior is more manifest in the low frequency sector.
 The result does not change much by changing the hyperparameters required for Welch algorithm.
 \sschmidt{Other observations??}
 
 
 \begin{figure}
-	
 	\label{fig:mem_welch_realdata}
-	\caption{Make here a comparison between Welch}
-	
+	\caption{Make here a comparison between Welch - True data}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_False.pdf}
+\end{figure}
+\begin{figure}
+	\label{fig:mem_welch_fakedata}
+	\caption{Make here a comparison between Welch - Fake data}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_True.pdf}
 \end{figure}
 
 \sschmidt{Mettiamo da qualche parte una descrizione dettagliata del codice? No: solo rimandiamo al codice nell'intro}
