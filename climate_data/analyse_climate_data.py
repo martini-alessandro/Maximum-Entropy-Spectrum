@@ -12,6 +12,8 @@
 
 ######
 
+#PROBLEM: the code does not catch the trend over the year timescale!!
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -29,12 +31,20 @@ M.solve(data)
 f = np.linspace(1./(T), 0.5*srate,1000)
 spec = M.spectrum(1./srate, f)
 
+#forecasting
+N_forecast = 24*1000 #10 day of forecasting
+predictions = M.forecast(data[:-N_forecast], N_forecast, 100)
+
+
+	#plot time series
 plt.figure()
-plt.plot(np.linspace(0, len(data)/24., len(data)), data)
+t = np.linspace(0, len(data)/24., len(data))
+plt.plot(t, data)
 plt.xlabel("Days")
 plt.ylabel("Temperature (K)")
 plt.savefig("temp_timeseries.pdf")
 
+	#plot spectrum
 plt.figure()
 unit_shift = 3600*24 #frequency is made 1/day
 plt.loglog(f * unit_shift , spec, label = "spectrum", c = 'k')
@@ -46,4 +56,18 @@ plt.ylabel("PSD")
 plt.legend()
 plt.savefig("spectrum.pdf")
 
+	#plot forecasting
+plt.figure()
+plt.title("{} days of forecasting".format(int(N_forecast/24)))
+l, m, h = np.percentile(predictions,[5,50, 95],axis=0)
+plt.plot(t[-(M.get_p()+N_forecast):],data[-(M.get_p()+N_forecast):],linewidth=1.5,color='r',zorder=2, label = 'data')
+plt.axvline(t[-N_forecast])
+plt.plot(t[-N_forecast:],m,'--',linewidth=0.5, color='k', zorder = 0)
+plt.fill_between(t[-N_forecast:],l,h,facecolor='turquoise',alpha=0.5, zorder = 1)
+plt.savefig("forecast.pdf")
+
 plt.show()
+
+
+
+
