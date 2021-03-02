@@ -341,15 +341,9 @@ In our case, they are i) the PSD estimate has to be non-negative; ii) its Fourie
 Before doing so, there is a technical problem to solve: the definition of entropy (Eq.~\ref{eq:entropy}) depends on a probability distribution, 
 not on the PSD. The variational problem can be formulated in terms of the power spectral density $S(f)$ alone by
 considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. 
-The entropy gain obtained by filtering white noise is: 
+The entropy gain obtained by filtering white noise with a sampling rate $\Delta t$ and Nyquist frequency $Ny \equiv \frac{1}{2 \Delta t}$ is:
+
 \begin{equation}\label{eq:EntropyGain}
-    \Delta H = \int_{-\infty}^{\infty}\log S(f) df , 
-\end{equation}
-hence the variational problem can be stated by requiring that $S(f)$ maximises the entropy gain \sschmidt{Non ho capito questa parte...:(}. 
-Time-limited observations do not provide access to the full frequency range, but only between minus and plus the Nyquist frequency, 
-that, in turn is given by the sampling interval $\Delta t$ as $Ny \equiv \frac{1}{2 \Delta t}$. Hence, the finite-size entropy
-gain is 
-\begin{equation}\label{eq:EntropyGain2}
     \Delta H = \int_{- Ny}^{Ny}\log S(f) df\,.
 \end{equation}
 
@@ -357,7 +351,7 @@ Consider a realisation of a stochastic process $(x_1,\ldots,x_n)$ with sample au
 \begin{equation}\label{eq:MaxConstraint}
 \int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}\,.
 \end{equation}
-This approach on power spectral density estimate was developed by Burg \cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimate. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. Remarkably, the variational problem admits a closed-form analytical expression for $S(f)$:
+This approach on power spectral density estimate was developed by Burg~\cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimates. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. Remarkably, the variational problem admits a closed-form analytical expression for $S(f)$:
 
 \begin{equation}\label{eq:MESApsd}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^s\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}, 
@@ -377,7 +371,7 @@ Thus, an AR($p$) process models the dependence of the value of the process at ti
 thus being potentially able to model complex autocorrelation between data.
 \par
 To show the analogy, we compute the PSD of such process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}.
-We start taking the z \footnote{Spiegare in due righe la z transform} transform of the previous eq.~\ref{eq:AR_p}: 
+We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~(\ref{eq:AR_p}): 
 \begin{align}
     \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t.
 \end{align}
@@ -386,185 +380,191 @@ in the $z$ domain, the process takes the form:
 \begin{equation}
     \tilde x(z) = \frac{\tilde\nu(z)}{\left(1 - \sum_{i = n}^p b_n z^n \right)}
 \end{equation}
-Since we assumed a stationary process, $\tilde{x}(z)$ is analytic both on and inside the unit circle. Taking its square value and evaluating it on the unit circle $z = e^{-\imath 2 \pi f \Delta t}$, from the definition of spectral density one obtains:
+Since we assumed a wide-sense stationary process, $\tilde{x}(z)$ is analytic both on and inside the unit circle. Taking its square value and evaluating it on the unit circle $z = e^{-\imath 2 \pi f \Delta t}$, from the definition of spectral density one obtains:
 \begin{equation}\label{eq:ARspectrum}
     S(f) = \vert \tilde x(z)\vert ^ 2 = 
-    \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}.
+    \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}\,.
 \end{equation}
 The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$.
 Eq.~(\ref{eq:ARspectrum}) and Eq.~(\ref{eq:MESApsd}) are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
-This shows that the MAXENT estimation of the PSD computes the coefficients of the autoregressive process that is able to model the data faithfully.
+This shows that the MAXENT estimation of the PSD also computes the coefficients of the autoregressive 
+process that model the observed process.
 
-\sschmidt{I don't understand the next of this section...}
-Having computed the prediction error filter one can easily obtain an estimate of the $AR$ coefficients for the process just changing sign to the prediction error filter $a_i$.
-Taken a time series, MESA allows us to compute the power spectrum and to find an effective description in terms of an autoregressive process. 
-Wold's theorem ensures that this (approximate) description for the phenomenon is legitimate when the process is found to be stationary. So, MESA defines a bridge between spectral estimation and the study of autoregressive processes, an unexpected and fundamental result. \\
-Another very remarkable process for this estimate, is that the linear predictor obtained solving the error filter equation, is the best linear predictor, i.e. it minimizes error, and is equivalent to a least square fit for the coefficients. \cite{VDBos}  \\ 
-To prove that it minimizes error, we will follow the original proof provided by Burg \cite{burg1975maximum}. Consider a general linear predictor $-c_i$: 
-\begin{equation}
-    x_{t} - \sum_{i = 1}^p (-c_i)x_{t - i} = \sum_{i = 0}^p c_i x_{t - i} = e'_t, 
-\end{equation}
-Denoting with $E\left[\cdot\right]$ the expectation value of some variable, the mean square error is given by: 
-\begin{equation}
-E\left[\sum_{i = 0}^p c_i x_{t-i}\sum_{j = 0}^p c^*_j x^*_{t - j}\right] = \sum_{i,j} c^*_j E\left[x^*_{t-j}x_{t-i} \right] c_j = \sum_{i, j}c^*_j R(j - i) c_i > 0,
-\end{equation}
-which, being $R$ positive definite and defined by the multiplication of a complex number times its complex conjugate, is always positive definite. 
-Let $-\vec{b}$ be the prediction error filter obtained with MESA. Multiplying the left hand side of \ref{eq:predictionErrorFilter} for the complex conjugate of the forward prediction error, 
-\begin{equation}\nonumber 
-    \sum_{i,j}b^*_jR(j-i)b_i = P_N
-\end{equation}
-is obtained . \\ 
-The (positive) quantity  
-\begin{equation}\label{eq:linearPredictor}
-    \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i),
-\end{equation}
-using Einstein notation on repeated indices and recall that $c_0 = b_0 = 1$, can be rewritten as 
-\begin{align}
-    & c^*_j R(j - i) c_i - c^*_j R(j - i) b_i - b^*_j R(j - i) c_i + b^*_j R(j - i)  b_i =\\ \nonumber 
-    &c^*_j R(j - i) c_i - c^*_0 P_N - P_N c_0 + P_N =\\ \nonumber
-    & c^*_j R(j - i) c_i - P_N.
-\end{align}
-Moving $P_N$ on the left hand side, it becomes 
-\begin{equation}\label{eq:bestLinearPredictor}
-    \sum_{i, j}c^*_j R(j-i)c_i = \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i) + P_N.
-\end{equation}
-Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
+%\sschmidt{I don't understand the next of this section...}
+%Having computed the prediction error filter one can easily obtain an estimate of the $AR$ coefficients for the process just changing sign to the prediction error filter $a_i$.
+%Taken a time series, MESA allows us to compute the power spectrum and to find an effective description in terms of an autoregressive process. 
+%Wold's theorem ensures that this (approximate) description for the phenomenon is legitimate when the process is found to be stationary. So, MESA defines a bridge between spectral estimation and the study of autoregressive processes, an unexpected and fundamental result. \\
+%Another very remarkable process for this estimate, is that the linear predictor obtained solving the error filter equation, is the best linear predictor, i.e. it minimizes error, and is equivalent to a least square fit for the coefficients. \cite{VDBos}  \\ 
+%To prove that it minimizes error, we will follow the original proof provided by Burg \cite{burg1975maximum}. Consider a general linear predictor $-c_i$: 
+%\begin{equation}
+%    x_{t} - \sum_{i = 1}^p (-c_i)x_{t - i} = \sum_{i = 0}^p c_i x_{t - i} = e'_t, 
+%\end{equation}
+%Denoting with $E\left[\cdot\right]$ the expectation value of some variable, the mean square error is given by: 
+%\begin{equation}
+%E\left[\sum_{i = 0}^p c_i x_{t-i}\sum_{j = 0}^p c^*_j x^*_{t - j}\right] = \sum_{i,j} c^*_j E\left[x^*_{t-j}x_{t-i} \right] c_j = \sum_{i, j}c^*_j R(j - i) c_i > 0,
+%\end{equation}
+%which, being $R$ positive definite and defined by the multiplication of a complex number times its complex conjugate, is always positive definite. 
+%Let $-\vec{b}$ be the prediction error filter obtained with MESA. Multiplying the left hand side of \ref{eq:predictionErrorFilter} for the complex conjugate of the forward prediction error, 
+%\begin{equation}\nonumber 
+%    \sum_{i,j}b^*_jR(j-i)b_i = P_N
+%\end{equation}
+%is obtained . \\ 
+%The (positive) quantity  
+%\begin{equation}\label{eq:linearPredictor}
+%    \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i),
+%\end{equation}
+%using Einstein notation on repeated indices and recall that $c_0 = b_0 = 1$, can be rewritten as 
+%\begin{align}
+%    & c^*_j R(j - i) c_i - c^*_j R(j - i) b_i - b^*_j R(j - i) c_i + b^*_j R(j - i)  b_i =\\ \nonumber 
+%    &c^*_j R(j - i) c_i - c^*_0 P_N - P_N c_0 + P_N =\\ \nonumber
+%    & c^*_j R(j - i) c_i - P_N.
+%\end{align}
+%Moving $P_N$ on the left hand side, it becomes 
+%\begin{equation}\label{eq:bestLinearPredictor}
+%    \sum_{i, j}c^*_j R(j-i)c_i = \sum_{j = 0}^p\sum_{i = 0}^p(c^*_j - b^*_j)R(j-i)(c_i - b_i) + P_N.
+%\end{equation}
+%Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
 
 \subsection{Forecasting} \label{sec:forecasting}
-The link between MESA and autoregressive process allow us to forecast from a given time series, thus providing plausible future observation for the data.
-Indeed, an autoregressive process of order $p$ models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
+The link between MESA and autoregressive processes of particular interest. Given the solution to the Levinson recursion to determine the $a_k$, see Appendix A, we have automatically the coefficients of the AR with equivalent PSD, hence we are able to exploit Eq.~(\ref{eq:AR_p}) to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
+Indeed, an AR($p$) process models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
 \begin{align}\label{eq:p_forecast}
 	p&(x_t|x_{t-1}, \ldots , x_{t-p}) \nonumber\\
 	&= \frac{1}{\sigma\sqrt{2\pi}} \exp\left[-\frac{1}{2} \left(\frac{x_t - \sum_{i = 1}^p b_i x_{t-i}}{\sigma}\right)^2\right].
 \end{align}
-The interpretation of eq.~\ref{eq:p_forecast} is straightforward: $x_t$ follows a Guassian distribution with a fixed variance an a mean value $m_t = \sum_{i = 1}^p b_i x_{t-i}$ computed from past observations.
-Equation~\ref{eq:p_forecast} provides then a well defined probability framework for predicting future observations: this is a very useful feature of the method, which does not have an equivalent in any other spectral analysis computation.
+The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follows a Gaussian distribution with a fixed variance an a mean value $m_t = \sum_{i = 1}^p b_i x_{t-i}$ computed from past observations.
+Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation.
 
 \section{Validation of the model}
-It is now clear that MESA algorithm provides a recursive formula for computing the coefficients $a_k$ in eq.~\ref{eq:MESApsd}. The number $M$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_m$. In a perfect scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $n$, the the estimation for  $\bar{n}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
+It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_m$. In a perfect scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $n$, the the estimation for  $\bar{n}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
 
 %OR WE CAN KEEP THIS (SOMEHOW MODIFIED)
 %Before being able to apply MESA, we need to address the question of the best length $M$ of the filter that provides the optimal estimate of the power spectrum. If the autocorrelation matrix was perfectly know, the answer would be simply $M = N$.
 %In real cases, such a knowledge is not available and one has to estimate the autocorrelation function from the data. The accuracy for the estimate decreases as the time lag $k$ increases as $\sim \left(\sqrt{N - k}\right)^{-1}$.
 %The accuracy of the estimate should then increase as the length of the autocorrelation function increases, but, from a certain point on, inaccuracy in the estimate for $R$ becomes so large that the estimate for the spectrum is negatively affected by this fact.
 
-It is then clear that the choice of how many points of the autocorrelation to consider is important: on one hand it is advisable to include as many knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_m$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
-Indeed, the order $M$ of the autocorrelation to be considered (or equivalently the order $M$ of the underlying autoregressive process) is the only input required by the user and a careful balance between this two necessities must be made when applying the algorithm.
+It is then clear that the choice of how many samples of the discrete autocorrelation to consider is important: 
+on the one hand it is advisable to include as much knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_m$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
+Indeed, the order $M$ of the autocorrelation to be considered (or equivalently the order $M$ of the underlying autoregressive process) is the only tuning parameter of MESA and a careful balance between this two necessities must be made when applying the algorithm.
 
-This section is devoted to an extensive study on how to make such choice.
-In section~\ref{sec:optimizers}, we are going to define three different \textit{loss functions} to measure how well the algorithm is able to reproduce a known PSD.
-The basic idea is to validate, as the autoregressive order considered increase, the performance of the algorithm results by measuring the loss function and pick, among the orders the one that yields better results.
-Second, the performance of different loss functions will be assessed by performing the spectral analysis on time series with given analytical PSD, sec.~\ref{sec:arp_validation}.
-In a last subsection~\ref{sec:LIGO_validation}, the same analysis is performed on real data from LIGO-Virgo gravitational waves observatory.
+The reminder of this section is devoted to an extensive study on how to make such choice.
+In Section~\ref{sec:optimizers}, we are going to define three different \textit{loss functions} to measure how well the 
+algorithm is able to reproduce a known PSD.
+The basic idea is to validate, as the autoregressive order considered increase, the performance of the algorithm results 
+by measuring the loss function and pick, among the orders the one that yields better results.
+Second, the performance of different loss functions will be assessed by performing the spectral analysis on time series with given analytical PSD, Sec.~\ref{sec:arp_validation}.
+In a last subsection~\ref{sec:LIGO_validation}, the same analysis is performed on real data from the LIGO-Virgo gravitational waves observatories.
 
-\subsection{Choosing an autoregressive order}\label{sec:optimizers} 
+\subsection{Choice of the autoregressive order}\label{sec:optimizers} 
 
-A good choice for the autoregressive order $M$ is proposed to be \cite{doi:10.1190/1.1440902}
+Guided from numerical experiments, an indication on the upper bound to the autoregressive order $M_{max}$ is~\cite{doi:10.1190/1.1440902}:
 \begin{equation}\label{eq:MMAx}
-M_{max} = 2N / \ln{(2N)}
+M_{max} = 2N / \ln{(2N)}\,,
 \end{equation}
-However, this is just an upper limit for the estimate of the length $M$ and the optimal algorithm could employ much less points.
-We then need a more sophisticated method for computing the right value for $M$.
+where $N$ is the number of points in the time-series.
+However, this is just a plausible upper limit on the order of the AR process $m$ and the optimal algorithm could employ fewer points.
+We then need a more sophisticated method for computing the right value for $m$.
 Various loss functions to assess the algorithm performance have been proposed in literature.
-We summarize them below:
+We summarise them below:
 
 \begin{itemize}
-\item \textbf{Final prediction Error (FPE)} 
-The first criterion is due to Akaike (1970) \cite{Akaike1970StatisticalPI}. He proposed that M has to be chosen as the length that reduces the error when the filter is used as a predictor: 
+\item \textbf{Final prediction Error } 
+The first criterion is due to Akaike~\cite{Akaike1970StatisticalPI}. He proposed that $m$ should be chosen as the 
+length that minimises the error when the filter is used as a predictor, the \emph{final prediction} error (FPE): 
 \begin{equation}
     FPE(m) = \mathbb{E}\left[ \left((x_t - \hat x_t) ^ 2\right) \right]
 \end{equation}
 with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.
-Minimizing FPE is the same as minimizing the quantity: 
+Minimizing FPE is equivalent to minimizing the quantity: 
 \begin{equation}
-    P_{m} \frac{N + m + 1}{N - m - 1}
+    \mathcal{L}_{\rm FPE}(m) = P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
-with $P_M$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
+with $P_m$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
 \item \textbf{Criterion Autoregressive Transfer function (CAT)}
-This second loss function is due to Parzen \cite{bhansali1986}, and it is defined as
+This second loss function is due to Parzen~\cite{bhansali1986}, and it is defined as
 \begin{equation}
-    CAT(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
+    \mathcal{L}_{\rm CAT}(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
 \end{equation}
-It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. 
+It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. \wdp{please expand}
 
-\item \textbf{Optimum Bayes Decision rule (OBD)} 
-The last criterion we will consider is the OBD (Rao, 1982)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, th loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}: 
+\item \textbf{Optimum Bayes Decision rule} 
+The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, the loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}: 
    \begin{align}
-        OBD&(m) = (N - m - 2) \log(P_m) \nonumber\\
-        &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2.
+        \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
+        &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2\,.
     \end{align}
 \end{itemize}
 
-Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $M$ is selected to be the one that minimize the loss function.
+Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson\wdp{add ref} recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the loss function.
 
-In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $M_{opt}<< M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
-In practice, we can apply an \textit{early stopping} procedure: every few iterations we look for the best order of $M_{opt}$; if this value does not change for a while, the computation is stopped and a good (local) minimum of the loss function is found.
+In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $m_{opt} << M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
+In practice, we can apply an \textit{early stopping} procedure: every few iterations we look for the best order of $m_{opt}$; if this value does not change for a while, we assume that a good (local) minimum of the loss function is found and the computation is stopped.
 
 The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
 
 \subsection{Choosing a loss function - A gaussian PSD} \label{sec:arp_validation}
-We test the performance of the three loss functions on a random time series with a known power spectral density.
-We take the PSD to be a Gaussian distribution with mean $\mu = 2.5 \quad units$ and standard deviation $\sigma = 0.5 \quad units$, see fig.~\ref{fig:autocorr}.
-Of course, the time series will be generated by sampling a frequency vector from ${p(\tilde{n}(f_i)) \propto \exp{\left\{-\frac{1}{2}\sum_i\frac{n_i ^2}{S(f_i)}\right\}}}$ and performing the inverse Fast Fourier Transform on the frequency series.
+We test the performance of the three loss functions on a random time series generated with a known power spectral density.
+We take the PSD to be a Gaussian distribution with mean $\mu = 2.5 \quad units$ and standard deviation $\sigma = 0.5 \quad units$, see Fig.~\ref{fig:autocorr}.
+The time series will be generated by sampling a frequency vector from ${p(\tilde{n}(f_i)) \propto \exp{\left\{-\frac{1}{2}\sum_i\frac{n_i ^2}{S(f_i)}\right\}}}$, following the procedure outlined in ~\cite{}, and performing the inverse Fast Fourier Transform on the frequency series.
 
-We will apply Burg method with each loss function on a number of simulated time series, obtaining a variety of estimate for PSD.
-The disagreement between the PSD $S_i(f)$ estimated from the i-th simulated time series and the target PSD $S(f)$ is measured with the relative error $r_i$, averaged over all frequencies:
+We will apply the Burg method choosing in turn each of the loss functions on an ensemble of simulated time series, 
+thus obtaining an ensemble of PSD estimates, that will aloows the statistical characterisation of the performance of each loss function.
+The disagreement between the PSD $S_i(f)$ estimated from the $i$-th simulated time series and the target PSD $S(f)$ is measured via 
+the relative error $r_i$, averaged over all frequencies:
 \begin{equation}\label{eq:freq_erorr}
-r_i = \frac{1}{f_{Ny}}\int_0^{f_{Ny}} \d{f} \frac{|S_i(f) - S(f)|}{S(f)}
+r_i = \frac{1}{Ny}\sum_{f_j=0}^{f_j = Ny} \frac{|S_i(f_j) - S(f_j)|}{S(f_j)}
 \end{equation}
-where $f_{Ny}$ is the Nyquist frequency of the time series. Of course in practice, the integral will be computed by averaging over a discrete grid of frequencies.
+where $Ny$ is the Nyquist frequency of the time series.
 
-We will consider every loss function separately and compare the results only at the end of this section.
-For each loss function, we will compute the ensemble averaged PSD estimation (as well as the $90\%$ confidence level) and the frequency dependence of the error (ensemble averaged):
+For each loss function, we compute the ensemble-averaged PSD (as well as the $90\%$ confidence level) and the ensemble-averaged frequency dependence of the error:
 \begin{equation}\label{eq:ensemble_averaged_error}
 	r(f) = \sum_i \frac{|S_i(f) - S(f)|}{S(f)} \;.
 \end{equation}
-In figure~\ref{fig:FPEmean} \ref{fig:OBDmean} and \ref{fig:CATmean} we report the averaged PSD for the three loss functions, as well as the ensemble averaged error in eq.~\ref{eq:ensemble_averaged_error}.
+Figs.~\ref{fig:FPEmean} \ref{fig:OBDmean} and \ref{fig:CATmean} show the averaged PSD for the three loss functions, 
+as well as the ensemble-averaged error from Eq.~(\ref{eq:ensemble_averaged_error}).
+Furthermore, Fig.~\ref{fig:optcomparison} displays the correlation between $r_i$ and the autoregressive order $m_i$ chosen for each independently drawn time series.
 
-Furthermore, we display in a contour plot the correlation between $r_i$ and the autoregressive order $m_i$ chosen for each independently drawn time series.
-This is done in figure~\ref{fig:optcomparison}.
-
-For our studies, we generate a dataset of 1000 time series of 3000 points each: see fig.~\ref{fig:noise} for an example of a time series in frequency and time domain.
-In section~\ref{sec:LIGO_validation}, we will perform the analysis again using the Advanced LIGO design sensitivity PSD \cite{Ligo}.
+For this investigation, we generate a dataset of 1000 time series of 3000 points each, see Fig.~\ref{fig:noise} for an example of a time series in frequency and time domain.
+%In section~\ref{sec:LIGO_validation}, we will perform the analysis again using the Advanced LIGO design sensitivity PSD \cite{Ligo}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/Noise and PSD/NormalPSDautocorr.pdf}
-	\caption{A priori spectrum (left) and autocorrelation (right) \sschmidt{This should be done with the same style as the others}}
+	\caption{Synthetic spectrum (left) and relative autocorrelation function (right) used to simulate the data to assess the performance of the three loss functions considered in Sec.~\ref{sec:arp_validation}\sschmidt{This should be done with the same style as the others}.}
 	\label{fig:autocorr}
 \end{figure}
 
 \begin{figure}
     \centering
         \includegraphics[width = \linewidth]{Images/NormalPSD/NormalNoise.pdf}
-    \caption{Noise in both time and frequency domain. Frequency noise behaviour is representative of the chosen spectrum, having its maximum amplitude around $f = 2.5 au$ \sschmidt{Togliamo questa figura?}}
+    \caption{Noise in both time and frequency domain. Frequency noise behaviour is representative of the chosen spectrum, having its maximum amplitude around $f = 2.5 au$ \sschmidt{Togliamo questa figura?}\wdp{direi di si}}
     \label{fig:noise}
 \end{figure}
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/FPE_spectrum_estim.pdf}
-	\caption{Average spectrum for FPE loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
+	\caption{Average spectrum for $\mathcal{L}_{\rm FPE}(m)$ with 90\% confidence regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:FPEmean}
 \end{figure}
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/OBD_spectrum_estim.pdf}
-	\caption{Average spectrum for OBD loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
+	\caption{Average spectrum for $\mathcal{L}_{\rm OBD}(m)$ loss function with 90\% confidence regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:OBDmean}
 \end{figure}
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/CAT_spectrum_estim.pdf}
-	\caption{Average spectrum for CAT loss function with 90\% Credibility Regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
+	\caption{Average spectrum for $\mathcal{L}_{\rm CAT}(m)$ loss function with 90\% confidence regions (top) and percentage error (bottom). The average is computed with $1000$ realization of a $3000$ points long time series.}
 	\label{fig:CATmean}
 \end{figure} 
 
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/error_length_contour.pdf}
-	\caption{For each of the $1000$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_erorr}) against the length $m$ of autoregressive process. The time series are randomly drawn with a gaussian PSD in fig.`\ref{fig:autocorr}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
+	\caption{Relative error $r$ (as in Eq.~(\ref{eq:freq_error})) vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with gaussian PSD given in Fig.~\ref{fig:autocorr}. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
 	\label{fig:optcomparison}
 \end{figure}
 
