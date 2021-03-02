@@ -42,7 +42,7 @@ superscriptaddress,10pt]{revtex4-1}
 
 % comments command
 \newcommand{\wdp}[1]{{\textcolor{magenta}{\texttt{WDP: #1}} }}
-\newcommand{\amartini}[1]{{\textcolor{blue}{\texttt{SS: #1}} }}
+\newcommand{\amartini}[1]{{\textcolor{blue}{\texttt{AM: #1}} }}
 \newcommand{\sschmidt}[1]{{\textcolor{red}{\texttt{SS: #1}} }}
 
 \begin{document}
@@ -720,78 +720,86 @@ The result does not change much by changing the hyperparameters required for Wel
 \appendix
 \section{MESA solution} \label{sec:MESA_solution}
 \subsection{MESA solution}
-We will follow the solution proposed by Burg in his PhD thesis \cite{burg1975maximum}. Instead of directly solving the variational problem for the power spectral density, we will rewrite it in terms of the constraints (\ref{eq:MaxConstraint}) of the problem. $S(f)$ is defined as the Fourier Transform of the autocorrelation function, as: 
+The proposed solution follows the original demonstration due to Burg \cite{burg1975maximum}. The constraints (\ref{eq:MaxConstraint}) can be directly implemented by substituting $S(f)$ as the Fourier transform of the autocorrelation function
 \begin{equation}
-    S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t}.
+    S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t}
 \end{equation}
-Substituting in \ref{eq:EntropyGain2}, the variational problem reduces to the maximization of: 
+in equation \ref{eq:EntropyGain}. In this way the variational problem is reduced to the maximization of: 
 \begin{equation}
     \int_{-Ny}^{Ny}  
-    \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{-\imath 2 \pi f n \Delta t} 
+    \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r(n\Delta t) e^{-\imath 2 \pi f n \Delta t} 
     \right) df.
 \end{equation}
-As we said before, not all the values for the autocorrelation are known. Generally, we have access to a finite number of values for the autocorrelation function, ranging in a symmetric interval $n \in [-N, N]$. 
-In the previous equation, since the summation index is ranging between $-\infty$ and $+\infty$, we are correctly assuming that also the unknown values have to be used in the computation of the power spectral density. But, since they are not known, we have to require the maximization of entropy to be independent of these values:
+Since the autocorrelation function can only be computed for a finite time interval $n \in [-N, N]$, the requirement for our estimate to be independent from the unkown values of the autocorrelation function can be implemented as:  
 \begin{equation}\nonumber 
-    \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N. 
+    \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N.
 \end{equation}
-Using the explicit form for $H$, this becomes
+By explicitly computing the derivative: 
 \begin{equation}
-      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s = 0 \text{ for } \vert s \vert > N. 
+      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s
 \end{equation}
-We see that $S(f)$ can be expressed in terms of the $\lambda s$ via a Fourier Series
+is easily seen that $S(f)$ can be expressed via a Fourier Series
 \begin{equation}\label{eq:PSDconstraint}
-    S(f)^{-1} = \sum_{s = -N}^N \lambda_s e^{-\imath 2 \pi f s \Delta t},
+    S(f)^{-1} = \sum_{s = -\infty}^\infty \lambda_s e^{-\imath 2 \pi f s \Delta t}
 \end{equation}
-This is a non-linear closed expression for the power spectral density. The requirement for $S(f)$ to be positive definite implies that: 
-\begin{equation}
-    \nonumber 
-    \lambda_{-s} = \lambda_s^* 
-\end{equation}
-With this property, and defining $z = e^{-\imath 2 \pi f \Delta t}$, $S(f)^{-1}$ can be rewritten as a polynomial in $z$ and $z^*$
+with the properties $\lambda_s = 0$ for $\vert s \vert > N$ and $\lambda_s = \lambda_{-s}^*$.  
+Defining $z = e^{-\imath 2 \pi f \Delta t}$ the previous Fourier expansion becomes a Laurent Polynomial in $z$: 
 \begin{equation}
     \label{eq:zExp}
     S(f)^{-1} = \lambda_0 + \sum_{s = i}^N \lambda_s z^s + \sum_{s = 1}^N \lambda^*_s z^{-s}.
 \end{equation}
-Let $z_0$ be a root for the polynomial
-\begin{equation}
-    \nonumber
-    \lambda_0 + \sum_{s = 1}^N \lambda_s z_0^s + \sum_{s = 1}^N \lambda^*_s z_0^{-s} = 0,
-\end{equation}
-it is easy to show that $(z_0^*)^{-1}$ is also a root for the equation: 
-\begin{align}
-    \nonumber 
-    &\lambda_0 + \sum_{s = 1}^{N} \lambda s \left(\frac{1}{z_0^s} \right)^* + \sum_{s = 1}^N \lambda^*_s \left(\frac{1 }{z_0^{-s}}\right)^* = \\ \nonumber 
-    &\lambda_0 + \sum_{s = 1}^N \lambda_s (z_0^{-s})^* + \sum_{s=1}^N \left(\lambda_s (z_0^s)\right)^* = \\ \nonumber 
-    &\left(\lambda_0 + \sum_{s=1}^N \lambda_s z_0^s + \sum_{s = 1}^N \lambda^*_s z_0^{-s}\right)^* = 0 
-\end{align}
-This means that for every pole $z_0$ laying outside (inside) the unit circle, there is another pole inside (outside) the unit circle.  So, if there are no roots on the unit circle, $N$ roots lay outside and $N$ inside of it. \\ 
-These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}
-\begin{equation}\nonumber 
-    S(f)^{-1} = \frac{1}{P_N \Delta t} \left(1 + \sum_{s}^N a_s z^s\right)\left(1 + \sum_s^N  a^*_s z^{-s}\right),
-\end{equation}
-or, defining $a_0 = 1$,
+It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is also a root: for every root laying outside the unit circle there will be another root inside of it and vice-versa. \\ 
+These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}:
 \begin{equation}\label{eq:MESApsd_appendix}
-    S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}. 
+    S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}
 \end{equation}
-The MESA expression for the power spectral density admits a non-linear, all pole representation when evaluated in $z = e^{-\imath 2 \pi f \Delta t}$. All the roots of the first polynomial can be chosen to lay outside the unit circle, so that all the roots of the second polynomial will lay inside of it \cite{1975STIN...7714318B}. 
-If one is able to compute the values of the coefficients $a_i$ the PSD is uniquely determined from the previous equation. \\ 
-To compute the $a_i$-s, we substitute in equation
-(\ref{eq:MaxConstraint}) with the above representation for $S(f)$ in terms of the $a_i$ coefficients. Changing  variable from $f$ to $z(f) = e^{-\imath 2 \pi f \Delta t}$, the integral (\ref{eq:MaxConstraint}) becomes a contour integral in the unit circle centered at the origin of the complex plane: 
+with $a_0 = 1$. The vector obtained as $(1, a_1, \dots, a_N)$ is known as the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed. \\
+%The MESA expression for the power spectral density admits a non-linear, all pole representation when evaluated in $z = e^{-\imath 2 \pi f \Delta t}$. All the roots of the first polynomial can be chosen to lay outside the unit circle, so that all the roots of the second polynomial will lay inside of it \cite{1975STIN...7714318B}. This is equivalent to (wide-sense) stationarity of the observed process. 
+%If one is able to compute the values of the coefficients $a_i$ the PSD is uniquely determined from the previous equation. \\ 
+To compute the $a_i$-s it is convenient to rewerite the equation 
+(\ref{eq:MaxConstraint}) in terms of the Laurent Polynomial and then integrating over $z$. In this way the equation becomes:
 \begin{equation}
    \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}}dz = \bar r_s. 
 \end{equation}
-Sending $s \to s - r$, multiplying by $a^*_s$ and summing over all possible values for $s$ the equation becomes 
-\begin{align} \nonumber 
-    \sum_{s = 0}^N a_s \bar r_{s - r} &= \frac{P_N}{2 \pi \imath}\oint \frac{z^{r - 1} \sum_{s = 0}^N a^*s z^{-s}}{\sum_{s = 0}^N a_s z^s \sum_{s = 0}^N a^*s z^{-s}} dz\\
-    & = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz\label{eq:ErFilter}
-\end{align}
-Since all the zeros of the denominator lay outside the unit circle, the contour integral is 0. The only exception is for $r = 0$ with a residual in the origin of the axis. For $r = 0$ the integral can be computed via the Cauchy integral formula and (\ref{eq:ErFilter}) becomes: 
+Substituting $s \to s - r$, multiplying by $a^*_s$ and summing over $s$ the previous equation becomes 
+\begin{equation}
+    \sum_{s = 0}^N a_s \bar r_{s - r} = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz.\label{eq:ErFilter}
+\end{equation}
+From now on only wide-sense stationary processes will be considered: for such a process all poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following results: 
 \begin{align}\label{eq:errorFilter1}
     \sum_{s = 0}^N a_s \bar r_{r - s} &= P_N \quad \text{ if } r = 0 \\ \label{eq:errorFilter2}
     \sum_{s = 0}^N a_s \bar r_{r - s} & = 0 \qquad \text{ if } r \neq 0.
 \end{align}
-This kind of equations are solved by the use of the Levinson recursion \cite{doi:10.1002/sapm1946251261}
+The $N$ equations obtained for $r = 0$ can be solved via the Lenvoinson-Durbin recursion \cite{doi:10.1002/sapm1946251261} and are sufficient to uniquely determine prediction error filter $\vec a$ and $P_N$. Defining the quantities  
+\begin{align}
+\Delta_N &= \sum_{n = 0}^{N}R(N - n + 1)a_n \\ 
+c_N &= - \frac{\Delta_N}{P_N},
+\end{align} the Levinson recursion is: 
+\begin{equation} \label{eq:Levinson1}
+P_N = P_{N -1}\left(1 - \vert c_{N - 1} \vert ^2\right)
+\end{equation}
+and 
+\begin{equation} \label{eq:Levinson2}
+\begin{pmatrix}
+1 \\ a_1 \\ \vdots \\ a_{N - 1} \\ a_N
+\end{pmatrix}
+= 
+\begin{pmatrix}
+1 \\ b_1 \\ \vdots \\ b_{N -1} \\ 0
+\end{pmatrix}
++ c_{N-1}
+\begin{pmatrix}
+0 \\ b_{N -1}^* \\ \vdots \\ b^*_1 \\ 1
+\end{pmatrix}. 
+\end{equation}
+with $b$ the forward prediction error coefficients at order $N-1$. 
+The recursion can be solved for every order if the 0'th order elements are computed. Reminding that $a_0 = 1$ whatever the order the other coefficients are easily found to be: 
+\begin{equation}
+P_0 = R(0); \quad \Delta_0 = R(1); \quad c_0 = -\frac{R(1)}{R(0)}. 
+\end{equation}
+These expressions allow us to compute $\vec a$ and $P_N$ to whatever order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
+\amartini{Io lascerei questo senza tutta la descrizione esplicita della Levinson recursion, che comunque lascio sotto se vogliamo tenerla} 
+
 \subsection{Levinson Recursion}
 The equations (\ref{eq:errorFilter1}) and (\ref{eq:errorFilter2}) can be rewritten as a Matrix equation of the form
 \begin{equation}\label{eq:predictionErrorFilter}
