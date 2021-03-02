@@ -480,6 +480,7 @@ Minimizing FPE is equivalent to minimizing the quantity:
     \mathcal{L}_{\rm FPE}(m) = P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
 with $P_m$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
+\wdp{comment on N that goes to infinity, just minimising the variance of the process}
 \item \textbf{Criterion Autoregressive Transfer function (CAT)}
 This second loss function is due to Parzen~\cite{bhansali1986}, and it is defined as
 \begin{equation}
@@ -488,7 +489,7 @@ This second loss function is due to Parzen~\cite{bhansali1986}, and it is define
 It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. \wdp{please expand}
 
 \item \textbf{Optimum Bayes Decision rule} 
-The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, the loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}: 
+The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, the loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}, \wdp{please check this equation}: 
    \begin{align}
         \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
         &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2\,.
