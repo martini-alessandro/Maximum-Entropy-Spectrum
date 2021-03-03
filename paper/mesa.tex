@@ -511,7 +511,7 @@ We will apply the Burg method choosing in turn each of the loss functions on an 
 thus obtaining an ensemble of PSD estimates, that will aloows the statistical characterisation of the performance of each loss function.
 The disagreement between the PSD $S_i(f)$ estimated from the $i$-th simulated time series and the target PSD $S(f)$ is measured via 
 the relative error $r_i$, averaged over all frequencies:
-\begin{equation}\label{eq:freq_erorr}
+\begin{equation}\label{eq:freq_error}
 r_i = \frac{1}{Ny}\sum_{f_j=0}^{f_j = Ny} \frac{|S_i(f_j) - S(f_j)|}{S(f_j)}
 \end{equation}
 where $Ny$ is the Nyquist frequency of the time series.
@@ -527,19 +527,6 @@ Furthermore, Fig.~\ref{fig:optcomparison} displays the correlation between $r_i$
 For this investigation, we generate a dataset of 1000 time series of 3000 points each, see Fig.~\ref{fig:noise} for an example of a time series in frequency and time domain.
 %In section~\ref{sec:LIGO_validation}, we will perform the analysis again using the Advanced LIGO design sensitivity PSD \cite{Ligo}.
 
-\begin{figure}
-	\centering
-	\includegraphics[width = \linewidth]{Images/Noise and PSD/NormalPSDautocorr.pdf}
-	\caption{Synthetic spectrum (left) and relative autocorrelation function (right) used to simulate the data to assess the performance of the three loss functions considered in Sec.~\ref{sec:arp_validation}\sschmidt{This should be done with the same style as the others}.}
-	\label{fig:autocorr}
-\end{figure}
-
-\begin{figure}
-    \centering
-        \includegraphics[width = \linewidth]{Images/NormalPSD/NormalNoise.pdf}
-    \caption{Noise in both time and frequency domain. Frequency noise behaviour is representative of the chosen spectrum, having its maximum amplitude around $f = 2.5 au$ \sschmidt{Togliamo questa figura?}\wdp{direi di si}}
-    \label{fig:noise}
-\end{figure}
 
 \begin{figure}[t]
 	\centering
@@ -564,7 +551,7 @@ For this investigation, we generate a dataset of 1000 time series of 3000 points
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/error_length_contour.pdf}
-	\caption{Relative error $r$ (as in Eq.~(\ref{eq:freq_error})) vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with gaussian PSD given in Fig.~\ref{fig:autocorr}. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
+	\caption{Relative error $r$ (as in eq.~(\ref{eq:freq_error})) vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with gaussian PSD given in Fig.~\ref{fig:autocorr}. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
 	\label{fig:optcomparison}
 \end{figure}
 
@@ -627,13 +614,7 @@ However, if we indeed can measure the PSD by averaging over different time serie
 
 
 \subsection{Choosing a loss function - LIGO Spectrum} \label{sec:LIGO_validation}
-\begin{figure}
-    \centering
-    \includegraphics[width = \linewidth]{Images/LIGOsimulate/LigoPSDoriginal.pdf}
-    \caption{Original power spectral density from Ligo \sschmidt{Remove this?? It's already in the other figure}}
-    \label{fig:LigoPSDOriginal}
-\end{figure}
-In this subsection we concentrate again on the reconstruction of a specific, known, power spectrum: that is the Advanced LIGO design sensitivity theoretical spectral curve see fig.~\ref{fig:LigoPSDOriginal}.
+In this subsection we concentrate again on the reconstruction of a specific, known, power spectrum: that is the Advanced LIGO design sensitivity theoretical spectral curve see fig.~\ref{fig:ligospectrum}.
 For this analysis we will study properties on $500$ time series arrays of $40960$ points each. We set a sampling rate of $\SI{2048}{Hz}$ (this is $\SI{20}{s} of data$).
 We chose a longer dataset to capture the complicated structure of the PSD. A shorter time batch would not have allowed us to reconstruct faithfully all the peaks of the empirical PSD.
 
@@ -641,12 +622,12 @@ We chose a longer dataset to capture the complicated structure of the PSD. A sho
 \begin{figure}
     \centering
      \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/compare_estimates.pdf}
-      \caption{Average spectrum for the three different loss function as compared with the ``true" PSD. The average is computed with $1000$ realization of a $3000$ points long time series.}
+      \caption{Average spectrum for the three different loss function as compared with the ``true" PSD. The average is computed with $500$ realization of a $40960$ points long time series.}
        \label{fig:ligospectrum}
 \end{figure}
 In figure \ref{fig:ligospectrum}, we report the original spectrum and the ensemble averaged spectrum obtained with the three methods (no confidence level).
 In figure \ref{fig:ligo1peak} and \ref{fig:ligo2peak}, we plot a details od fig.~\ref{fig:ligospectrum} around the two peaks of the spectrum
-In figure~\ref{fig:LigoOrderError}, we report, as above, a scatter plot with the frequency averaged error (eq.~\ref{eq:freq_erorr}) and the length of the autoregressive model obtained with each loss function.
+In figure~\ref{fig:LigoOrderError}, we report, as above, a scatter plot with the frequency averaged error (eq.~\ref{eq:freq_error}) and the length of the autoregressive model obtained with each loss function.
 
 The conclusions are very similar to those above. When averaged on multiple realization, CAT loss function is able to capture the spectrum very precisely.
 In fact, even in presence of very sharp peaks, CAT reconstruction seems to be almost perfectly coincident with each of them (figs.\ref{fig:ligo1peak} and \ref{fig:ligo2peak}).
@@ -678,7 +659,7 @@ The choice of the loss function between CAT and FPE seems problem-dependent.
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/error_length_contour.pdf}
-    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_erorr}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
+    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_error}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
     \label{fig:LigoOrderError}
 \end{figure}
 
