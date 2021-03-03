@@ -14,12 +14,13 @@ import scipy.stats
 import matplotlib.pyplot as plt
 from style_sheet import init_plotting
 from scipy.interpolate import interp1d 
+import matplotlib.ticker as ticker
 
 def relative_error(real, estimate): 
     return np.abs(real - estimate) / real 
 
 PSD = 'ligo' #normal or ligo 
-save = True
+save = False
 savedir = '../paper/Images/optimisers_comparison/' + PSD + '/'
 simulate_data = False 
 methods = ['FPE', 'CAT', 'OBD']
@@ -77,6 +78,7 @@ elif not simulate_data:
     if PSD.lower() == 'ligo': 
         s = np.load('plot_data/ligo_spectra.npy')
         o = np.load('plot_data/ligo_optimisers.npy')
+    
         orde = np.load('plot_data/ligo_orders.npy')
     if PSD.lower() == 'normal': 
         s = np.load('plot_data/normal_spectra.npy')
@@ -98,9 +100,11 @@ ord_fig, ord_ax = plt.subplots()            #Error VS order for each method
 err_fig, err_ax = plt.subplots(1, 3)        #Error hist for each method 
 aro_fig, aro_ax = plt.subplots(1, 3)        #AR order estimate hist for each method
 fig4, ax4 = plt.subplots()                  #Plot with every spectral estimate    
-
+if PSD == 'ligo': fig5, ax5 = plt.subplots(1, 2)      
+            #Plot with zoom over two peaks for Ligo Spectrum 
 ord_ax.set_xlabel('Filter Length estimate'); ord_ax.set_ylabel('Frequency averaged error')
 ax4.set_ylabel(y); ax4.set_xlabel(r"$f(Hz)$")
+ax5[0].set_ylabel(y); ax5[0].set_xlabel(r"$f(Hz)$"); ax5[1].set_xlabel(r"$f(Hz)$")
 err_ax[0].set_ylabel('Percentage')
 aro_ax[0].set_ylabel('Percentage')
 
@@ -155,7 +159,9 @@ for i, method in enumerate(methods):
     aro_ax[i].hist(orders[method], bins = 70, density = True, color = 'k', histtype = 'step')
 
     ax4.loglog(frequency[:-1], median[method], color = colors[method], label = method)
-    
+    ax5[0].loglog(frequency[:-1], median[method], color = colors[method])
+    ax5[1].loglog(frequency[:-1], median[method], color = colors[method], label = method)
+
     if save: 
         fig.savefig(savedir + '{}_optimizer_values.pdf'.format(method), bbox_inches = 'tight')
         fig2.savefig(savedir + '{}_error_VS_order.pdf'.format(method), bbox_inches = 'tight')
@@ -165,16 +171,21 @@ for i, method in enumerate(methods):
                                                      ensemble_error[method].mean(),
                                                      ensemble_error[method].std()))
     
-ord_fig.legend(loc = 'lower right')
-ax4.loglog(frequency, psd, '--', color = 'k') 
+ord_fig.legend(loc = 'lower right'); fig4.legend(loc = 'upper right'); fig5.legend(loc = 'upper right') 
+ax4.loglog(frequency, psd, '--', color = 'k'); 
+ax5[0].loglog(frequency, psd, '--', color = 'k')
+ax5[1].loglog(frequency, psd, '--', color = 'k')
 ax4.set_xlim(f.min(), .5 / dt)
-fig4.legend(loc = 'upper right')
-fig4.tight_layout()
+fig4.tight_layout(); fig5.tight_layout() 
+ax5[0].set_xlim(14, 22); ax5[0].set_ylim(1e-45, 1e-39)
+ax5[1].set_xlim(434, 442)
+ax5[0].set_xticks([14, 18, 22], minor = True); ax5[1].set_xticks([434, 438, 442], minor = True)
 if save: 
     err_fig.savefig(savedir + 'errors_hist.pdf', bbox_inches = 'tight')
     ord_fig.savefig(savedir + 'error_VS_order_comparison.pdf', bbox_inches = 'tight')
     aro_fig.savefig(savedir + 'orders_hist.pdf', bbox_inches = 'tight')
     fig4.savefig(savedir + 'compare_estimates.pdf', bbox_inches = 'tight')
+    if PSD == 'ligo': fig5.savefig(savedir + 'compare_estimates_peaks.pdf', bbox_inches = 'tight')
 
 #plt.close('all')
 
