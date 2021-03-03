@@ -425,9 +425,9 @@ class MESA(object):
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*self.N/np.log(2.*self.N)) +1
+            self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
-            self.mmax = m + 1
+            self.mmax = m
         
         if optimisation_method == 'Fixed':
             self.early_stop = False
@@ -679,7 +679,7 @@ class MESA(object):
         p : 'int'
             Order of the autoregressive process that define the PSD
         """
-        return self.a_k.size - 1
+        return self.a_k.size - 1 #why -1???
     
     def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, verbose = False):
         """
