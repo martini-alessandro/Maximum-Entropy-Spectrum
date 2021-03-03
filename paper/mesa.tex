@@ -720,42 +720,48 @@ The result does not change much by changing the hyperparameters required for Wel
 \appendix
 \section{MESA solution} \label{sec:MESA_solution}
 \subsection{MESA solution}
-The proposed solution follows the original demonstration due to Burg \cite{burg1975maximum}. The constraints (\ref{eq:MaxConstraint}) can be directly implemented by substituting $S(f)$ as the Fourier transform of the autocorrelation function
+To derive the expression for the MAXENT spectral estimator the approach proposed by Burg \cite{burg1975maximum} will be followed. The constraints \ref{eq:MaxConstraint} are not implemented via the standard Lagrange Multipliers approach while the entropy gain \ref{eq:EntropyGain} will be re-written by explicitly writing $S(f)$ as the Fourier Transform of the sample autocorrelation function: 
 \begin{equation}
-    S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t}
+    S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t},
 \end{equation}
-in equation \ref{eq:EntropyGain}. In this way the variational problem is reduced to the maximization of: 
+and becomes
 \begin{equation}
-    \int_{-Ny}^{Ny}  
+    \Delta H = \int_{-Ny}^{Ny}  
     \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r(n\Delta t) e^{-\imath 2 \pi f n \Delta t} 
     \right) df.
 \end{equation}
-Since the autocorrelation function can only be computed for a finite time interval $n \in [-N, N]$, the requirement for our estimate to be independent from the unkown values of the autocorrelation function can be implemented as:  
-\begin{equation}\nonumber 
-    \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N.
-\end{equation}
-By explicitly computing the derivative: 
+Deriving with respect to the autocorrelation function $r_s$
 \begin{equation}
-      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s
+      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s. 
+\end{equation} 
+its easily shown that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of some $\lambda$s coefficients. THe determination of the values for the $\lambda$s uniquely solve the problem of power-spectral density estimation. Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda$s coefficient show the property 
+\begin{equation}
+\nonumber 
+\lambda_s = \lambda_{-s}^*. 
 \end{equation}
-is easily seen that $S(f)$ can be expressed via a Fourier Series
+The second property is obtained considering that the autocorrelation function can only be computed for a finite time interval $n \in [-N, N]$, the requirement for our estimate to be independent from the unkown values of the autocorrelation function can be implemented as:  
+\begin{equation}\nonumber 
+    \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N,
+\end{equation}
+that means 
+\begin{equation}
+\nonumber 
+\lambda_s = 0 \text{ for } \vert s \vert > N. 
+\end{equation}
+From the previous equations is easily seen that $S(f)$ can be expressed via a Fourier Series 
 \begin{equation}\label{eq:PSDconstraint}
-    S(f)^{-1} = \sum_{s = -\infty}^\infty \lambda_s e^{-\imath 2 \pi f s \Delta t}
+    S(f)^{-1} = \sum_{s = -N}^N \lambda_s e^{-\imath 2 \pi f s \Delta t}.
 \end{equation}
-with the properties $\lambda_s = 0$ for $\vert s \vert > N$ and $\lambda_s = \lambda_{-s}^*$.  
 Defining $z = e^{-\imath 2 \pi f \Delta t}$ the previous Fourier expansion becomes a Laurent Polynomial in $z$: 
 \begin{equation}
     \label{eq:zExp}
-    S(f)^{-1} = \lambda_0 + \sum_{s = i}^N \lambda_s z^s + \sum_{s = 1}^N \lambda^*_s z^{-s}.
+    S(f)^{-1} = \lambda_0 + \sum_{s = 1}^N \lambda_s z^s + \sum_{s = 1}^N \lambda^*_s z^{-s}.
 \end{equation}
-It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is also a root: for every root laying outside the unit circle there will be another root inside of it and vice-versa. \\ 
-These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}:
+It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is also a root: for every root laying outside the unit circle there will be another root inside of it and vice-versa. These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}:
 \begin{equation}\label{eq:MESApsd_appendix}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}
 \end{equation}
 with $a_0 = 1$. The vector obtained as $(1, a_1, \dots, a_N)$ is known as the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed. \\
-%The MESA expression for the power spectral density admits a non-linear, all pole representation when evaluated in $z = e^{-\imath 2 \pi f \Delta t}$. All the roots of the first polynomial can be chosen to lay outside the unit circle, so that all the roots of the second polynomial will lay inside of it \cite{1975STIN...7714318B}. This is equivalent to (wide-sense) stationarity of the observed process. 
-%If one is able to compute the values of the coefficients $a_i$ the PSD is uniquely determined from the previous equation. \\ 
 To compute the $a_i$-s it is convenient to rewerite the equation 
 (\ref{eq:MaxConstraint}) in terms of the Laurent Polynomial and then integrating over $z$. In this way the equation becomes:
 \begin{equation}
@@ -765,12 +771,13 @@ Substituting $s \to s - r$, multiplying by $a^*_s$ and summing over $s$ the prev
 \begin{equation}
     \sum_{s = 0}^N a_s \bar r_{s - r} = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz.\label{eq:ErFilter}
 \end{equation}
-From now on only wide-sense stationary processes will be considered: for such a process all poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following results: 
+From now on only wide-sense stationary processes will be considered: for such a process all poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following, well known, equations: 
 \begin{align}\label{eq:errorFilter1}
     \sum_{s = 0}^N a_s \bar r_{r - s} &= P_N \quad \text{ if } r = 0 \\ \label{eq:errorFilter2}
     \sum_{s = 0}^N a_s \bar r_{r - s} & = 0 \qquad \text{ if } r \neq 0.
 \end{align}
-The $N$ equations obtained for $r = 0$ can be solved via the Lenvoinson-Durbin recursion \cite{doi:10.1002/sapm1946251261} and are sufficient to uniquely determine prediction error filter $\vec a$ and $P_N$. Defining the quantities  
+The solution of the previous equations fully determine the functional form of the power spectral density estimator \ref{eq:MESApsd_appendix}, and the method for solving such equations is the Levinson-Durbin recursion \cite{doi:10.1002/sapm1946251261}. The recursion can be easily schemitized as follows: 
+After defining the quantities  
 \begin{align}
 \Delta_N &= \sum_{n = 0}^{N}R(N - n + 1)a_n \\ 
 c_N &= - \frac{\Delta_N}{P_N},
@@ -793,129 +800,15 @@ and
 \end{pmatrix}. 
 \end{equation}
 with $b$ the forward prediction error coefficients at order $N-1$. 
-The recursion can be solved for every order if the 0'th order elements are computed. Reminding that $a_0 = 1$ whatever the order the other coefficients are easily found to be: 
+The 0'th order element can be easily initialized reminding that $a_0 = 1$ whatever the order the other coefficients. $P_0$ can be determined from \ref{eq:errorFilter1} and its value is: 
 \begin{equation}
-P_0 = R(0); \quad \Delta_0 = R(1); \quad c_0 = -\frac{R(1)}{R(0)}. 
+P_0 = R(0),
 \end{equation}
-These expressions allow us to compute $\vec a$ and $P_N$ to whatever order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
-\amartini{Io lascerei questo senza tutta la descrizione esplicita della Levinson recursion, che comunque lascio sotto se vogliamo tenerla} 
-
-\subsection{Levinson Recursion}
-The equations (\ref{eq:errorFilter1}) and (\ref{eq:errorFilter2}) can be rewritten as a Matrix equation of the form
-\begin{equation}\label{eq:predictionErrorFilter}
-    \begin{pmatrix}
-    \bar r_0 &  \bar r_{-1} & \dots & \bar r_{-N}\\
-    \bar r_{1} & \bar r_ 0 & \dots & \bar r_{1 - N} \\ 
-    \bar r_{2} & \bar r_{1} & \dots & \bar r_{2 - N}
-    \\
-    \vdots & \vdots & \ddots & \vdots  \\
-    \bar r_{N} & \bar r_{N - 1} & \dots  &\bar r_0
-    \end{pmatrix}
-    \begin{pmatrix}
-    1 \\   a_1 \\   a_ 2 \\  \vdots \\   a_N
-    \end{pmatrix} = 
-    \begin{pmatrix}
-    P_N \\   0 \\  0 \\ \vdots  \\   0
-    \end{pmatrix}
-\end{equation}
-know as the prediction error filter equation. It is a matrix equation involing the Toeplitz Matrix $R_{ij}$ and the vector $\vec a$, known as the forward prediction error filter. The approach for solving the equations is the Levinson - Durbin recursion. \\
-Our goal is to obtain the $N$-th order equation (\ref{eq:predictionErrorFilter}) from the $N-1$-th order equation: 
-\begin{equation}\label{eq:Forward}
-    \begin{pmatrix}
-    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N}\\
-    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} \\ 
-    \vdots & \vdots & \ddots & \vdots \\ 
-    \bar r_{N - 1} & \bar r_{N -2} & \dots & \bar r_0
-    \end{pmatrix} 
-    \begin{pmatrix}
-    1  \\   b_1  \\  \vdots \\   b_{N - 1}
-    \end{pmatrix} =
-    \begin{pmatrix}
-    P_{N -1} \\  0 \\ \vdots \\ 0
-    \end{pmatrix} .
-\end{equation}
-This equation is not sufficient to solve the recursion. Since the autocorrelation matrix is self-adjoint, from equations (\ref{eq:errorFilter1}) and (\ref{eq:errorFilter2}) and noting that the first and the last row of the autocorrelation matrix are respectively the complex conjugate reverse, is easy to show that
-\begin{equation}\label{eq:Backward}
-     \begin{pmatrix}
-    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N}\\
-    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} \\ 
-    \vdots & \vdots & \ddots & \vdots \\ 
-    \bar r_{N - 1} & \bar r_{N -2} & \dots & \bar r_0
-    \end{pmatrix} 
-    \begin{pmatrix}
-    b^*_{N-1} \\ b^*_{N- 2} \\\vdots \\ 1
-    \end{pmatrix} 
-    = 
-    \begin{pmatrix}
-    0 \\ 0 \\ \vdots \\ P_{N-1}
-    \end{pmatrix} 
-\end{equation}
-holds. The vector obtained reflecting b and taking its complex conjugate is known as ``backward prediction error". \\ 
-Stepping from order $N - 1$ to order $N$, the autocorrelation matrix grows from size $(N,N)$ to size $(N + 1, N + 1)$, this implies that a new component $b_n$ for the prediction error filter is needed. If we take it to be $b_N = 0$, this choice does not modify the first $N$ component of the right side of equation (\ref{eq:Forward}) (or the last $N$ components of (\ref{eq:Backward})), i.e.:
-
-\begin{equation}\label{eq:OrderN}
-    \begin{pmatrix}
-    \bar r_0 & \bar r_{-1} & \dots &\bar r_{1 - N} & \bar r_{- N}\\
-    \bar r_{1} & \bar r_0 & \dots & \bar r_{2 - N} & \bar r_{1 - N}\\ 
-    \vdots & \vdots & \ddots & \vdots & \vdots \\ 
-    \bar r_{N -1} & \bar r_{N-2} & \dots & \bar r_0 & \bar r_{-1}
-    \\
-    \bar r_{N } & \bar r_{N -1} & \dots & \bar r_1 & r_0 
-    \end{pmatrix} 
-    \begin{pmatrix}
-    1  \\   b_1  \\  \vdots \\   b_{N - 1} \\ 0 
-    \end{pmatrix} =
-    \begin{pmatrix}
-    P_{N -1} \\  0 \\ \vdots \\ 0 \\ \Delta_N
-    \end{pmatrix} .
-\end{equation}
-with 
+ while $\Delta_0$ and $c_0$ are uniquely determined from their definitions and are
 \begin{equation}
-    \Delta_N = \sum_{n=0}^N \bar r_{N - n}b_n.
+\Delta_0 = R(1); \quad c_0 = -\frac{R(1)}{R(0)}. 
 \end{equation}
-Adding the previous expansion for both forward and backward equations, one obtains 
-\begin{equation}\nonumber 
-        \begin{pmatrix}
-    \bar r_0 & \bar r_{-1} & \dots & \bar r_{- N}\\
-    \bar r_{1} & \bar r_0 & \dots & \bar r_{1 - N}\\ 
-    \vdots & \vdots & \ddots & \vdots \\ 
-    \bar r_{N -1} & \bar r_{N-2} & \dots &  \bar r_{-1}
-    \\
-    \bar r_{N } & \bar r_{N -1} & \dots  & r_0 
-    \end{pmatrix} 
-    \begin{pmatrix}
-    1  \\   b_1  \\  \vdots \\   b_{N - 1} \\ 0 
-    \end{pmatrix} 
-    + c_N 
-    \begin{pmatrix}
-    0 \\ b^*_{N -1} \\ \vdots  \\ b_1 \\ 1 
-    \end{pmatrix}
-    =
-    \begin{pmatrix}
-    P_{N -1} \\  0 \\ \vdots \\ 0 \\ \Delta_N
-    \end{pmatrix} .
-    + c_N
-    \begin{pmatrix}
-    \Delta^*_N \\ 0 \\\vdots \\ 0 \\ P_{N-1}
-    \end{pmatrix}.
-\end{equation}
-With the reflection coefficient $c_N$ to be computed. Requiring the previous equation to be equivalent to \ref{eq:predictionErrorFilter}, one obtains
-\begin{equation}\nonumber 
-\begin{cases}
-    P_{N - 1} + c_N\Delta^*_N = P_N \\
-    c_N P_{N - 1} + \Delta_N = 0
-\end{cases}
-\end{equation}
-which can be easily solved for $c_N$ and $P_N$ as 
-\begin{equation}
-    c_N = -\frac{\Delta_N}{P_{N-1}}; \quad \text{ and } P_N = P_{N - 1}\left(1 - \vert c_N \vert ^2 \right). 
-\end{equation}
-Having computed the value for the reflection coefficient, the $N$-th order forward prediction error filter is found to be 
-\begin{equation}
-    a_i = b_i + c_N b^*_{N - i}.
-\end{equation}
-To obtain the solution for the $N$-th order, one starts $\bar r_0 = P_0$ and recursively computes the new values until the desired order is computed. 
-This problem is often solved numerically with Burg's Algorithm \cite{Vos}.
+These expressions allow us to compute $\vec a$ and $P_N$ to whatever order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved. While Burg's method for spectral analysis is solved via Levinson recursion, another faster recursion \cite{Vos} is implemented in memspectrum package.
 
 
 	\bibliography{Bibliography.bib}
