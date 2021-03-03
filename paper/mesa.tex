@@ -626,11 +626,11 @@ We chose a longer dataset to capture the complicated structure of the PSD. A sho
        \label{fig:ligospectrum}
 \end{figure}
 In figure \ref{fig:ligospectrum}, we report the original spectrum and the ensemble averaged spectrum obtained with the three methods (no confidence level).
-In figure \ref{fig:ligo1peak} and \ref{fig:ligo2peak}, we plot a details od fig.~\ref{fig:ligospectrum} around the two peaks of the spectrum
+In figure \ref{fig:ligoPeaks} we plot a details od fig.~\ref{fig:ligospectrum} around the two peaks of the spectrum
 In figure~\ref{fig:LigoOrderError}, we report, as above, a scatter plot with the frequency averaged error (eq.~\ref{eq:freq_error}) and the length of the autoregressive model obtained with each loss function.
 
 The conclusions are very similar to those above. When averaged on multiple realization, CAT loss function is able to capture the spectrum very precisely.
-In fact, even in presence of very sharp peaks, CAT reconstruction seems to be almost perfectly coincident with each of them (figs.\ref{fig:ligo1peak} and \ref{fig:ligo2peak}).
+In fact, even in presence of very sharp peaks, CAT reconstruction seems to be almost perfectly coincident with each of them (figs.\ref{fig:ligoPeaks}).
 However, the computation on a single noise realization yields larger error, as manifest in fig.~\ref{fig:LigoOrderError}.
 This supports the conclusion that CAT is not a stable optimizer: different computation of the same spectrum can output very different results.
 On the other hand, FPE seems more robust and provides a smaller variance (and frequency averaged error), despite having a worse performance on the average.
@@ -646,15 +646,9 @@ We can then draw some general conclusions:
 The choice of the loss function between CAT and FPE seems problem-dependent.
 
 \begin{figure}[t]
-        \includegraphics[width = \linewidth]{Images/LIGOsimulate/1stPeakComparison.pdf}
-        \caption{1st peak of the spectrum and it reconstruction with every optimizer (left) and associated percentage error (right) \sschmidt{This should be done with the same style as the others}}
-        \label{fig:ligo1peak}
-\end{figure}
-\begin{figure}[t]
-    \centering
-        \includegraphics[width = \linewidth]{Images/LIGOsimulate/2ndPeakComparison.pdf}
-        \caption{2nd peak of the spectrum, Relative error around 2nd peak of the spectrum \sschmidt{This should be done with the same style as the others}}
-        \label{fig:ligo2peak}
+        \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/compare_estimates_peaks.pdf}
+        \caption{Details of peaks of the spectrum and their reconstruction with every optimizer}
+        \label{fig:ligoPeaks}
 \end{figure}
 \begin{figure}
     \centering
