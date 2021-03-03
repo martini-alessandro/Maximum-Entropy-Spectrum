@@ -45,13 +45,13 @@ class optimizer:
     def __init__(self, method):
         """
         Implements various method to choose the best recursive order for Burg's Algorithm
-        Avilable methods are "FPE", "OBD", "CAT", "AIC". The most representative order is 
+        Avilable methods are "FPE", "OBD", "CAT", "AIC", "Fixed". The most representative order is 
         chosen to be the one that minimized the related function. 
         Parameters
         ----------
         method : 'str'
             Selects the method to be used to estimate the best order between "FPE",
-            "OBD", "CAT", "AIC"
+            "OBD", "CAT", "AIC", "Fixed"
 
 
         """
@@ -367,7 +367,7 @@ class MESA(object):
         """
         Computes the power spectral density of the attribute data for the class
         using standard Burg method recursive and a Faster (but less stable) version. 
-        Default is Fast. 
+        Default is Fast.
 
         Parameters
         ----------
@@ -381,7 +381,8 @@ class MESA(object):
         optimisation_method: 'str'     
             Method used to select the best recursive order. The order is chosen
             minimizing the corresponding method. 
-            Available methods are "FPE", "OBD", "CAT", "AIC".
+            Available methods are "FPE", "OBD", "CAT", "AIC", "Fixed".
+            If optimisation_method is "Fixed", the autoregressive order is always set to m, without looking for a minimum.
             Deafult is "FPE".   
         
         method: 'str'                  
@@ -396,6 +397,7 @@ class MESA(object):
             Default is True. Breaks the iteration if there is no new global 
             maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
+            Has no effect with "Fixed" optimizer.
 
         Returns
         -------
@@ -423,9 +425,12 @@ class MESA(object):
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*self.N/np.log(2.*self.N))
+            self.mmax = int(2*self.N/np.log(2.*self.N)) +1
         else:
-            self.mmax = m
+            self.mmax = m + 1
+        
+        if optimisation_method == 'Fixed':
+            self.early_stop = False
            
         if method.lower() == "fast":
             self._method = self._FastBurg
