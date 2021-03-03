@@ -176,23 +176,23 @@ class MESA(object):
     """
     Class the implement the reproduces the Maximum Entropy Spectrum of a given 
     time-series. 
-    
-    init: data: `np.ndarray` shape (N,)
-    solve(): 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self,filename = None, *args, **kwargs):
         """ 
         Class that implements Burg method to estimate power spectral densitiy of
         time series. 
         
         Parameters
         ----------
-        data: 'np.ndarray'       
-            Time series with power spectral density to be computed 
+        filename: 'str'       
+            Name of file from which the model is loaded.
+            If None, the model is not initialized
         """
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
         self.optimization = None
+        if isinstance(filename,str):
+        	self.load(filename)
 
     def save(self,filename):
         """
