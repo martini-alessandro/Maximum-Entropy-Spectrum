@@ -106,6 +106,7 @@ if plot:
 	ax_scatter.legend(loc = 'upper right')
 	ax_p.legend()
 	ax_p.set_xlim([0,200])
+	ax_p.set_ylim([-0.15,0.15])
 	ax_p.set_xlabel("p")
 	ax_p.set_ylabel("Difference in a_k")
 	ax_scatter.set_xlabel("p - p_true")
