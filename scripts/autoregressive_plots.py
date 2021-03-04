@@ -7,8 +7,6 @@ sys.path.insert(0,'..')
 import memspectrum
 
 
-
-
 N_process = 50 #10 simulated autoregressive processes
 N_data = 2000 #number of timesteps for each autoregressive process
 p_max = 30
@@ -87,12 +85,14 @@ if plot:
 	ax_scatter = fig_scatter.gca()
 	
 		#computing erorrs
-	diff_p = np.zeros((N_process,3))
+	p_rec = np.zeros((N_process,3))
+	p_true = np.zeros((N_process,))
 	diff_ak = np.zeros((N_process,N_data,3))
 	for i in range(N_process):
 		for j, l in enumerate(loss_functions):
-			diff_p[i,j] = - true_arp_list[i].get_p() + rec_MESA_list[i][j].get_p()
-			#print(j, true_arp_list[i].get_p() , rec_MESA_list[i][j].get_p(),diff_p[i,j])
+			p_true[i] = true_arp_list[i].get_p()
+			p_rec[i,j] = rec_MESA_list[i][j].get_p()#- true_arp_list[i].get_p() + rec_MESA_list[i][j].get_p()
+			#print(j, true_arp_list[i].get_p() , rec_MESA_list[i][j].get_p(),p_rec[i,j])
 			ak_true = np.concatenate([true_arp_list[i].a_k, np.zeros((N_data-len(true_arp_list[i].a_k),))]) #(N_data,)
 			ak_rec = np.concatenate([rec_MESA_list[i][j].a_k, np.zeros((N_data-len(rec_MESA_list[i][j].a_k),))]) #(N_data,)
 			diff_ak[i,:,j] = -(ak_true-ak_rec)
@@ -100,17 +100,23 @@ if plot:
 
 		#plotting
 	for i, l in enumerate(loss_functions):
-		ax_scatter.scatter(diff_p[:,i], np.sqrt(np.mean(np.square(diff_ak[...,i]), axis = 1)), c = colors[l], label = l)
+#		ax_scatter.scatter(p_rec[:,i], np.sqrt(np.mean(np.square(diff_ak[...,i]), axis = 1)), c = colors[l], label = l)
+		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l)
 		ax_p.plot(range(N_data), diff_ak[:N_p_plot,:,i].T, 'o', c = colors[l])
 		#ax_p.set_yscale('log')
-	ax_scatter.legend(loc = 'upper right')
+	ax_scatter.legend(loc = 'lower right')
 	ax_p.legend()
 	ax_p.set_xlim([0,200])
 	ax_p.set_ylim([-0.15,0.15])
 	ax_p.set_xlabel("p")
 	ax_p.set_ylabel("Difference in a_k")
-	ax_scatter.set_xlabel("p - p_true")
-	ax_scatter.set_ylabel("Averaged squared error")
+	#ax_scatter.set_xlabel("p - p_true")
+	#ax_scatter.set_ylabel("Averaged squared error")
+	ax_scatter.set_xlabel(r"$p_{MESA}$")
+	ax_scatter.set_ylabel(r"$p_{true}$")
+	ax_scatter.plot([2,p_max],[2,p_max])
+	ax_scatter.set_xscale('log')
+	#ax_scatter.set_yscale('log')
 	
 	fig_p.tight_layout()
 	fig_scatter.tight_layout()
