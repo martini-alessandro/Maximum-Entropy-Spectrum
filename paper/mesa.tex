@@ -479,16 +479,25 @@ Minimizing FPE is equivalent to minimizing the quantity:
 \begin{equation}
     \mathcal{L}_{\rm FPE}(m) = P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
-with $P_m$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
+with $P_m$ defined by the prediction error filter equation \ref{eq:errorFilter1} \sschmidt{What is this equation?}.
 \item \textbf{Criterion Autoregressive Transfer function (CAT)}
-This second loss function is due to Parzen~\cite{bhansali1986}, and it is defined as
+This second loss function has been written by Parzen and studied into details by Banshali ~\cite{bhansali1986}. 
+It is based on the assumption that the observed process is an infinite order autoregressive process 
+\begin{equation} 
+x_t = \sum_{i = 1}^{\infty}a_{i}x_{t-i} + \nu_t
+\end{equation} 
+and tries to select the order $m$ as the best finite-order approximation for the observed process. Being N the number of samples it has the property that $m \to \infty$ as $N \to \infty$. This is an interesting result since any real-valued
+stochastic process can be written as a ARMA(p,q) process (Wold theorem) i.e. an $AR(\infty)$ process thus this is a physically significant property. 
+The loss function has the functional form: 
 \begin{equation}
-    \mathcal{L}_{\rm CAT}(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m}.
+    \mathcal{L}_{\rm CAT}(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m},
 \end{equation}
-It has the interesting property that the distance between the original filter and the estimate is minimum and asymptotically unbiased. \wdp{please expand}
+and the so chosen order is found to be asymptotically unbiased for $P_N$. 
 
 \item \textbf{Optimum Bayes Decision rule} 
-The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, the loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}: 
+The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. Let $x(t)$ be the observed 
+time series for the process that has to be described as an autoregressive process of order $m$ (AR(m)) with m to be determined. The OBD is obtained chosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
+hypothesis is uniquely determined from both the length and the values of the filter under study. Chosing a Likelihood of the form \ref{eq:p_forecast} and uniform priors for both the coefficients and the hypothesis Rao has shown that chosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of: 
    \begin{align}
         \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
         &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2\,.
@@ -736,7 +745,7 @@ It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is 
 \begin{equation}\label{eq:MESApsd_appendix}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}
 \end{equation}
-with $a_0 = 1$. The vector obtained as $(1, a_1, \dots, a_N)$ is known as the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed. \\
+with $a_0 = 1$ and $\Delta t$ the uniform sampling interval for the time series. The vector obtained as $(1, a_1, \dots, a_N)$ is known as the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed. \\
 To compute the $a_i$-s it is convenient to rewerite the equation 
 (\ref{eq:MaxConstraint}) in terms of the Laurent Polynomial and then integrating over $z$. In this way the equation becomes:
 \begin{equation}
