@@ -7,15 +7,15 @@ sys.path.insert(0,'..')
 import memspectrum
 
 
-N_process = 50 #10 simulated autoregressive processes
-N_data = 2000 #number of timesteps for each autoregressive process
-p_max = 30
+N_process = 100 #10 simulated autoregressive processes
+N_data = 50000 #number of timesteps for each autoregressive process
+p_max = 5000
 
 save_dir = 'arp_data/'
 plot_dir = '../paper/Images/arp_errors/'
 
-load = True
-plot = True
+load = False
+plot = False
 
 	#initializing the models
 true_arp_list = []
@@ -27,7 +27,7 @@ for i in range(N_process):
 
 	if load:
 		true_arp_list.append(memspectrum.MESA(save_dir+'arp_model_{}'.format(i)))
-		data_list.append(np.loadtxt(save_dir+'data_{}'.format(i)))
+		#data_list.append(np.loadtxt(save_dir+'data_{}'.format(i)))
 		rec_MESA_list.append( (memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[0],i)), 
 			memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[1],i)),
 			memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[2],i)) )
@@ -35,13 +35,15 @@ for i in range(N_process):
 	else:
 		true_arp_list.append(memspectrum.MESA())
 			#getting p
-		p = np.random.choice(range(2,p_max))
+		p = np.random.choice(np.linspace(np.log10(2),np.log10(p_max), 10000))
+		p = int(10**(p))
 		
 		a_k = np.random.normal(0, 0.1, size = (p,))
-		a_k = np.multiply(a_k,np.exp(-0.1*np.arange(0,len(a_k),1)))
+		a_k = np.multiply(a_k,np.exp(-0.05*np.arange(0,len(a_k),1)))
+		a_k[0] = 1 #you forgot this part!!! Now you need to start again :(
 		P = np.random.exponential(0.05)
 
-		print('Process {} has p = {} and P, a_k = {}, {}'.format(i,p,P,a_k))
+		print('Process {} has p = {} and P, a_k = {}, {}'.format(i,p,P,None))
 		
 			#initializing the model
 		true_arp_list[-1].N = N_data
@@ -52,7 +54,7 @@ for i in range(N_process):
 		
 			#forecasting
 		data_0 = np.random.rand(p) #initial data
-		burn_steps = 100000
+		burn_steps = 1000*p
 		
 		data = true_arp_list[-1].forecast(data_0, burn_steps+N_data)[0,:] #(burn_steps+N_data,)
 		
@@ -101,10 +103,10 @@ if plot:
 		#plotting
 	for i, l in enumerate(loss_functions):
 #		ax_scatter.scatter(p_rec[:,i], np.sqrt(np.mean(np.square(diff_ak[...,i]), axis = 1)), c = colors[l], label = l)
-		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l)
+		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l, s = 2)
 		ax_p.plot(range(N_data), diff_ak[:N_p_plot,:,i].T, 'o', c = colors[l])
 		#ax_p.set_yscale('log')
-	ax_scatter.legend(loc = 'lower right')
+	ax_scatter.legend(loc = 'upper left')
 	ax_p.legend()
 	ax_p.set_xlim([0,200])
 	ax_p.set_ylim([-0.15,0.15])
@@ -114,14 +116,14 @@ if plot:
 	#ax_scatter.set_ylabel("Averaged squared error")
 	ax_scatter.set_xlabel(r"$p_{MESA}$")
 	ax_scatter.set_ylabel(r"$p_{true}$")
-	ax_scatter.plot([2,p_max],[2,p_max])
+	ax_scatter.plot(range(2,p_max),range(2,p_max))
 	ax_scatter.set_xscale('log')
-	#ax_scatter.set_yscale('log')
+	ax_scatter.set_yscale('log')
 	
 	fig_p.tight_layout()
 	fig_scatter.tight_layout()
 	
-	fig_scatter.savefig(plot_dir+'scatter_deltap_mse.pdf')
+	fig_scatter.savefig(plot_dir+'scatter_deltap_ptrue.pdf')
 	fig_p.savefig(plot_dir+'scatter_deltaak_p.pdf')
 	plt.show()
 

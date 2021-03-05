@@ -664,10 +664,18 @@ Therefore, the choice of loss function, at least in between CAT and FPE, depends
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/arp_errors/scatter_deltap_ptrue}
-	\caption{}
-	\label{fig:p_vs_ptru}
+	\caption{Reconstructed value for the autoregressive order plotted against the true value of the autoregressive order.
+	The reconstructed autoregressive orders are computed from a time series randomly drawn with an $AR(p)$ model, with the three different loss functions under investigation.
+	}
+	\label{fig:p_vs_ptrue}
 \end{figure}
 
+We now address the issue of how well the autoregressive order (i.e. the number of $a_k$ coefficients employed) is estimated with each loss function.
+In doing so, we generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p)~\mathcal{U}[log(2), log(5000)]$.
+Each coefficient $a_k$ is assigned as follows: $a_k = \alpha_k e^{-0.05\cdot k}$, where $\alpha ~ \mathbb{N}(0,0.1)$ and the exponential ensures that the coefficients falls with distance (as in any realistic finite memory process).
+We report the result of this investigation in fig.~\ref{fig:p_vs_ptrue}
+
+Observations below!!!!
 
 \section{Comparison with Welch method}
 
