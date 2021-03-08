@@ -14,8 +14,8 @@ p_max = 5000
 save_dir = 'arp_data/'
 plot_dir = '../paper/Images/arp_errors/'
 
-load = False
-plot = False
+load = True
+plot = True
 
 	#initializing the models
 true_arp_list = []

@@ -19,12 +19,15 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.insert(0,'..')
 import memspectrum
+import scipy.signal
 
 sys.path.insert(0,'../scripts')
 import welch
 
 
-data = np.loadtxt('data_@1h_len95689.dat')#[:24*60]
+#data = np.loadtxt('data_@1h_len95689.dat')[(195-30)*24:(195+30)*24] #summer
+#data = np.loadtxt('data_@1h_len95689.dat')[(2567-30)*24:(2567+30)*24] #winter
+data = np.loadtxt('data_@1h_len95689.dat')
 
 srate = 1./3600 # 1/(1 hours)
 T = len(data)/srate
@@ -42,10 +45,10 @@ y = A*np.cos(2*np.pi*f_0*t +phi_0) +np.mean(data)
 #computing spectrum
 M = memspectrum.MESA()
 if False:
-	M.solve(data, method ='standard', optimisation_method = 'FPE', early_stop = True)
-	M.save("model_FPE")
+	M.solve(data-np.mean(data), method ='fast', optimisation_method = 'CAT', early_stop = False)
+	M.save("model_CAT_zeromean")
 else:
-	M.load("model_FPE")
+	M.load("model_CAT_zeromean")
 N = len(data)
 spec, f = M.spectrum(1./srate)
 spec = spec[:int(N/2)]
@@ -57,8 +60,17 @@ if False:
 	f = f[:int(len(f)/2)-1]
 
 #forecasting
-N_forecast = 24*100 #1000 day of forecasting
-predictions = M.forecast(data[:-N_forecast], N_forecast, 100)
+N_forecast = 24*5 #1000 day of forecasting
+predictions = M.forecast(data[:-N_forecast]-np.mean(data), N_forecast, 100)+np.mean(data)
+
+#computing correlation
+correlation = scipy.signal.correlate(data-np.mean(data), data-np.mean(data), mode="full")
+correlation = correlation/max(correlation)
+lags = scipy.signal.correlation_lags(data.size, data.size, mode="full")
+	#doing fft
+#spec_welch = np.fft.fft(correlation)
+#plt.loglog(np.abs(spec_welch))
+
 
 	#plot time series
 plt.figure()
@@ -83,6 +95,9 @@ plt.ylabel("PSD (1/Hz)")
 plt.legend()
 plt.savefig("spectrum.pdf")
 
+#plt.show()
+#quit()
+
 	#plot forecasting
 plt.figure()
 plt.title("{} days of forecasting".format(int(N_forecast/24)))
@@ -93,13 +108,33 @@ plt.plot(t[-N_forecast:],m,'--',linewidth=0.5, color='k', zorder = 0)
 plt.fill_between(t[-N_forecast:],l,h,facecolor='turquoise',alpha=0.5, zorder = 1)
 plt.savefig("forecast.pdf")
 
+	#plot a_k
+plt.figure(figsize = (20,20))
+N_start = int(len(correlation)/2)
+delta_T = len(M.a_k)
 
-plt.figure()
-plt.plot(range(len(M.a_k)), M.a_k, 'o', ms =3)
+correlation_spec = np.fft.irfft(spec)
+correlation_spec/=correlation_spec[0]
+#plt.plot(correlation_spec)
+#plt.show()
+
+plt.plot(lags[N_start:N_start+delta_T], correlation[N_start:N_start+delta_T])
+plt.plot(lags[N_start:N_start+delta_T], correlation_spec[:delta_T])
+np.savetxt('autocorr.dat', correlation[N_start:N_start+delta_T*10])
+
+plt.show()
+plt.plot(range(len(M.a_k)), M.a_k, 'o', ms =3, label = r'$a_k$')
 for i in range(0,int(len(M.a_k)/24)):
-	plt.axvline(i*24.+1, ls ='-.', lw = 1, c = 'k')
+	plt.axvline(i*24.+1, ls ='-.', lw = 1, c = 'g')
+	plt.axvline(i*24., ls ='-.', lw = 1, c = 'r')
 plt.xlabel('k')
-plt.ylabel(r'$a_k$')
+plt.ylabel(r'$a_k$/autocorr')
+
+N_start = int(len(correlation)/2)
+delta_T = len(M.a_k)
+plt.plot(lags[N_start:N_start+delta_T], (correlation[N_start:N_start+delta_T]-correlation[N_start+delta_T])/(correlation[N_start]-correlation[N_start+delta_T]), c = 'k', label = 'scaled_autocorr')
+
+plt.legend()
 plt.savefig("a_k.pdf")
 
 plt.show()

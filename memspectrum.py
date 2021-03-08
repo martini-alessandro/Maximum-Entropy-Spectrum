@@ -375,7 +375,8 @@ class MESA(object):
               data for the spectrum calculation
               
         m : 'np.int'                   
-            Maximum number of recursions for the computation of the  power spectral density. 
+            Maximum number of recursions for the computation of the  power spectral density.
+            Maximum autoregressive order is p = m-1
             Default is None, that means m = 2N / log(2N)
                                  
         optimisation_method: 'str'     
@@ -425,9 +426,9 @@ class MESA(object):
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
-            self.mmax = int(2*self.N/np.log(2.*self.N)) + 1
+            self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
-            self.mmax = m +1
+            self.mmax = m
         
         if optimisation_method == 'Fixed':
             self.early_stop = False
