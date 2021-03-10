@@ -190,6 +190,8 @@ class MESA(object):
         """
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
+        self.N = None
+        self.mu = None
         self.optimization = None
         if isinstance(filename,str):
         	self.load(filename)
@@ -198,7 +200,7 @@ class MESA(object):
         """
         Save the class to file (if the spectral density analysis is already performed).
         The output file can be used to load the class with method load()
-        File is a 1D array with the format: [P, N, a_k]. The header holds the shapes for each array
+        File is a 1D array with the format: [P, N, mu, a_k]. The header holds the shapes for each array
         
         Parameters
         ----------
@@ -208,8 +210,8 @@ class MESA(object):
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
         
-        to_save = np.concatenate([[self.P], [self.N], self.a_k])
-        header = "(1,1,{})".format(len(self.a_k))
+        to_save = np.concatenate([[self.P], [self.N],[self.mu], self.a_k])
+        header = "(1,1,1,{})".format(len(self.a_k))
         np.savetxt(filename, to_save, header = header)
         return
         
@@ -236,11 +238,11 @@ class MESA(object):
         shapes = eval(first_line.translate({ord('#'): None, ord(' '): None}))
             #checking for the header
         if not isinstance(shapes, tuple):
-            if len(shapes) != 3 or not np.all([isinstance(s, int) for s in shapes]):
+            if len(shapes) != 4 or not np.all([isinstance(s, int) for s in shapes]):
                 raise ValueError("Wrong format for the header: unable to load the model")
 
             #assigning values
-        self.P, self.N, self.a_k = np.split(data, np.cumsum(shapes)[:-1])
+        self.P, self.N, self.mu, self.a_k = np.split(data, np.cumsum(shapes)[:-1])
         self.N = int(self.N.real)
         
         return
@@ -319,8 +321,6 @@ class MESA(object):
             (positive) frequencies to evaluate the spectrum at (shape (N,))
             must be equally spaced
 
-        
-
         Returns: 
         ----------
         if no frequency array is given 
@@ -356,7 +356,31 @@ class MESA(object):
             raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
 
         return
+    
+    def compute_autocovariance(dt, normalize = False):
+        """
+        Compute the autocovariance of the data based on the autoregressive coefficients.
+        The autocovariance is defined as: C(tau) = E_t[(x_t -mu)(x_t+tau -mu)]
         
+        Parameters: 
+        ----------
+        dt: 'np.float'                   
+            Sampling rate for the time series 
+            
+        normalize: 'bool'        
+            Whether the autocovariance should be normalized s.t. it is 1 at t =0
+
+        Returns: 
+        ----------
+        autocov: 'np.ndarray'                   
+            Autocovariance of the model
+        """
+        spec, f = M.spectrum(dt)
+        autocov = np.fft.irfft(spec*np.sqrt(self.mu)) #or there is a +1 in there...
+        if normalize:
+            autocov /= autocov[0]
+        return autocov       
+     
     def solve(self,
               data,
               m = None,
@@ -423,6 +447,7 @@ class MESA(object):
         
         self.data = data
         self.N  = len(data)
+        self.mu = np.mean(data)
         self.regularisation = regularisation
         self.early_stop = early_stop
         if m is None:
