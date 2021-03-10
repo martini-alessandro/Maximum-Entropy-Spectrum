@@ -479,20 +479,16 @@ Minimizing FPE is equivalent to minimizing the quantity:
 \begin{equation}
     \mathcal{L}_{\rm FPE}(m) = P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
-<<<<<<< HEAD
-with $P_m$ defined by the prediction error filter equation \ref{eq:errorFilter1} \sschmidt{What is this equation?}.
-=======
-with $P_m$ defined by the prediction error filter equation \sschmidt{What is this equation?}.
-\wdp{comment on N that goes to infinity, just minimising the variance of the process}
->>>>>>> b4656241deb9202eeb7a737395b29a26362866fe
+with $P_m$ defined by the prediction error filter equation \ref{eq:errorFilter1}. \\ 
+If the $N \to \infty$ limit is considered,remembering $m_{max} = 2N / \log(2N)$, we see that N dominates both the numerator and the denominator of the fraction: in large $N$ limit using Akaike's loss function is equivalent to the minimization of the variance $P_m$ of the process. 
+
 \item \textbf{Criterion Autoregressive Transfer function (CAT)}
 This second loss function has been written by Parzen and studied into details by Banshali ~\cite{bhansali1986}. 
 It is based on the assumption that the observed process is an infinite order autoregressive process 
 \begin{equation} 
 x_t = \sum_{i = 1}^{\infty}a_{i}x_{t-i} + \nu_t
 \end{equation} 
-and tries to select the order $m$ as the best finite-order approximation for the observed process. Being N the number of samples it has the property that $m \to \infty$ as $N \to \infty$. This is an interesting result since any real-valued
-stochastic process can be written as a ARMA(p,q) process (Wold theorem) i.e. an $AR(\infty)$ process thus this is a physically significant property. 
+and tries to select the order $m$ as the best finite-order approximation for the observed process. Being N the number of samples it has the property that $m \to \infty$ as $N \to \infty$. Since any real-valued stochastic process can be written as a ARMA(p,q) process (Wold theorem) i.e. an $AR(\infty)$ process, this is a physically significant property. 
 The loss function has the functional form: 
 \begin{equation}
     \mathcal{L}_{\rm CAT}(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m},
@@ -500,20 +496,17 @@ The loss function has the functional form:
 and the so chosen order is found to be asymptotically unbiased for $P_N$. 
 
 \item \textbf{Optimum Bayes Decision rule} 
-<<<<<<< HEAD
 The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. Let $x(t)$ be the observed 
 time series for the process that has to be described as an autoregressive process of order $m$ (AR(m)) with m to be determined. The OBD is obtained chosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
-hypothesis is uniquely determined from both the length and the values of the filter under study. Chosing a Likelihood of the form \ref{eq:p_forecast} and uniform priors for both the coefficients and the hypothesis Rao has shown that chosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of: 
-=======
-The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. With the technique of asymptotic integration, the loss function is proposed to be the length that maximizes the posterior distribution \sschmidt{Which posterior?}, \wdp{please check this equation}: 
->>>>>>> b4656241deb9202eeb7a737395b29a26362866fe
+hypothesis is uniquely determined from both the length and the values of the filter under study. Chosing a Likelihood of the form \ref{eq:p_forecast} and uniform priors for both the coefficients and the hypothesis Rao has shown that chosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of \wdp{please check this equation}: 
+
    \begin{align}
         \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
         &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2\,.
     \end{align}
 \end{itemize}
 
-Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson\wdp{add ref} recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the loss function.
+Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson \cite{doi:10.1002/sapm1946251261} recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the loss function.
 
 In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $m_{opt} << M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
 In practice, we can apply an \textit{early stop} procedure: every few iterations we look for the best order of $m_{opt}$; if this value does not change for a while, we assume that a good (local) minimum of the loss function is found and the computation is stopped.
@@ -746,7 +739,7 @@ Deriving with respect to the autocorrelation function $r_s$
 \begin{equation}
       \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s. 
 \end{equation} 
-its easily shown that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of some $\lambda$s coefficients. THe determination of the values for the $\lambda$s uniquely solve the problem of power-spectral density estimation. Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda$s coefficient show the property 
+its easily shown that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of some $\lambda$s coefficients. The determination of the values for the $\lambda$s uniquely solve the problem of power-spectral density estimation. Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda$s coefficient show the property 
 \begin{equation}
 \nonumber 
 \lambda_s = \lambda_{-s}^*. 
