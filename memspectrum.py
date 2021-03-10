@@ -339,6 +339,8 @@ class MESA(object):
             ValueError if frequencies greater then Nyquist frequencies are given 
             
         """
+        if self.a_k is None:
+            raise RuntimeError("Model is not initialized: unable to compute spectrum. Call MESA.solve() or load a model from file to initialize the model")
         f_ny = .5 / dt 
         spec, f_spec = self._spectrum(dt, self.N)
         
@@ -357,7 +359,7 @@ class MESA(object):
 
         return
     
-    def compute_autocovariance(dt, normalize = False):
+    def compute_autocovariance(self, dt, normalize = False):
         """
         Compute the autocovariance of the data based on the autoregressive coefficients.
         The autocovariance is defined as: C(tau) = E_t[(x_t -mu)(x_t+tau -mu)]
@@ -375,8 +377,12 @@ class MESA(object):
         autocov: 'np.ndarray'                   
             Autocovariance of the model
         """
-        spec, f = M.spectrum(dt)
-        autocov = np.fft.irfft(spec*np.sqrt(self.mu)) #or there is a +1 in there...
+        spec, f = self.spectrum(dt)
+        spec = spec[:int(self.N/2)]
+        f = f[:int(self.N/2)]
+        autocov = np.fft.irfft(spec) #or there is a +1 in there...
+        #autocov -= np.square(self.mu)
+        #print(self.mu)
         if normalize:
             autocov /= autocov[0]
         return autocov       
