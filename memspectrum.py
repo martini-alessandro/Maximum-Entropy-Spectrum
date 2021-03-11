@@ -772,7 +772,7 @@ class MESA(object):
         if isinstance(seed, int):
             np.random.seed(seed)
         elif seed is not None:
-            warnings.warn("Invalid seed given for the generator. Default one used")            
+            warnings.warn("Invalid seed given for the generator. Default one used",UserWarning)            
         coef = - self.a_k[1:][::-1]
         for i in range(length): 
             if verbose: sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
