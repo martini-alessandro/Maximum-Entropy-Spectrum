@@ -713,7 +713,7 @@ class MESA(object):
         """
         return self.a_k.size - 1 #why -1???
     
-    def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, verbose = False):
+    def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, seed = None, verbose = False):
         """
         Forecasting on an observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
@@ -738,6 +738,9 @@ class MESA(object):
             
         include_data: `bool`
             Whether to prepend to the output the input time series
+        
+        seed: `int`
+            Seed for the random generator. If is None, no initialization of the seed is done and the authomatic numpy setting is used.
         
         verbose: `bool`
             Whether to print the status of the forecasting
@@ -766,6 +769,10 @@ class MESA(object):
                 raise ValueError("Data are not long enough for forecasting")
         else:
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
+        if isinstance(seed, int):
+            np.random.seed(seed)
+        elif seed is not None:
+            warnings.warn("Invalid seed given for the generator. Default one used")            
         coef = - self.a_k[1:][::-1]
         for i in range(length): 
             if verbose: sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
