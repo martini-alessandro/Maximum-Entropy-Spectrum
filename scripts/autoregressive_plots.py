@@ -11,11 +11,11 @@ N_process = 100 #10 simulated autoregressive processes
 N_data = 50000 #number of timesteps for each autoregressive process
 p_max = 5000
 
-save_dir = 'arp_data/'
+save_dir = 'arp_data_dirichlet/'
 plot_dir = '../paper/Images/arp_errors/'
 
-load = True
-plot = True
+load = False
+plot = False
 
 	#initializing the models
 true_arp_list = []
@@ -37,9 +37,11 @@ for i in range(N_process):
 			#getting p
 		p = np.random.choice(np.linspace(np.log10(2),np.log10(p_max), 10000))
 		p = int(10**(p))
+		#p=int(p_max)
 		
-		a_k = np.random.normal(0, 0.1, size = (p,))
-		a_k = np.multiply(a_k,np.exp(-0.05*np.arange(0,len(a_k),1)))
+		a_k = np.random.dirichlet([1. for i in range(p)])
+		a_k = a_k * (2*np.random.binomial(1,0.5,a_k.shape)-1) #flipping the sign at random
+		
 		a_k[0] = 1 #you forgot this part!!! Now you need to start again :(
 		P = np.random.exponential(0.05)
 
@@ -48,23 +50,21 @@ for i in range(N_process):
 			#initializing the model
 		true_arp_list[-1].N = N_data
 		true_arp_list[-1].P = P
+		true_arp_list[-1].mu = 0.
 		true_arp_list[-1].a_k = a_k
 		
 		true_arp_list[-1].save(save_dir+'arp_model_{}'.format(i))
 		
 			#forecasting
 		data_0 = np.random.rand(p) #initial data
-		burn_steps = 1000*p
+		burn_steps = 100*p
 		
 		data = true_arp_list[-1].forecast(data_0, burn_steps+N_data)[0,:] #(burn_steps+N_data,)
 		
 		data_list.append(data[-N_data:])
 		#print("Time series: ", data_list[-1])
 		
-		#plt.plot(data_list[-1])
-		#plt.show()
 		np.savetxt(save_dir+'data_{}'.format(i), data_list[-1])
-		
 		
 			#reconstructing with MESA
 		temp_MESA =  (memspectrum.MESA(), memspectrum.MESA(), memspectrum.MESA()) 
@@ -125,6 +125,9 @@ if plot:
 	
 	fig_scatter.savefig(plot_dir+'scatter_deltap_ptrue.pdf')
 	fig_p.savefig(plot_dir+'scatter_deltaak_p.pdf')
+	print("Saved fig @ "+plot_dir+'scatter_deltap_ptrue.pdf')
+	print("Saved fig @ "+plot_dir+'scatter_deltaak_p.pdf')
+	
 	plt.show()
 
 
