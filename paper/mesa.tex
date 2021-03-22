@@ -701,13 +701,19 @@ Therefore, the choice of loss function, at least in between CAT and FPE, depends
 \end{figure}
 
 We now address the issue of how well the autoregressive order (i.e. the number of $a_k$ coefficients employed) is estimated with each loss function.
-In doing so, we generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p)~\mathcal{U}_{[log(2), log(5000)]}$.
+In doing so, we generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p) \sim\mathcal{U}_{[log(2), log(5000)]}$.
 Each coefficient $a_k$ is assigned according to a Dirichlet distribution $\mathrm{Dir}([1,\hdots, 1])$. The sign of $a_k$ is assigned randomly according to a binomial distribution.
-We report the result of this investigation in fig.~\ref{fig:p_vs_ptrue}
+We report the result of this investigation in fig.~\ref{fig:p_vs_ptrue}.
 
-Observations below!!!!
+It can be seen that OBD and FPE loss functions show very similar behaviour. They are {\it very} realiable in capturing the correct autoregressive order up to a certain threshold ($p\sim 100$ for OBD and $p\sim 200$ for FPE). For any autoregressive process of order higher than the threshold, the optimization underestimates badly the actual value of $p$.
+For this reason, FPE and OBD seems realiable only for simple autoregressive processes. For complicated processes, it seems they underfit the problem (i.e. they output a model simpler that those required).
 
-\section{Comparison with Welch method}
+On the other hand, CAT loss function shows a different behaviour. The selected autoregressive order $p$ is always close to the maximum possible value, regardless the actual value $p_{true}$ of the underlying process. This produces always a model that is more complex than those obtained with FPE and OBD and this can explain the origin of the high variance in the estimation observed in the experiments described in the previous section.
+Of course, CAT does not perform a good job in reconstructing an autoregressive process. However, for high order autoregressive process the error introduced by CAT is more tolerable than the error introduced by FPE and OBD. This is a good reason to prefer CAT optimizer in such situations (see sec.~\ref{sec:temp_timeseries} for another example of this).
+
+\sschmidt{Shall we add more?} 
+
+\section{Comparison with Welch method}\label{sec:Welch_comparison}
 
 It is really interesting to have a qualitative comparison between the performance of the MESA and of the standard Welch algorithm.
 We perform such comparison on the spectrum of LIGO (even though similar conclusions can be drawn from any other PSD).
@@ -739,9 +745,46 @@ The result does not change much by changing the hyperparameters required for Wel
 
 \sschmidt{Mettiamo da qualche parte una descrizione dettagliata del codice? No: solo rimandiamo al codice nell'intro}
 
-\section{Forecast analysis}
-\section{Final remarks and future prospects}
+\section{Application: Temperature Time Series} \label{sec:temp_timeseries}
+We apply our code to the study of the temperature time series. This will allow to test the code performance on a different time series, of great importance in physics. We will also assess the quality of the forecasting predictions: this task has a great impact also on practical applications.
+We downloaded the historical reanalysis data from the Copernicus project (or whathever it is) \cite{}.
+Data refers to the temperature measure at coordinates $\textrm{N}\;\ang{45;5;} \;\; \textrm{E}\;\ang{9;1;}}$, corresponding about to the city of Milan, Italy. The temperature is measured once per hour for almost 31 years from 31st December 1989 to 30th November 2020.
 
+In fig.~\ref{fig:temp_spectrum}, we compute the spectrum over all the data. We employ both FPE and CAT loss functions.
+First of all, we note that at every frequency the estimation given by FPE is much less noisy the one from CAT: this issue was already studied in the previous sections. 
+We clearly see that there is a peak on the PSD at the frequency $f_D = \SI{1}{day^{-1}}$ corresponding to a day. This is somehow trivial and highly expected.
+Higher order harmonics (corresponding to integer multiples of $f_D$) are also visible up to the Nyquist frequency ($f_D = \SI{0.5}{hour^{-1}}$): they are required to explain the high variability of the daily temperature cycle throughout the year.
+
+Looking at the low frequencies, it is striking to note that FPE does not capture the peak $f_{yr} = \SI{1}{yr^{-1}}$ located at the frequency of a year. On the other hand, the peak is captured well by the CAT loss function.
+This can be understood by looking at fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often understimating badly the actual value.
+In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
+Clearly, the autoregressive process selected by FPE cannot produce a meaningful prediction on the timescale of a few months and for this reason it is unable to capture the peak at $f_{yr}$. In other words, the model is too simple to capture \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
+On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour.
+The ``actual" length of the autoregressive process should be closer to the choice of CAT.
+
+\sschmidt{
+Some remarks:
+\begin{itemize}
+	\item What happens if we downsample the data? FPE should be able to capture the yearly trend...
+	\item Remove yearly trend from the data?
+	\item Other plots?
+\end{itemize}
+}
+
+\sschmidt{Other comments below...}
+
+\begin{figure}
+	\caption{Spectrum for the historical temperature time series. The two lines refers to different loss functions (CAT and FPE); the inset shows the harmonics of the fundamental frequency of a day. Two vertical lines are drawn in correspondence to the frequency $f_D$ of a day and $f_{yr}$ of a year.}
+	\label{fig:temp_spectrum}
+	\includegraphics{Images/climate_plots/temp_spectrum.pdf}
+\end{figure}
+
+\section{Final remarks and future prospects} \label{sec:conclusion}
+\blindtext
+\blindtext
+\blindtext
+
+\pagebreak
 \appendix
 \section{MESA solution} \label{sec:MESA_solution}
 \subsection{MESA solution}

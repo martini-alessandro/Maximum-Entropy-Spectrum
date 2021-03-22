@@ -27,7 +27,8 @@ import welch
 
 #data = np.loadtxt('data_@1h_len95689.dat')[(195-30)*24:(195+30)*24] #summer
 #data = np.loadtxt('data_@1h_len95689.dat')[(2567-30)*24:(2567+30)*24] #winter
-data = np.loadtxt('data_@1h_len95689.dat')
+#data = np.loadtxt('data_@1h_len95689.dat')
+data = np.loadtxt('data_@1h_len271009_1989-2020.dat')
 
 srate = 1./3600 # 1/(1 hours)
 T = len(data)/srate
@@ -35,20 +36,30 @@ T = len(data)/srate
 	#togliere ciclo annuale
 	#togliere trend delle medie annuali
 
+mu = np.mean(data)
 f_0 = 1/(365)
 t = np.linspace(0, len(data)/24., len(data))
 A = (max(data)-min(data))/2.*0.5
 phi_0 = 2.8
-y = A*np.cos(2*np.pi*f_0*t +phi_0) +np.mean(data)
+if True:
+	def f(t, A, f_0,phi_0):
+		return A*np.cos(2*np.pi*f_0*t +phi_0) +mu
+	print("Initial guess for amplitude, freq and phase for annual trend: ",A, f_0,phi_0)
+	popt, pcov = scipy.optimize.curve_fit(f, t, data, (A, f_0,phi_0))
+	print("Final guess for amplitude, freq and phase for annual trend: ",*popt)
+	A, f_0,phi_0 = popt
+	y = f(t, A, f_0,phi_0)
+else:
+	y = f(t, A, f_0,phi_0)
 #data = data -y
 
 #computing spectrum
 M = memspectrum.MESA()
 if False:
-	M.solve(data-np.mean(data), method ='fast', optimisation_method = 'CAT', early_stop = False)
-	M.save("model_CAT_zeromean")
+	M.solve(data, method ='fast', optimisation_method = 'CAT', early_stop = False)
+	M.save("model_CAT_long")
 else:
-	M.load("model_CAT_zeromean")
+	M.load("model_CAT_long")
 N = len(data)
 spec, f = M.spectrum(1./srate)
 spec = spec[:int(N/2)]
@@ -60,11 +71,12 @@ if False:
 	f = f[:int(len(f)/2)-1]
 
 #forecasting
-N_forecast = 24*5 #1000 day of forecasting
-predictions = M.forecast(data[:-N_forecast]-np.mean(data), N_forecast, 100)+np.mean(data)
+N_forecast = 24*200 #1000 day of forecasting
+predictions = M.forecast(data[:-N_forecast], N_forecast, 100)
 
 #computing correlation
 correlation = scipy.signal.correlate(data-np.mean(data), data-np.mean(data), mode="full")
+#correlation = scipy.signal.correlate(data, data, mode="full")
 correlation = correlation/max(correlation)
 lags = scipy.signal.correlation_lags(data.size, data.size, mode="full")
 	#doing fft
@@ -73,7 +85,8 @@ lags = scipy.signal.correlation_lags(data.size, data.size, mode="full")
 
 
 	#plot time series
-plt.figure()
+fig = init_plotting()
+ax = fig.gca()
 t = np.linspace(0, len(data)/24., len(data))
 plt.plot(t, data)
 plt.plot(t, y)
@@ -113,16 +126,19 @@ plt.figure(figsize = (20,20))
 N_start = int(len(correlation)/2)
 delta_T = len(M.a_k)
 
-correlation_spec = np.fft.irfft(spec)
+correlation_spec = np.fft.irfft(spec*np.sqrt(np.mean(data))) #or there is a +1 in there...
 correlation_spec/=correlation_spec[0]
+#correlation_spec += np.square(np.mean(data))
 #plt.plot(correlation_spec)
 #plt.show()
 
-plt.plot(lags[N_start:N_start+delta_T], correlation[N_start:N_start+delta_T])
-plt.plot(lags[N_start:N_start+delta_T], correlation_spec[:delta_T])
+plt.plot(lags[N_start:N_start+delta_T], correlation[N_start:N_start+delta_T], label='correlation')
+plt.plot(lags[N_start:N_start+delta_T], correlation_spec[:delta_T], label = 'mesa correlation')
+plt.legend()
 np.savetxt('autocorr.dat', correlation[N_start:N_start+delta_T*10])
 
 plt.show()
+
 plt.plot(range(len(M.a_k)), M.a_k, 'o', ms =3, label = r'$a_k$')
 for i in range(0,int(len(M.a_k)/24)):
 	plt.axvline(i*24.+1, ls ='-.', lw = 1, c = 'g')

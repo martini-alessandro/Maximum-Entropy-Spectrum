@@ -210,7 +210,7 @@ class MESA(object):
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
         
-        to_save = np.concatenate([[self.P], [self.N],[self.mu], self.a_k])
+        to_save = np.concatenate([[self.P], [float(self.N)],[self.mu], self.a_k])
         header = "(1,1,1,{})".format(len(self.a_k))
         np.savetxt(filename, to_save, header = header)
         return
@@ -393,7 +393,8 @@ class MESA(object):
               optimisation_method = "FPE",
               method              = "Fast",
               regularisation      = 1.0,
-              early_stop          = True):
+              early_stop          = True,
+              verbose = False):
         """
         Computes the power spectral density of the attribute data for the class
         using standard Burg method recursive and a Faster (but less stable) version. 
@@ -429,6 +430,9 @@ class MESA(object):
             maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
             Has no effect with "Fixed" optimizer.
+        
+        verbose: 'boolean'
+            Whether to print the status of the mesa solution
 
         Returns
         -------
@@ -456,6 +460,7 @@ class MESA(object):
         self.mu = np.mean(data)
         self.regularisation = regularisation
         self.early_stop = early_stop
+        self.verbose = verbose
         if m is None:
             self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
@@ -524,6 +529,7 @@ class MESA(object):
         old_idx = 0
         #Loop for the FastBurg Algorithm
         for i in range(self.mmax):
+            if self.verbose: sys.stderr.write('\r\tIteration {0} of {1}'.format(i + 1, self.mmax))
             #Update prediction error filter and reflection error coefficient
             k, new_a = self._updateCoefficients(a[-1], g)
             #Update variables. Check paper for indices at j-th loop.
@@ -555,6 +561,8 @@ class MESA(object):
                     break
         if not self.early_stop:
             idx = np.nanargmin(optimization)
+
+        if self.verbose: sys.stderr.write('\n')
 
         return P[idx], a[idx], np.array(optimization)
    
@@ -647,6 +655,7 @@ class MESA(object):
         old_idx = 0
         #Burg's recursion
         for i in range(self.mmax):
+            if self.verbose: sys.stderr.write('\r\tIteration {0} of {1}'.format(i + 1, self.mmax))
             f = _f[1:]
             b = _b[:-1]
 
@@ -678,7 +687,9 @@ class MESA(object):
                     break
         if not self.early_stop:
             idx = np.argmin(optimization) #+ 1
-
+        
+        if self.verbose: sys.stderr.write('\n')
+        
         return P[idx], a_k[idx], optimization
     
     def _updatePredictionCoefficient(self, x, reflectionCoefficient):

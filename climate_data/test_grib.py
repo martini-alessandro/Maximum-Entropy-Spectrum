@@ -5,7 +5,11 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 
-ds = xr.open_dataset('adaptor.mars.internal-1614589133.4434555-10786-9-72b941a9-4c27-4d17-8061-3525cfcbd646.grib', engine='cfgrib', backend_kwargs={'read_keys': ['experimentVersionNumber']})
+ds = xr.open_dataset('adaptor.mars.internal-1614589133.4434555-10786-9-72b941a9-4c27-4d17-8061-3525cfcbd646.grib', engine='cfgrib', backend_kwargs={'read_keys': ['experimentVersionNumber']}) #20091231-20201130
+#ds = xr.open_dataset('adaptor.mars.internal-1614619196.5842516-30992-8-350d6fd6-6cf6-4e7e-bed2-b92cca5f47ec.grib', engine='cfgrib', backend_kwargs={'read_keys': ['experimentVersionNumber']}) #19991231-20091231
+#ds = xr.open_dataset('adaptor.mars.internal-1614619254.7736595-26399-6-0b5cc738-4574-4489-9cfe-8b807abaf151.grib', engine='cfgrib', backend_kwargs={'read_keys': ['experimentVersionNumber']}) #19891231-19991231
+
+
 print(ds)
 print(ds.t2m.attrs)
 #help(xr.open_dataset)
@@ -36,7 +40,7 @@ b = b[~np.isnan(b)]
 print(b)
 t = np.linspace(0, len(b), len(b)) #hours
 
-np.savetxt('data_@1h_len{}.dat'.format(len(b)),b)
+np.savetxt('data_@1h_len{}_.dat'.format(len(b)),b)
 quit()
 
 plt.plot(t, b)
@@ -76,5 +80,67 @@ data_np = np.array(lat_list)
 print(data_np.shape)
 plt.imshow(data_np)
 plt.show()
+
+
+"""
+array(['1999-12-31T00:00:00.000000000', '2000-01-01T00:00:00.000000000',
+       '2000-01-02T00:00:00.000000000', ..., '2009-12-29T00:00:00.000000000',
+       '2009-12-30T00:00:00.000000000', '2009-12-31T00:00:00.000000000'],
+      dtype='datetime64[ns]')
+Coordinates:
+    number   int64 ...
+  * time     (time) datetime64[ns] 1999-12-31 2000-01-01 ... 2009-12-31
+    surface  int64 ...
+Attributes:
+    long_name:      initial time of forecast
+    standard_name:  forecast_reference_time
+<xarray.DataArray 'step' (step: 24)>
+array([ 3600000000000,  7200000000000, 10800000000000, 14400000000000,
+       18000000000000, 21600000000000, 25200000000000, 28800000000000,
+       32400000000000, 36000000000000, 39600000000000, 43200000000000,
+       46800000000000, 50400000000000, 54000000000000, 57600000000000,
+       61200000000000, 64800000000000, 68400000000000, 72000000000000,
+       75600000000000, 79200000000000, 82800000000000, 86400000000000],
+      dtype='timedelta64[ns]')
+Coordinates:
+    number   int64 ...
+  * step     (step) timedelta64[ns] 01:00:00 02:00:00 ... 1 days 00:00:00
+    surface  int64 ...
+Attributes:
+    long_name:      time since forecast_reference_time
+    standard_name:  forecast_period
+<xarray.DataArray 'latitude' (latitude: 2)>
+array([45.5, 45.4])
+Coordinates:
+    number    int64 ...
+    surface   int64 ...
+  * latitude  (latitude) float64 45.5 45.4
+Attributes:
+    units:             degrees_north
+    standard_name:     latitude
+    long_name:         latitude
+    stored_direction:  decreasing
+<xarray.DataArray 'longitude' (longitude: 2)>
+array([9.1, 9.2])
+Coordinates:
+    number     int64 ...
+    surface    int64 ...
+  * longitude  (longitude) float64 9.1 9.2
+Attributes:
+    units:          degrees_east
+    standard_name:  longitude
+    long_name:      longitude
+(3654, 24, 2, 2)
+(3654, 24)
+[[      nan       nan       nan ...       nan       nan 270.97482]
+ [270.26868 269.6307  269.4444  ... 270.64658 270.48184 270.25766]
+ [269.94144 269.96716 270.04718 ... 269.5512  269.8716  269.7848 ]
+ ...
+ [272.35785 271.99747 271.58832 ... 273.0402  273.2572  273.31464]
+ [273.13177 272.9658  272.70944 ... 272.12778 271.6813  271.66272]
+ [271.39862 271.34235 271.3499  ... 275.75543 275.4552        nan]]
+[      nan       nan       nan ... 275.75543 275.4552        nan]
+[270.97482 270.26868 269.6307  ... 275.48245 275.75543 275.4552 ]
+"""
 
 
