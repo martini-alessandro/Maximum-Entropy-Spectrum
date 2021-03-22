@@ -78,7 +78,7 @@ We find that, when compared to the Welch's method, the Burg's method provides a 
 \section{Introduction}
 
 The study of the properties of  stochastic processes is a crucial task in many fields of physics and mathematical physics [Here we should make some examples...].
-A particularly interesting class of stochastic processes are the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the auto-covariance function 
+A particularly interesting class of stochastic processes are the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the autocorrelation function 
 \begin{equation}
 	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
 \end{equation}
@@ -113,13 +113,15 @@ without highlighting its connection with the time structure of the process itsel
 A ubiquitous method for such computation is due to Welch \cite{Welch} and it based on the method of periodograms. Basically, the PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many windowed batches and averaging the squared moduli of their Fourier transforms. The standard approach of periodograms \cite{Lomb,Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
     \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
 \end{equation}
-The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD. \\ 
+The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD. \sschmidt{Here we say different things about periodigrams. We should be more clear...}
+
 The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa. Moreover, the final result depends on the choice of window function, hence begging the question of what the ``real" PSD is. \\  
 Another problem with this approach is the requirement for the window to be $0$ outside the interval: we are arbitrarily assuming $\rho_j = 0$ for $j > M$, and modifying the estimate if a non-rectangular window is chosen. Making assumptions on unobserved data and modifying the ones we have at our disposal introduces information about the process that is not really there. Moreover, this method requires a number of arbitrary choices to be made, e.g. the number of time slices, the kind of Window function, the overlap between consecutive slices, etc... All the knobs must be tuned by hand and their choice can dramatically affect the PSD estimation.
 \par
 An appealing alternative approach, based on the Maximum Entropy principle \cite{Jaynes}, has been put forward by Burg \cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the arbitrary parameters, as it provides an iterative closed form expression for the spectrum of a stochastic time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
 Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provide a natural and simple machinery to forecast a time series, thus predicting past observations based on previous ones.
-In this paper we discuss the details of the Maximum entropy principle, its application to Power Spectral Density estimation with Burg algorithm and the link between Burg's algorithm and autoregressive process. Furthermore, we present and describe a new code, `memspectrum`, that provides a robust python implementation of the algorithm.
+
+In this paper we discuss the details of the Maximum entropy principle, its application to Power Spectral Density estimation with Burg algorithm and the link between Burg's algorithm and autoregressive process. Furthermore, we present and describe a new code, \texttt{memspectrum}, that provides a robust python implementation of the algorithm.
 We provide a thorough assessment of the performance of our code and we validate our results performing a number of tests. We compare our results with those of spectral analysis carried out with the standard Welch method.
 \par
 Our paper is organized as follows: blablabla...
@@ -129,7 +131,7 @@ Our paper is organized as follows: blablabla...
 The Maximum Entropy principle (MAXENT) is among the most important results in Bayesian probability theory. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while at the same time it is non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to Burg \cite{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series.
 
 After a short introduction to Jayne's MAXENT (sec.~\ref{sec:MAXENT}), we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form (sec.~\ref{sec:MESA}).
-Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link to introduce a method for forecasting a time series.
+Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link for straightforwardly forecasting a time series.
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
 
@@ -161,10 +163,10 @@ this describes a situation of `maximum ignorance'; we have no evidence at all an
 %for each outcome, i.e. appealing to the indifference principle (IP), is equivalent to the requirement for our experiment to be the most unpredictable. 
 %All we know is that one over $N$ events is going to happen. With this evidence, we cannot expect one outcome to occur over the others. 
 %To report the results of such an experiment, we need to communicate every single outcome: it 'carries' high information. 
-In this context, the role played by evidence should also be clear: it dictates the probability assignment in order to make the result 'more certain' or 'less informative'. Any assignment different from the 'most uncertain' is violating the principle of it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. From the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
+In this context, the role played by evidence should also be clear: it dictates the probability assignment in order to make the result `more certain' or `less informative'. Any assignment different from the `most uncertain' is violating the principle of it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. From the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
 \par
 MAXENT ratifies the aforementioned principle by stating that probabilities should be assigned by maximizing uncertainty using evidence as constraint. 
-This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a 'generalization' of information defined in equation (\ref{eq:information}) to be something like the 'expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
+This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a `generalization' of information defined in equation (\ref{eq:information}) to be something like the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
 %
 %Some properties for $H$ can be worked out easily. 
 %From previous discussion, given a fixed number $N$ of possible outcomes, we want $H$ to be maximized by the choice $p_1 = \dots = p_N$.
@@ -195,8 +197,8 @@ and $H$ is what we will call (information) entropy.
 
 The maximisation of entropy, supplemented by evidence in the form of constraints to which the sought-for probability distribution must obey,
 gives rise to several of the most common probability distributions utilised commonly by data scientists. For instance, whenever the only constraint available is the normalisation of the probability distribution, the entropy is maximised by the uniform distribution. 
-If the information available is instead the expected value -- the mean -- entropy is maximised by the  exponential distribution. Of particular importance is 
-the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
+If the information available is instead the expected value -- the mean -- entropy is maximised by the  exponential distribution.
+Of particular importance is the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
 We retain this particularly interesting from the foundational point of view, since it provides a deeper insight into the ubiquitous Gaussian distribution.
 It is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy. 
 
@@ -205,7 +207,20 @@ For this work, we are particularly interested in the mutli-dimensional case. Sup
     p&\left((x_1, \ldots, x_n)\vert I\right) = \nonumber \\
     &\frac{1}{\left(2 \pi \det C\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i,j}(x_i-\mu_i) (x_j-\mu_j)C^{-1}_{ij} \right)\,. 
 \end{align}
-We have already seen that for a wide-sense stationary process the mean function is independent of time, hence redefined to be equal to zero without loss of generality, and the auto-covariance function is dependent only on the time lag $\tau \equiv t_i - t_j$. One can thus choose a sampling rate $\Delta t$ so that $C_{ij} = C((i-j)\Delta t)$. The autocovariance matrix thus becomes a Toeplitz matrix. Toeplitz matrices are asymptotically equivalent to circulant matrices and thus diagonalised by the discrete Fourier transform base\cite{Gray}.
+
+We have already seen that for a wide-sense stationary process the mean function is independent of time, hence redefined to be equal to zero without loss of generality, and the auto-covariance function is dependent only on the time lag $\tau \equiv t_i - t_j$. One can thus choose a sampling rate $\Delta t$ so that $C_{ij} = C((i-j)\Delta t)$. The autocovariance matrix thus becomes a Toeplitz matrix\footnote{
+We remind the reader that a Toeplix matrix is a matrix in the form:
+\begin{pmatrix}
+	a_0 & a_1 & a_2 & \ldots & \ldots& \ldots &a_n\\
+	a_{-1} & a_0 & a_1 & \ldots & \ldots& \ldots &a_{n-1}\\
+	a_{-2} & a_{-1} & a_0 & \ldots & \ldots & \ldots  &a_{n-2}\\
+	\vdots & \vdots & \vdots & \vdots & \vdots & \vdots &\vdots\\
+	a_{-n +1} & \ldots & \ldots & \ldots& a_{-1} & a_0    &a_{1}\\
+	a_{-n} & \ldots & \ldots & \ldots& a_{-2} & a_{-1} & a_0
+\end{pmatrix}
+
+}.
+Toeplitz matrices are asymptotically equivalent to circulant matrices and thus diagonalised by the discrete Fourier transform base\cite{Gray}.
 %R. M. Gray, Foundations and Trends⃝R in Communications and Information Theory 2, 155 (2005), URL https://doi.org/10.1561/0100000006.
 Some simple algebra shows that the time-domain multivariate Gaussian can be transformed into the equivalent frequency domain 
 probability distribution:
@@ -213,7 +228,7 @@ probability distribution:
 p&\left((\tilde{x}_1, \ldots, \tilde{x}_n)\vert I\right) = \nonumber \\
     &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i}\tilde{x}_i^2S^{-1}_{i} \right)\,,
 \end{align}
-where the matrix $S$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
+where the matrix $S = S_i \delta_{ij}$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
 Many readers will recognise the familiar form of the Whittle likelihood that stands at the basis of the \emph{matched filter} method\cite{woodward}
 %P. M. Woodward, D. W. Fry, and W. Higinbotham, Probability and information theory, with applications to radar; 2nd ed. (Pergamon Press, Oxford, 1964), URL http://cds.cern.ch/record/2031792.
 and of gravitational waves data analysis, e.g. \cite{finn:1992}.
@@ -331,7 +346,9 @@ In principle, if the autocorrelation was known exactly (i.e. at every time $\tau
 would reduce to a single Fourier transform.
 However, in any realistic setting, we are dealing with a finite number of samples $N$ from the process, hence such computation
 is impossible.
-Moreover, the error $\sigma_k$ in the estimate of the autocorrelation after $k$ steps increases with $k$ as $\sigma \sim 1/\sqrt{N - k}$, so that only a few values for the autocorrelation function can actually be computed reliably.
+Moreover, the error $\sigma_k$ in the estimate of the autocorrelation after $k$ steps increases as $\sigma \sim 1/\sqrt{N - k}$\footnote{
+This is clearly understood: when computing the autocorrelation at order $k$, only $N-k$ examples of the product $x_t x_{t+k}$ are available and the variance of the average value goes as the inverse of the square root of the points considered.
+}, so that only a few values for the autocorrelation function can actually be computed reliably.
 This bring us the core of the problem: how to give an estimate from partial (and noisy) knowledge of the autocorrelation function? MAXENT can guide use in this task without any a priori assumptions on the unavailable data\footnote{Indeed this is the largest difference with the most common Welch method. The latter assumes that the unknown values of the autocorrelation are $0$. Clearly, this assumption is unjustified and MAXENT is a good way to drop this assumption.}.
 \par
 As in the previous examples, one needs to set up a variational problem where the entropy, Eq.~(\ref{eq:entropy}), is maximized 
@@ -369,8 +386,11 @@ An autoregressive stationary process of order $p$ (AR($p$)) is a time series who
 where $b_1, \ldots, b_p$ are real coefficients and $\nu_t$ is white noise with a given variance $\sigma^2$.
 Thus, an AR($p$) process models the dependence of the value of the process at time $t$ on every past $p$ observations, 
 thus being potentially able to model complex autocorrelation between data.
-\par
-To show the analogy, we compute the PSD of such process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}.
+
+It turns out that the maximums entropy principle provides a representation of the time series as an $AR(p)$ process. The Burg's algorithm computes the autoregressive coefficients that are suitable to the available data.
+Thanks to Wold's theorem \cite{something}, every stationary time series can be represented as an autoregressive process: this ensures that maximum entropy estimation is faithful and general.
+
+To show the analogy, we compute the PSD $S_{AR(p)}$ of an $AR(p)$ process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}. This will also provide a direct expression for the autoregressive coefficients $b_i$ and for the noise variance $\sigma^2$.
 We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~(\ref{eq:AR_p}): 
 \begin{align}
     \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t.
@@ -382,7 +402,7 @@ in the $z$ domain, the process takes the form:
 \end{equation}
 Since we assumed a wide-sense stationary process, $\tilde{x}(z)$ is analytic both on and inside the unit circle. Taking its square value and evaluating it on the unit circle $z = e^{-\imath 2 \pi f \Delta t}$, from the definition of spectral density one obtains:
 \begin{equation}\label{eq:ARspectrum}
-    S(f) = \vert \tilde x(z)\vert ^ 2 = 
+    S_{AR(p)}(f) = \vert \tilde x(z)\vert ^ 2 = 
     \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}\,.
 \end{equation}
 The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$.
@@ -426,7 +446,7 @@ process that model the observed process.
 %Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
 
 \subsection{Forecasting} \label{sec:forecasting}
-The link between MESA and autoregressive processes of particular interest. Given the solution to the Levinson recursion to determine the $a_k$, see Appendix A, we have automatically the coefficients of the AR with equivalent PSD, hence we are able to exploit Eq.~(\ref{eq:AR_p}) to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
+The link between MESA and autoregressive processes is of particular interest. Given the solution to the Levinson recursion to determine the $a_k$, see Appendix A, we have automatically the coefficients of the AR with equivalent PSD, hence we are able to exploit Eq.~(\ref{eq:AR_p}) to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
 Indeed, an AR($p$) process models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
 \begin{align}\label{eq:p_forecast}
 	p&(x_t|x_{t-1}, \ldots , x_{t-p}) \nonumber\\
@@ -681,8 +701,8 @@ Therefore, the choice of loss function, at least in between CAT and FPE, depends
 \end{figure}
 
 We now address the issue of how well the autoregressive order (i.e. the number of $a_k$ coefficients employed) is estimated with each loss function.
-In doing so, we generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p)~\mathcal{U}[log(2), log(5000)]$.
-Each coefficient $a_k$ is assigned as follows: $a_k = \alpha_k e^{-0.05\cdot k}$, where $\alpha ~ \mathbb{N}(0,0.1)$ and the exponential ensures that the coefficients falls with distance (as in any realistic finite memory process).
+In doing so, we generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p)~\mathcal{U}_{[log(2), log(5000)]}$.
+Each coefficient $a_k$ is assigned according to a Dirichlet distribution $\mathrm{Dir}([1,\hdots, 1])$. The sign of $a_k$ is assigned randomly according to a binomial distribution.
 We report the result of this investigation in fig.~\ref{fig:p_vs_ptrue}
 
 Observations below!!!!
