@@ -90,7 +90,7 @@ In some literature, the PSD is introduced as
 \begin{equation}\label{eq:psd-f-definition}
 	\mathbf{E}[\tilde{x}(f) \cdot \tilde{x}(f^\prime)] = S(f) \delta(f-f^\prime)
 \end{equation}
-without highlighting its connection with the time structure of the process itself, thus masking some important properties that will explore further in what follows. The latter definition in (\ref{eq:psd-f-definition}) gives, however, i) a straightforward interpretation of the PSD: it measures how much signal ``power" is located in each frequency; ii) an operative way of estimating it for an unknown process.  
+without highlighting its connection with the time structure of the process itself, thus masking some important properties that will explore further in what follows. The latter definition in~\eqref{eq:psd-f-definition} gives, however, i) a straightforward interpretation of the PSD: it measures how much signal ``power" is located in each frequency; ii) an operative way of estimating it for an unknown process.  
 %Under such assumption, it can be shown [cite something] that the problem of characterizing the noise properties is greatly simplified and its properties are summarized by a single \textit{autocorrelation function}, which describes how an observation at a given time correlates with another observation a later time. More formally, the properties of a zero mean time series $x_t$ are described by the function:
 %\begin{equation}
 %	R(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
@@ -164,7 +164,7 @@ Of course, when assigning probabilities for a set of events, all the evidence av
 %In this context, the role played by evidence should be clear: it dictates the probability assignment in order to make the result `more certain' or `less informative'. Any assignment different from the `most uncertain' is violating the principle of it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. From the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
 \par
 MAXENT puts the aforementioned principle into a more precise mathematical context by stating that probabilities should be assigned by maximizing uncertainty using evidence as constraint. 
-This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a `generalization' of information defined in equation (\ref{eq:information}) to be something like the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
+This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a `generalization' of information defined in equation \eqref{eq:information} to be something like the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
 %
 %Some properties for $H$ can be worked out easily. 
 %From previous discussion, given a fixed number $N$ of possible outcomes, we want $H$ to be maximized by the choice $p_1 = \dots = p_N$.
@@ -238,7 +238,7 @@ entirely reduced to the estimation of the PSD or, equivalently, the auto-covaria
 %
 %
 
-%This interpretation is straightforward: if we compare it with Eq.~(\ref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being `non committal' with unavailable evidence, since \ref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization.
+%This interpretation is straightforward: if we compare it with Eq.~(\eqref{eq:information}), we see that the entropy is defined as the 'average information'. The probability assignments made maximizing it with respect to $p$, is somehow requiring  the 'expected value' of uncertainty to be a maximum. Such an assignment is in agreement with our hypothesis of being `non committal' with unavailable evidence, since \eqref{eq:entropy} is all we need to assign probabilities uniquely. Evidence can be added in form of constraints in the maximization.
 
 %It is easy to verify that this expression for entropy verifies the aforementioned properties. 
 %Assigning the same value for each probability $p_i$, it is straightforward to verify $H$ increases with N: 
@@ -267,7 +267,7 @@ entirely reduced to the estimation of the PSD or, equivalently, the auto-covaria
 %\begin{equation}
 %    \delta H\left[p_1, \dots, p_N\right] = \sum_{i = 1}^N\frac{\partial H}{\partial p_i}\delta p_i = - \sum_{i = 1}^N\left(\log p_i + 1\right),
 %\end{equation}
-%so that equation \ref{eq:entropyNormConst} reduce to
+%so that equation \eqref{eq:entropyNormConst} reduce to
 %\begin{equation}\nonumber 
 %    \sum_{i = 1}^N\left[\log p_i + \lambda + 1 \right]\delta p_i = 0\,.
 %\end{equation}
@@ -350,7 +350,7 @@ This is clearly understood: when computing the autocorrelation at order $k$, onl
 }, so that only a few values for the autocorrelation function can actually be computed reliably.
 This bring us the core of the problem: how to give an estimate from partial (and noisy) knowledge of the autocorrelation function? MAXENT can guide use in this task without any a priori assumptions on the unavailable data\footnote{Indeed this is the largest difference with the most common Welch method. The latter assumes that the unknown values of the autocorrelation are $0$. Clearly, this assumption is unjustified and MAXENT is a good way to drop this assumption.}.
 \par
-As in the previous examples, one needs to set up a variational problem where the entropy, Eq.~(\ref{eq:entropy}), is maximized 
+As in the previous examples, one needs to set up a variational problem where the entropy, Eq.~\eqref{eq:entropy}, is maximized 
 subject to some problem-specific constraints. 
 In our case, they are i) the PSD estimate has to be non-negative; ii) its Fourier transform has to match the sample autocorrelation (wherever an estimate of this is available).
 \par
@@ -369,7 +369,7 @@ Let us define a realisation of a stochastic process $(x_1,\ldots,x_N)$ with samp
 \int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f k \Delta t} df = \bar r_{k}\,.
 \end{equation}
 
-Thus, by maximizing eq.~\ref{eq:EntropyGain} with constraints in eq.~\ref{eq:MaxConstraint}, we can give an estimate of the spectrum given an empirical time series.
+Thus, by maximizing eq.~\eqref{eq:EntropyGain} with constraints in eq.~\eqref{eq:MaxConstraint}, we can give an estimate of the spectrum given an empirical time series.
 This approach on PSD computation provide a result consistent with the epirical autocorrelation function whenever this is available and, at the same time, it does not make any assumption for the unavailable estimates for the autocorelation at large time lags.
 Most importantly, the variational problem admits a closed-form analytical expression for $S(f)$.
 The expression was first found by Burg~\cite{burg1975maximum}:
@@ -395,8 +395,8 @@ thus being potentially able to model complex autocorrelation between data.
 It turns out that the maximums entropy principle provides a representation of the time series as an $AR(p)$ process. The Burg's algorithm computes the autoregressive coefficients that are suitable to the available data.
 Thanks to Wold's theorem \cite{something}, every stationary time series can be represented as an autoregressive process: this ensures that maximum entropy estimation is faithful and general.
 
-To show the analogy, we compute the PSD $S_{AR(p)}$ of an $AR(p)$ process and we show that it is formally equivalent to the PSD obtained in eq.~\ref{eq:MESApsd}. This will also provide a direct expression for the autoregressive coefficients $b_i$ and for the noise variance $\sigma^2$.
-We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~(\ref{eq:AR_p}): 
+To show the analogy, we compute the PSD $S_{AR(p)}$ of an $AR(p)$ process and we show that it is formally equivalent to the PSD obtained in eq.~\eqref{eq:MESApsd}. This will also provide a direct expression for the autoregressive coefficients $b_i$ and for the noise variance $\sigma^2$.
+We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~(\eqref{eq:AR_p}): 
 \begin{align}
     \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t.
 \end{align}
@@ -411,7 +411,7 @@ Since we assumed a wide-sense stationary process, $\tilde{x}(z)$ is analytic bot
     \frac{\vert \tilde \nu(f) \vert ^ 2}{\left\vert 1 - \sum_{n = 1}^p b_i e^{\imath 2 \pi f n \Delta t} \right\vert ^ 2}\,.
 \end{equation}
 The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$.
-Eq.~(\ref{eq:ARspectrum}) and Eq.~(\ref{eq:MESApsd}) are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
+Eq.~(\eqref{eq:ARspectrum}) and Eq.~(\eqref{eq:MESApsd}) are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
 This shows that the MAXENT estimation of the PSD also computes the coefficients of the autoregressive 
 process that model the observed process.
 
@@ -451,7 +451,7 @@ process that model the observed process.
 %Being all the quantities positive definite, the left hand side is minimized by the choice $c_i = b_i$. Also, known $P_N$, the previous equation gives an estimate on the additional mean square error associated at choices that differ from the prediction error filter. 
 
 \subsection{Forecasting} \label{sec:forecasting}
-The link between MESA and autoregressive processes is of particular interest. Given the solution to the Levinson recursion to determine the $a_k$, see Appendix A, we have automatically the coefficients of the AR with equivalent PSD, hence we are able to exploit Eq.~(\ref{eq:AR_p}) to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
+The link between MESA and autoregressive processes is of particular interest. Given the solution to the Levinson recursion to determine the $a_k$, see Appendix A, we have automatically the coefficients of the AR with equivalent PSD, hence we are able to exploit Eq.~\ref{eq:AR_p} to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
 Indeed, an AR($p$) process models the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation:
 \begin{align}\label{eq:p_forecast}
 	p&(x_t|x_{t-1}, \ldots , x_{t-p}) \nonumber\\
@@ -523,7 +523,7 @@ and the so chosen order is found to be asymptotically unbiased for $P_N$.
 \item \textbf{Optimum Bayes Decision rule} 
 The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. Let $x(t)$ be the observed 
 time series for the process that has to be described as an autoregressive process of order $m$ (AR(m)) with m to be determined. The OBD is obtained chosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
-hypothesis is uniquely determined from both the length and the values of the filter under study. Chosing a Likelihood of the form \ref{eq:p_forecast} and uniform priors for both the coefficients and the hypothesis Rao has shown that chosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of \wdp{please check this equation}: 
+hypothesis is uniquely determined from both the length and the values of the filter under study. Chosing a Likelihood of the form \eqref{eq:p_forecast} and uniform priors for both the coefficients and the hypothesis Rao has shown that chosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of \wdp{please check this equation}: 
 
    \begin{align}
         \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
@@ -531,7 +531,7 @@ hypothesis is uniquely determined from both the length and the values of the fil
     \end{align}
 \end{itemize}
 
-Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson \cite{doi:10.1002/sapm1946251261} recursion until $M_{max}$, as given in Eq.~\ref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the loss function.
+Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson \cite{doi:10.1002/sapm1946251261} recursion until $M_{max}$, as given in Eq.~\eqref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the loss function.
 
 In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $m_{opt} << M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
 In practice, we can apply an \textit{early stop} procedure: every few iterations we look for the best order of $m_{opt}$; if this value does not change for a while, we assume that a good (local) minimum of the loss function is found and the computation is stopped.
@@ -558,7 +558,7 @@ For each loss function, we compute the ensemble-averaged PSD (as well as the $90
 	r(f) = \sum_i \frac{|S_i(f) - S(f)|}{S(f)} \;.
 \end{equation}
 Figs.~\ref{fig:FPEmean} \ref{fig:OBDmean} and \ref{fig:CATmean} show the averaged PSD for the three loss functions, 
-as well as the ensemble-averaged error from Eq.~(\ref{eq:ensemble_averaged_error}).
+as well as the ensemble-averaged error from Eq.~\eqref{eq:ensemble_averaged_error}.
 Furthermore, Fig.~\ref{fig:optcomparison} displays the correlation between $r_i$ and the autoregressive 
 order $m_i$ chosen for each independently drawn time series.
 
@@ -588,7 +588,7 @@ order $m_i$ chosen for each independently drawn time series.
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/error_length_contour.pdf}
-	\caption{Relative error $r$ (as in eq.~(\ref{eq:freq_error})) vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with gaussian PSD given in Fig.~\ref{fig:autocorr}. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
+	\caption{Relative error $r$ (as in eq.~\eqref{eq:freq_error}) vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with gaussian PSD given in Fig.~\ref{fig:autocorr}. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
 	\label{fig:optcomparison}
 \end{figure}
 
@@ -690,7 +690,7 @@ Therefore, the choice of loss function, at least in between CAT and FPE, depends
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/error_length_contour.pdf}
-    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\ref{eq:freq_error}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
+    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\eqref{eq:freq_error}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
     \label{fig:LigoOrderError}
 \end{figure}
 
@@ -808,21 +808,21 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 
 \pagebreak
 \appendix
-\section{MESA solution} \label{sec:MESA_solution}
-\subsection{MESA solution}
+\section{Computing the PSD} 
+\subsection{MESA solution}\label{sec:MESA_solution}
 We derive the expression for the MAXENT spectral estimator following the approach proposed by Burg \cite{burg1975maximum}.
-Unlike the standard approach, we do not enforce the constraints in eq.~\ref{eq:MaxConstraint} with the standard Lagrange Multipliers approach.
+Unlike the standard approach, we do not enforce the constraints in eq.~\eqref{eq:MaxConstraint} with the standard Lagrange Multipliers approach.
 We write instead the PSD $S(f)$ as the Fourier Transform of the sample autocorrelation function: 
 \begin{equation}
     S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t},
 \end{equation}
-and the entropy gain expression eq.~\ref{eq:EntropyGain} becomes:
+and the entropy gain expression eq.~\eqref{eq:EntropyGain} becomes:
 \begin{equation}
     \Delta H = \int_{-Ny}^{Ny}  
     \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{-\imath 2 \pi f n \Delta t} 
     \right) df.
 \end{equation}
-Note that this expression already takes into account the contraints in eq.~\ref{eq:MaxConstraint}.
+Note that this expression already takes into account the contraints in eq.~\eqref{eq:MaxConstraint}.
 
 We now introduce a set of coefficients $\lambda_s$, defined as the derivative of $\Delta H$ with respect to the autocorrelation function $r_s$.
 Excplitely they are:
@@ -836,7 +836,7 @@ Some properties for the coefficients can be worked out easily. First, since $S(f
 	\nonumber 
 	\lambda_s = \lambda_{-s}^*. 
 \end{equation}
-The second property is obtained considering that the autocorrelation function $r_n$ can only be computed for a finite time interval $n \in [-N, N]$ and that the PSD estimation must not depend on the unavailable values $r_n$: this is part of the constraint in eq.~\ref{eq:MaxConstraint}
+The second property is obtained considering that the autocorrelation function $r_n$ can only be computed for a finite time interval $n \in [-N, N]$ and that the PSD estimation must not depend on the unavailable values $r_n$: this is part of the constraint in eq.~\eqref{eq:MaxConstraint}
 This requirement can be implemented as:  
 \begin{equation}\nonumber 
     \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N,
@@ -847,7 +847,7 @@ that means
 \lambda_s = 0 \text{ for } \vert s \vert > N. 
 \end{equation}
 
-From eq.~\ref{eq:lamdas} and from the properties above, is easily seen \sschmidt{How exactly?} that $S(f)$ can be expressed via a Fourier Series 
+From eq.~\eqref{eq:lamdas} and from the properties above, is easily seen \sschmidt{How exactly?} that $S(f)$ can be expressed via a Fourier Series 
 \begin{equation}\label{eq:PSDconstraint}
     S(f)^{-1} = \sum_{s = -N}^N \lambda_s e^{-\imath 2 \pi f s \Delta t}.
 \end{equation}
@@ -856,13 +856,13 @@ Defining $z = e^{-\imath 2 \pi f \Delta t}$ the previous Fourier expansion becom
     \label{eq:zExp}
     S(f)^{-1} = \lambda_0 + \sum_{s = 1}^N \lambda_s z^s + \sum_{s = 1}^N \lambda^*_s z^{-s}.
 \end{equation}
-It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is also a root: for every root laying outside the unit circle there will be another root inside of it and vice-versa. These properties allow us to rewrite the Fourier expansion (\ref{eq:zExp}) as \cite{1975STIN...7714318B}:
+It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is also a root: for every root laying outside the unit circle there will be another root inside of it and vice-versa. These properties allow us to rewrite the Fourier expansion \eqref{eq:zExp} as \cite{1975STIN...7714318B}:
 \begin{equation}\label{eq:MESApsd_appendix}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}
 \end{equation}
 with $a_0 = 1$ and $\Delta t$ the uniform sampling interval for the time series. The vector obtained as $(1, a_1, \dots, a_N)$ is the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed.
 
-To compute the $a_s$ is convenient to plug into eq.~\ref{eq:MaxConstraint} the Laurent Polynomial exansion for $S(f)$ eq.~\ref{eq:MESApsd_appendix} and then integrating over $z$. In this way the equation becomes:
+To compute the $a_s$ is convenient to plug into eq.~\eqref{eq:MaxConstraint} the Laurent Polynomial exansion for $S(f)$ eq.~\eqref{eq:MESApsd_appendix} and then integrating over $z$. In this way the equation becomes:
 \begin{equation}
     \label{eq:contourintegral}
    \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}}dz = \bar r_s. 
@@ -879,8 +879,8 @@ For a wide-sense stationary processes \sschmidt{Justify this assumption!}, all t
     \sum_{s = 0}^N a_s \bar r_{r - s} & = 0 \qquad \text{ if } r \neq 0.
 \end{align}
 
-\section{Levinson recursion} \label{sec:MESA_solution}
-The solution of the eqs.~(\ref{eq:errorFilter1}-\ref{eq:errorFilter2}) fully determines the functional form of the power spectral density estimator \ref{eq:MESApsd_appendix}.
+\subsection{Levinson recursion} \label{sec:LevinsonRecursion}
+The solution of the eqs.~(\ref{eq:errorFilter1}-\ref{eq:errorFilter2}) fully determines the functional form of the power spectral density estimator \eqref{eq:MESApsd_appendix}.
 The method for solving the equations is called the Levinson-Durbin recursion \cite{doi:10.1002/sapm1946251261} and it is described in the following.
 For each order $N$ of the iteration we define the quantities:
 \begin{align}
@@ -907,7 +907,7 @@ and
 \end{pmatrix}. 
 \end{equation}
 where $b$ is the forward prediction error coefficients at order $N-1$. 
-The 0-th order element can be easily initialized reminding that $a_0 = 1$ (always) and that $P_0$ can be determined from \ref{eq:errorFilter1}.
+The 0-th order element can be easily initialized reminding that $a_0 = 1$ (always) and that $P_0$ can be determined from \eqref{eq:errorFilter1}.
 Its values turns out to be: 
 \begin{equation}
 P_0 = R(0),
@@ -917,7 +917,7 @@ $\Delta_0$ and $c_0$ are uniquely determined from their definitions and they are
 \Delta_0 = R(1); \quad c_0 = -\frac{R(1)}{R(0)}. 
 \end{equation}
 
-These expressions allow us to compute $\vec a$ and $P_N$ to any order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
+These expressions allow us to compute $\vec a$ and $P_N$ to any order by simply iterating \eqref{eq:Levinson1} and \eqref{eq:Levinson2}. Substituing them in equation \eqref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
 Burg's method for spectral analysis is solved via Levinson is implmenteed in the released \texttt{memspectrum} package.
 Another faster recursion method is available in \cite{Vos} and it is also available in \texttt{memspectrum}.
 
