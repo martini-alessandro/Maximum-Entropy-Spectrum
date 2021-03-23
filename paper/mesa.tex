@@ -771,13 +771,30 @@ Some remarks:
 \end{itemize}
 }
 
-\sschmidt{Other comments below...}
+We now assess the accuracy of the forecasting of new observations of the time series.
+Based on actual data, we try to predict future values as described in sec.~\ref{sec:forecasting}. We produce $N =100$ indepedent predictions and we compute the median as well as the $90\%$ confidence interval. This is compared with the actual measured temparature values.
+The predictions spans a two years range of time.
+We report our results in fig.~\ref{fig:temp_spectrum}.
+
+We note the observed difference is always well included in the $90\%$ confidence interval: the forecasting predictions seem reliable.
+On the other hand, the confidence interval is pretty large (almost as large as $\SI{15}{K}$), thus making easy for the actual data to fit the predictions. We believe that the origin of such large uncertainty is due to the complexity of the time series considered: any realistic model, even more complex than our autoregressive process, might not produce drastically lower uncertainties (in such a long term).
+
+\sschmidt{Data should be divided in train and test set for the purpose of forecasting!!}
+
+\sschmidt{Other comments below??}
 
 \begin{figure}
 	\caption{Spectrum for the historical temperature time series. The two lines refers to different loss functions (CAT and FPE); the inset shows the harmonics of the fundamental frequency of a day. Two vertical lines are drawn in correspondence to the frequency $f_D$ of a day and $f_{yr}$ of a year.}
 	\label{fig:temp_spectrum}
 	\includegraphics{Images/climate_plots/temp_spectrum.pdf}
 \end{figure}
+
+\begin{figure}
+	\caption{Difference between the historical temperature $T$ and the forecast temperature $T_{forecast}$ for two years of data. The red shadow denotes the $90\%$ confidence interval of the predictions. The model is trained with CAT loss function. The discrepancy between predicted and actual values is always everywhere included in the $90\%$ confidence interval.}
+	\label{fig:temp_forecast}
+	\includegraphics{Images/climate_plots/forecast_accuracy.pdf}
+\end{figure}
+
 
 \section{Final remarks and future prospects} \label{sec:conclusion}
 \blindtext
