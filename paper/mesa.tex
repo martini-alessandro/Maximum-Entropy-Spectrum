@@ -135,37 +135,35 @@ Next, we will discuss an interesting link between Burg's method and autoregressi
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
 
+\sschmidt{This section might be simplified...}
+
 Before introducing MAXENT as a variational problem, we will workout some simple examples to contexualise how information's entropy
 and `uncertainty' are related. First of all,  it is worth noting that the word `information' will not be used to indicate our knowledge on the system under study: this is what we will call `evidence'. Information will be intended as in communication theory: it specifies the length of the message necessary to provide
 a full description of the system under study.
 
 For instance, consider a perfectly sinusoidal signal: knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: 
 it has a low information entropy content. Even less information is required if we are studying a system whose outcome is 
-certain (has probability $p = 1$). If the amount of information $I$ can be considered to zero, a communication is not even needed.  
+certain (has probability $p = 1$), as in this case, a communication is not even needed.  
 Shannon \cite{Shannon} proposed the quantity
 \begin{equation}\label{eq:information}
     I = \log_2 \frac{1}{p(x)}
 \end{equation}
 to represent the quantity of information brought by an outcome $x$ with probability $p(x)$. It is additive quantity as well as monotonically decreasing as a function of $p \in [0, 1]$. The more uncertain the outcome, the higher the information it brings.
-\par
-What happens if we consider a larger set of different events? What is  the `most uncertain' outcome?  Since we are intending probability as a representation of the state of knowledge, one of the first requirement for our assignment is the agreement with common sense.
-Consider an experiment based on the occurrence of one of two different outcomes $E_1, E_2$ with given probabilities $P_1$ and $P_2$. What are the values that make our outcome the most uncertain?
-If $P_1$ and $P_2$ are largely different, like $P_1 = 0.999$ and $P_2 = 0.001$, we have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome.
-The most unpredictable experiment is the one in which 
+
+We now seek to generalize the measure for the information in the case where different outcomes are possible.
+To do so, let us consider an experiment with two different random outcomes $E_1, E_2$, with given probabilities $P_1$ and $P_2$, and we ask ourselfs which are the probability assignments that makes the outcome more uncertain (i.e. maximize the information).
+If $P_1$ and $P_2$ are largely different, for istance $P_1 = 0.999$ and $P_2 = 0.001$, we clearly have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome. The information content will be very low.
+On the other hand, most unpredictable experiment happens when 
 \begin{equation}\nonumber
     P_1 = P_2 = \frac{1}{2}:
 \end{equation}
-this describes a situation of `maximum ignorance'; we have no evidence at all and we have no way of predicting what the outcome of such an experiment will be.  The generalisation to $N$ possible outcomes is straightforward. \\ 
-%This can be generalized in the case of $N$ events. Assigning same probability
-%\begin{equation*}
-%    P_1 = \dots = P_N = \frac{1}{N}
-%\end{equation*}
-%for each outcome, i.e. appealing to the indifference principle (IP), is equivalent to the requirement for our experiment to be the most unpredictable. 
-%All we know is that one over $N$ events is going to happen. With this evidence, we cannot expect one outcome to occur over the others. 
-%To report the results of such an experiment, we need to communicate every single outcome: it 'carries' high information. 
-In this context, the role played by evidence should also be clear: it dictates the probability assignment in order to make the result `more certain' or `less informative'. Any assignment different from the `most uncertain' is violating the principle of it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. From the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
+this describes a situation of `maximum ignorance'; we have no evidence at all and we have no way of predicting what the outcome of such an experiment will be.  The information content of this system must be high.
+
+Of course, when assigning probabilities for a set of events, all the evidence available must be taken into account. On the other hand, the probability assignment must not introduce additional evidence in the system and thus the need to be ``the most uncertain possible given the knoledge of the system".
+ 
+%In this context, the role played by evidence should be clear: it dictates the probability assignment in order to make the result `more certain' or `less informative'. Any assignment different from the `most uncertain' is violating the principle of it to being non committal to non-available evidence. We can only assign a more certain probability, i.e. less informative, if we have evidence for it. If we have none, the result has to be the most unpredictable, i.e. the most informative. From the point of view of communication theory: the higher the evidence on a system, the lower the information I need to send to describe it.
 \par
-MAXENT ratifies the aforementioned principle by stating that probabilities should be assigned by maximizing uncertainty using evidence as constraint. 
+MAXENT puts the aforementioned principle into a more precise mathematical context by stating that probabilities should be assigned by maximizing uncertainty using evidence as constraint. 
 This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a `generalization' of information defined in equation (\ref{eq:information}) to be something like the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
 %
 %Some properties for $H$ can be worked out easily. 
@@ -198,6 +196,7 @@ and $H$ is what we will call (information) entropy.
 The maximisation of entropy, supplemented by evidence in the form of constraints to which the sought-for probability distribution must obey,
 gives rise to several of the most common probability distributions utilised commonly by data scientists. For instance, whenever the only constraint available is the normalisation of the probability distribution, the entropy is maximised by the uniform distribution. 
 If the information available is instead the expected value -- the mean -- entropy is maximised by the  exponential distribution.
+
 Of particular importance is the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
 We retain this particularly interesting from the foundational point of view, since it provides a deeper insight into the ubiquitous Gaussian distribution.
 It is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy. 
@@ -357,23 +356,29 @@ In our case, they are i) the PSD estimate has to be non-negative; ii) its Fourie
 \par
 Before doing so, there is a technical problem to solve: the definition of entropy (Eq.~\ref{eq:entropy}) depends on a probability distribution, 
 not on the PSD. The variational problem can be formulated in terms of the power spectral density $S(f)$ alone by
-considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA}. 
+considering our signal as the result of filtering a white noise process with a filter whose power response is exactly $S(f)$ \cite{AblesMESA} \sschmidt{Which form has this filter?}. 
 The entropy gain obtained by filtering white noise with a sampling rate $\Delta t$ and Nyquist frequency $Ny \equiv \frac{1}{2 \Delta t}$ is:
-
 \begin{equation}\label{eq:EntropyGain}
     \Delta H = \int_{- Ny}^{Ny}\log S(f) df\,.
 \end{equation}
 
-Consider a realisation of a stochastic process $(x_1,\ldots,x_n)$ with sample autocorrelations $\bar r_i,\,i=0,\ldots, n/2$, we require that the variational solution $S(f)$ for the PSD matches the empirical autocorrelation:
+Before maximising the entropy gain, we need to include the evidence available as a form of mathematical constraints for the assignment of $S(f)$.
+This is equivalent in imposing that the variational solution $S(f)$ for the PSD matches the empirical autocorrelation.
+Let us define a realisation of a stochastic process $(x_1,\ldots,x_N)$ with sample autocorrelations $\bar r_k,\,k=0,\ldots, N/2$, then the PSD must satisfy the following equation:
 \begin{equation}\label{eq:MaxConstraint}
-\int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f n \Delta t} df = \bar r_{n}\,.
+\int_{-Ny}^{Ny} S(f) e^{\imath 2 \pi f k \Delta t} df = \bar r_{k}\,.
 \end{equation}
-This approach on power spectral density estimate was developed by Burg~\cite{burg1975maximum} and it is a way out from the problems raised in periodograms estimates. It requires no assumptions on the unavailable estimates for $\bar r_n$ and is consistent with the sample autocorrelation function by construction. Remarkably, the variational problem admits a closed-form analytical expression for $S(f)$:
 
+Thus, by maximizing eq.~\ref{eq:EntropyGain} with constraints in eq.~\ref{eq:MaxConstraint}, we can give an estimate of the spectrum given an empirical time series.
+This approach on PSD computation provide a result consistent with the epirical autocorrelation function whenever this is available and, at the same time, it does not make any assumption for the unavailable estimates for the autocorelation at large time lags.
+Most importantly, the variational problem admits a closed-form analytical expression for $S(f)$.
+The expression was first found by Burg~\cite{burg1975maximum}:
 \begin{equation}\label{eq:MESApsd}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^s\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}, 
 \end{equation}
-with $\Delta t$ the sampling interval, $z=\exp{(2\pi i f\Delta t)}$, $a_0$ = 1 and the coefficients $P_N$ and $a_i (i \neq 0)$ to be determined. The details of the derivation and the actual values of the coefficients $a_i$ can be found in appendix \ref{sec:MESA_solution}.
+where $\Delta t$ is the sampling interval of the time series, $z=\exp{(2\pi i f\Delta t)}$, $a_0$ = 1.
+The vector obtained as $(1, a_1, \dots, a_N)$ is also known as the \textit{prediction error filter}.
+The coefficients $P_N$ and $a_s (s > 0)$ are to be determined by an iterative process (called Burg's algorithm). The details of the derivation and the actual form for the coefficients $a_s$ can be found in appendix \ref{sec:MESA_solution}.
 
 \subsection{Autoregressive Process Analogy} \label{sec:autoregr}
 
@@ -805,26 +810,34 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 \appendix
 \section{MESA solution} \label{sec:MESA_solution}
 \subsection{MESA solution}
-To derive the expression for the MAXENT spectral estimator the approach proposed by Burg \cite{burg1975maximum} will be followed. The constraints \ref{eq:MaxConstraint} are not implemented via the standard Lagrange Multipliers approach while the entropy gain \ref{eq:EntropyGain} will be re-written by explicitly writing $S(f)$ as the Fourier Transform of the sample autocorrelation function: 
+We derive the expression for the MAXENT spectral estimator following the approach proposed by Burg \cite{burg1975maximum}.
+Unlike the standard approach, we do not enforce the constraints in eq.~\ref{eq:MaxConstraint} with the standard Lagrange Multipliers approach.
+We write instead the PSD $S(f)$ as the Fourier Transform of the sample autocorrelation function: 
 \begin{equation}
     S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t},
 \end{equation}
-and becomes
+and the entropy gain expression eq.~\ref{eq:EntropyGain} becomes:
 \begin{equation}
     \Delta H = \int_{-Ny}^{Ny}  
-    \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r(n\Delta t) e^{-\imath 2 \pi f n \Delta t} 
+    \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{-\imath 2 \pi f n \Delta t} 
     \right) df.
 \end{equation}
-Deriving with respect to the autocorrelation function $r_s$
-\begin{equation}
-      \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df = \lambda_s. 
+Note that this expression already takes into account the contraints in eq.~\ref{eq:MaxConstraint}.
+
+We now introduce a set of coefficients $\lambda_s$, defined as the derivative of $\Delta H$ with respect to the autocorrelation function $r_s$.
+Excplitely they are:
+\begin{equation} \label{eq:lamdas}
+      \lambda_s \coloneqq \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df
 \end{equation} 
-its easily shown that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of some $\lambda$s coefficients. The determination of the values for the $\lambda$s uniquely solve the problem of power-spectral density estimation. Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda$s coefficient show the property 
+and we will show that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of such coefficients. Thenm the determination of the values for the $\lambda_s$ uniquely solves the problem of power-spectral density estimation.
+
+Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda_s$ show the property 
 \begin{equation}
-\nonumber 
-\lambda_s = \lambda_{-s}^*. 
+	\nonumber 
+	\lambda_s = \lambda_{-s}^*. 
 \end{equation}
-The second property is obtained considering that the autocorrelation function can only be computed for a finite time interval $n \in [-N, N]$, the requirement for our estimate to be independent from the unkown values of the autocorrelation function can be implemented as:  
+The second property is obtained considering that the autocorrelation function $r_n$ can only be computed for a finite time interval $n \in [-N, N]$ and that the PSD estimation must not depend on the unavailable values $r_n$: this is part of the constraint in eq.~\ref{eq:MaxConstraint}
+This requirement can be implemented as:  
 \begin{equation}\nonumber 
     \frac{\delta H}{\delta \bar r_s} = 0 \text{ for } \vert s \vert > N,
 \end{equation}
@@ -833,7 +846,8 @@ that means
 \nonumber 
 \lambda_s = 0 \text{ for } \vert s \vert > N. 
 \end{equation}
-From the previous equations is easily seen that $S(f)$ can be expressed via a Fourier Series 
+
+From eq.~\ref{eq:lamdas} and from the properties above, is easily seen \sschmidt{How exactly?} that $S(f)$ can be expressed via a Fourier Series 
 \begin{equation}\label{eq:PSDconstraint}
     S(f)^{-1} = \sum_{s = -N}^N \lambda_s e^{-\imath 2 \pi f s \Delta t}.
 \end{equation}
@@ -846,27 +860,35 @@ It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is 
 \begin{equation}\label{eq:MESApsd_appendix}
     S(f) = \frac{P_N \Delta t}{\left(\sum_{s=0}^N a_s z^z\right)\left(\sum_{s = 0}^N a^*_s z^{-s}\right)}
 \end{equation}
-with $a_0 = 1$ and $\Delta t$ the uniform sampling interval for the time series. The vector obtained as $(1, a_1, \dots, a_N)$ is known as the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed. \\
-To compute the $a_i$-s it is convenient to rewerite the equation 
-(\ref{eq:MaxConstraint}) in terms of the Laurent Polynomial and then integrating over $z$. In this way the equation becomes:
+with $a_0 = 1$ and $\Delta t$ the uniform sampling interval for the time series. The vector obtained as $(1, a_1, \dots, a_N)$ is the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed.
+
+To compute the $a_s$ is convenient to plug into eq.~\ref{eq:MaxConstraint} the Laurent Polynomial exansion for $S(f)$ eq.~\ref{eq:MESApsd_appendix} and then integrating over $z$. In this way the equation becomes:
 \begin{equation}
+    \label{eq:contourintegral}
    \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}}dz = \bar r_s. 
 \end{equation}
-Substituting $s \to s - r$, multiplying by $a^*_s$ and summing over $s$ the previous equation becomes 
+Substituting $s \to s - r$, multiplying by $a^*_s$ and summing over $s$, the previous equation becomes 
 \begin{equation}
-    \sum_{s = 0}^N a_s \bar r_{s - r} = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz.\label{eq:ErFilter}
+    \label{eq:errorFilter}
+    \sum_{s = 0}^N a_s \bar r_{s - r} = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz
 \end{equation}
-From now on only wide-sense stationary processes will be considered: for such a process all poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following, well known, equations: 
-\begin{align}\label{eq:errorFilter1}
+For a wide-sense stationary processes \sschmidt{Justify this assumption!}, all the poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following, well known, equations: 
+\begin{align}
+    \label{eq:errorFilter1}
     \sum_{s = 0}^N a_s \bar r_{r - s} &= P_N \quad \text{ if } r = 0 \\ \label{eq:errorFilter2}
     \sum_{s = 0}^N a_s \bar r_{r - s} & = 0 \qquad \text{ if } r \neq 0.
 \end{align}
-The solution of the previous equations fully determine the functional form of the power spectral density estimator \ref{eq:MESApsd_appendix}, and the method for solving such equations is the Levinson-Durbin recursion \cite{doi:10.1002/sapm1946251261}. The recursion can be easily schemitized as follows: 
-After defining the quantities  
+
+\section{Levinson recursion} \label{sec:MESA_solution}
+The solution of the eqs.~(\ref{eq:errorFilter1}-\ref{eq:errorFilter2}) fully determines the functional form of the power spectral density estimator \ref{eq:MESApsd_appendix}.
+The method for solving the equations is called the Levinson-Durbin recursion \cite{doi:10.1002/sapm1946251261} and it is described in the following.
+For each order $N$ of the iteration we define the quantities:
 \begin{align}
-\Delta_N &= \sum_{n = 0}^{N}R(N - n + 1)a_n \\ 
+\Delta_N &= \sum_{n = 0}^{N} a_n \bar{r}_{N - n + 1} \\ 
 c_N &= - \frac{\Delta_N}{P_N},
-\end{align} the Levinson recursion is: 
+\end{align}
+
+The Levinson recursion computes the $N$th order quantities given the $N-1$th order quantities: 
 \begin{equation} \label{eq:Levinson1}
 P_N = P_{N -1}\left(1 - \vert c_{N - 1} \vert ^2\right)
 \end{equation}
@@ -884,16 +906,20 @@ and
 0 \\ b_{N -1}^* \\ \vdots \\ b^*_1 \\ 1
 \end{pmatrix}. 
 \end{equation}
-with $b$ the forward prediction error coefficients at order $N-1$. 
-The 0'th order element can be easily initialized reminding that $a_0 = 1$ whatever the order the other coefficients. $P_0$ can be determined from \ref{eq:errorFilter1} and its value is: 
+where $b$ is the forward prediction error coefficients at order $N-1$. 
+The 0-th order element can be easily initialized reminding that $a_0 = 1$ (always) and that $P_0$ can be determined from \ref{eq:errorFilter1}.
+Its values turns out to be: 
 \begin{equation}
 P_0 = R(0),
 \end{equation}
- while $\Delta_0$ and $c_0$ are uniquely determined from their definitions and are
+$\Delta_0$ and $c_0$ are uniquely determined from their definitions and they are:
 \begin{equation}
 \Delta_0 = R(1); \quad c_0 = -\frac{R(1)}{R(0)}. 
 \end{equation}
-These expressions allow us to compute $\vec a$ and $P_N$ to whatever order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved. While Burg's method for spectral analysis is solved via Levinson recursion, another faster recursion \cite{Vos} is implemented in memspectrum package.
+
+These expressions allow us to compute $\vec a$ and $P_N$ to any order by simply iterating \ref{eq:Levinson1} and \ref{eq:Levinson2}. Substituing them in equation \ref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
+Burg's method for spectral analysis is solved via Levinson is implmenteed in the released \texttt{memspectrum} package.
+Another faster recursion method is available in \cite{Vos} and it is also available in \texttt{memspectrum}.
 
 
 	\bibliography{Bibliography.bib}
