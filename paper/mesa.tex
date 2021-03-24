@@ -751,7 +751,8 @@ The result does not change much by changing the hyperparameters required for Wel
 
 \sschmidt{Mettiamo da qualche parte una descrizione dettagliata del codice? No: solo rimandiamo al codice nell'intro}
 
-\section{Application: Temperature Time Series} \label{sec:temp_timeseries}
+\section{Applications} \label{sec:applications}
+\subsection{Temperature Time Series} \label{sec:temp_timeseries}
 We apply our code to the study of the temperature time series. This will allow to test the code performance on a different time series, of great importance in physics. We will also assess the quality of the forecasting predictions: this task has a great impact also on practical applications.
 We downloaded the historical reanalysis data from the Copernicus project (or whathever it is) \cite{}.
 Data refers to the temperature measure at coordinates $\textrm{N}\;\ang{45;5;} \;\; \textrm{E}\;\ang{9;1;}}$, corresponding about to the city of Milan, Italy. The temperature is measured once per hour for almost 31 years from 31st December 1989 to 30th November 2020.
@@ -762,7 +763,9 @@ We clearly see that there is a peak on the PSD at the frequency $f_D = \SI{1}{da
 Higher order harmonics (corresponding to integer multiples of $f_D$) are also visible up to the Nyquist frequency ($f_D = \SI{0.5}{hour^{-1}}$): they are required to explain the high variability of the daily temperature cycle throughout the year.
 
 Looking at the low frequencies, it is striking to note that FPE does not capture the peak $f_{yr} = \SI{1}{yr^{-1}}$ located at the frequency of a year. On the other hand, the peak is captured well by the CAT loss function.
-This can be understood by looking at fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often understimating badly the actual value.
+In analogy as what observed for the peak at $f_D$, in the CAT spectru we observe a higher order harmonic at a frequency $2 \cdot f_{yr}$. As in the previous case, this is required to better model the temperature variation in the year.
+
+The failure of FPE in catching the low frequency trend can be understood by looking at fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often understimating badly the actual value.
 In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
 Clearly, the autoregressive process selected by FPE cannot produce a meaningful prediction on the timescale of a few months and for this reason it is unable to capture the peak at $f_{yr}$. In other words, the model is too simple to capture \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
 On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour.
@@ -799,6 +802,29 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 	\caption{Difference between the historical temperature $T$ and the forecast temperature $T_{forecast}$ for two years of data. The red shadow denotes the $90\%$ confidence interval of the predictions. The model is trained with CAT loss function. The discrepancy between predicted and actual values is always everywhere included in the $90\%$ confidence interval.}
 	\label{fig:temp_forecast}
 	\includegraphics{Images/climate_plots/forecast_accuracy.pdf}
+\end{figure}
+
+\subsection{Seismic waveforms} \label{sec:seismic_timeseries}
+\blindtext
+\begin{figure}
+	\caption{Do a caption}
+	\label{fig:seismic_spectrum}
+	\includegraphics{Images/seismic_plots/seismic_spectrum.pdf}
+\end{figure}
+
+\begin{figure}
+	\caption{Do a caption}
+	\label{fig:seismic_forecast}
+	\includegraphics{Images/seismic_plots/forecast_accuracy.pdf}
+\end{figure}
+
+
+\subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
+\blindtext
+\begin{figure}
+	\caption{Do a caption}
+	\label{fig:LIGO_forecast}
+	\includegraphics{Images/forecast_LIGO/forecast_accuracy.pdf}
 \end{figure}
 
 
