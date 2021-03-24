@@ -110,6 +110,7 @@ without highlighting its connection with the time structure of the process itsel
 %A power spectral density fully describes a stationary noisy time series and this shows how important is in the study of noise.
 %\par
 %Thus, in many real application, the knowledge of the PSD is crucial for the understanding of the process and indeed algorithms for PSD computation are a standard part of every software package for computational physics.
+\sschmidt{Spiega bene i due metodi di windowing!}
 A ubiquitous method for such computation is due to Welch \cite{Welch} and it based on the method of periodograms. Basically, the PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many windowed batches and averaging the squared moduli of their Fourier transforms. The standard approach of periodograms \cite{Lomb,Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
     \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
 \end{equation}
@@ -396,7 +397,7 @@ It turns out that the maximums entropy principle provides a representation of th
 Thanks to Wold's theorem \cite{something}, every stationary time series can be represented as an autoregressive process: this ensures that maximum entropy estimation is faithful and general.
 
 To show the analogy, we compute the PSD $S_{AR(p)}$ of an $AR(p)$ process and we show that it is formally equivalent to the PSD obtained in eq.~\eqref{eq:MESApsd}. This will also provide a direct expression for the autoregressive coefficients $b_i$ and for the noise variance $\sigma^2$.
-We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~(\eqref{eq:AR_p}): 
+We start taking the $z$ transform~\footnote{We remind the reader that the $z$ transform is the discrete-time equivalent of the Laplace transform, thus taking a discrete time time-series and returning a frequency series.} of Eq.~\eqref{eq:AR_p}: 
 \begin{align}
     \sum_t x_t z^t - \sum_i b_i z^i\sum_t x_{t - i} z^{t - i} = \sum_t \nu_t z^t.
 \end{align}
@@ -808,7 +809,7 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 
 \pagebreak
 \appendix
-\section{Computing the PSD} 
+\section{Details of PSD computation} 
 \subsection{MESA solution}\label{sec:MESA_solution}
 We derive the expression for the MAXENT spectral estimator following the approach proposed by Burg \cite{burg1975maximum}.
 Unlike the standard approach, we do not enforce the constraints in eq.~\eqref{eq:MaxConstraint} with the standard Lagrange Multipliers approach.
