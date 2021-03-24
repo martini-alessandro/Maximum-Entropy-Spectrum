@@ -17,7 +17,7 @@ def empirical_autocorrelation(data):
 	corr = scipy.signal.correlate(data, data, mode="full")
 		#computing average value
 	lags = scipy.signal.correlation_lags(data.size, data.size, mode="full")
-	N_divide = len(data)-np.abs(lags) #number of data summed at each lag
+	N_divide = len(data)#-np.abs(lags) #number of data summed at each lag
 	return np.divide(corr,N_divide) #*np.mean(np.square(data)
 	
 
@@ -50,22 +50,12 @@ print(np.sum(M_zero.a_k), np.sum(M.a_k))
 
 print(np.allclose(spec_zero, spec), np.allclose(spec, spec_scaled))
 
-print(M.a_k, M_zero.a_k)
-print(M.P, M_zero.P)
-print(np.sum(M.a_k), np.sum(M_zero.a_k))
-print(np.allclose(M.a_k[:10],M_zero.a_k[:10]))
-plt.plot(M_zero.a_k)
-plt.plot(M.a_k)
-#plt.show()
-
-#quit()
-
 plt.figure()
 plt.loglog(f,spec_scaled*1/K**0, label = "symmetry")
 plt.loglog(f,spec_zero, label = 'zero mean')
 plt.loglog(f,spec, label = 'normal data')
 plt.legend()
-plt.show()
+#plt.show()
 
 
 autocov_empirical = empirical_autocorrelation(data-np.mean(data))
@@ -87,7 +77,7 @@ else:
 mu_avg_sq[len(data)] = -np.square(np.mean(data))
 #print("Mean: ", -np.mean(data[k:]+data[:-k]) * np.mean(data) +np.mean(data)**2, -np.mean(data)**2)
 
-autocorr_empirical += mu_avg_sq
+#autocorr_empirical += mu_avg_sq
 
 lags = scipy.signal.correlation_lags(data.size, data.size, mode="full")
 
@@ -109,13 +99,14 @@ plt.plot(lags[N_start:N_start+delta_T], autocov_mesa[:delta_T])
 
 plt.figure()
 plt.plot(lags[N_start:N_start+delta_T], autocov_mesa_zero[:delta_T]/autocov_mesa_zero[0])
-#plt.plot(lags[N_start:N_start+delta_T], autocorr_empirical[N_start:N_start+delta_T]-mu_avg_sq[N_start:N_start+delta_T])
+plt.plot(lags[N_start:N_start+delta_T], autocov_empirical[N_start:N_start+delta_T]/autocov_empirical[N_start])
 
 plt.figure()
-#plt.plot(lags[N_start:N_start+delta_T], autocov_mesa[:delta_T], label = "MESA")
+plt.title('Autocovs')
+plt.plot(lags[N_start:N_start+delta_T], autocov_mesa[:delta_T]/autocov_mesa[0], label = "MESA")
 plt.plot(lags[N_start:N_start+delta_T], autocov_mesa_zero[:delta_T], label = "MESA zero")
 plt.plot(lags[N_start:N_start+delta_T], autocov_empirical[N_start:N_start+delta_T], label = "autocov empirical")
-plt.plot(lags[N_start:N_start+delta_T], autocorr_empirical[N_start:N_start+delta_T], label = "autocorr empirical")
+plt.plot(lags[N_start:N_start+delta_T], autocorr_empirical[N_start:N_start+delta_T]/autocorr_empirical[N_start], label = "autocorr empirical")
 #plt.yscale('log')
 plt.legend()
 plt.show()
