@@ -19,24 +19,34 @@ data = np.array(data['strain']['Strain'])
 srate = 4096 #in Hz
 T_train = 1000
 M = memspectrum.MESA()
+M_FPE = memspectrum.MESA()
 if False:
 	M.solve(data[:int(T_train*srate)], optimisation_method = 'CAT', method = 'Fast' , verbose = True, m = 100000, early_stop = True)
 	M.save('LIGO_model_CAT')
+	M_FPE.solve(data[:int(T_train*srate)], optimisation_method = 'FPE', method = 'Fast' , verbose = True, m = 100000, early_stop = True)
+	M_FPE.save('LIGO_model_FPE')
 else:
 	M.load('LIGO_model_CAT')
+	M_FPE.load('LIGO_model_FPE')
 
 	#Forecasting
 N_forecast = srate*10 #100 s of forecasting
 
 if False:
 	forecast = M.forecast(data[int(T_train*srate)-len(M.a_k):int(T_train*srate)],N_forecast, 100, verbose = True)
-	np.savetxt('forecast_LIGO_data.dat', forecast)
+	np.savetxt('forecast_LIGO_data_CAT.dat', forecast)
+	forecast_FPE = M_FPE.forecast(data[int(T_train*srate)-len(M.a_k):int(T_train*srate)],N_forecast, 100, verbose = True)
+	np.savetxt('forecast_LIGO_data_FPE.dat', forecast_FPE)
 else:
-	forecast = np.loadtxt('forecast_LIGO_data.dat')
+	forecast = np.loadtxt('forecast_LIGO_data_CAT.dat')
+	forecast_FPE = np.loadtxt('forecast_LIGO_data_FPE.dat')
 l,m,h = np.percentile(forecast,[5,50,95],axis = 0)
 sigma = np.std(forecast,axis = 0)
+sigma_FPE = np.std(forecast_FPE,axis = 0)
 true = data[int(T_train*srate):int(T_train*srate)+N_forecast]
 #quit()
+
+print("Model length: ",len(M.a_k), len(M_FPE.a_k))
 
 	#plot forecasting
 fig = init_plotting()
@@ -51,14 +61,15 @@ ax.fill_between(t_grid, -true+h, -true+l, color = 'r',alpha = 0.3, zorder = 0)
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true- l, c = 'r')
 ax.set_ylabel(r"$h_{forecast} -h$")
 
-ax2.plot(t_grid, sigma, c = 'b', zorder = 1)
-
+ax2.plot(t_grid, sigma, c = 'k', zorder = 1, label = 'CAT')
+ax2.plot(t_grid, sigma_FPE, c = 'r', zorder = 0, label = 'FPE')
+plt.legend(loc= 'upper left')
 
 ax2.set_xlabel("Time (s)")
 ax2.set_ylabel(r"$\sigma$")
 
 axins =  ax2.inset_axes([0.6, 0.15, 0.5, 0.35])
-N_inset = 2500
+N_inset = int(0.5*srate)
 axins.plot(t_grid[:N_inset], -(true-m)[:N_inset], c = 'b', zorder = 1)
 axins.fill_between(t_grid[:N_inset], (-true+h)[:N_inset], (-true+l)[:N_inset], color = 'r',alpha = 0.3, zorder = 0)
 axins.set_ylabel(r"$h_{forecast} -h$")

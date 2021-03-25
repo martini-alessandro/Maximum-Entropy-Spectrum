@@ -834,9 +834,26 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 
 
 \subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
-\blindtext
+As a last example of and application of the maximum entropy method on real data, we come back to the strain produced by the LIGO-Virgo interferometers and we forecast the future observations. The spectral analysis is performed with CAT and FPE loss functions on $\SI{1000}{s}$ of data \cite{Abbott_2021} sampled at $\SI{4096}{Hz}$ observed at Livingston observatory starting from GPS time $1164603392$.
+We then forecast the following $\SI{100}{s}$ of observations with the model optimized with CAT. The results are shown in fig.~\ref{fig:LIGO_forecast}.
+
+By looking at the figure, we note that the forecasted prediction is always in the $90\%$ confidence interval.
+The confidence interval, however, is very broad and the prediction is not very accurate (being the same order of magnitude of the strain).
+By looking at the standard deviation $\sigma$ of the predictions (bottom panel in fig.~\ref{fig:LIGO_forecast}), we note that it increases very quickly in the first $\SI{0.5}{s}$ and then its trend stabilizes to a constant value.
+The order of the autoregressive process selected is $p_{CAT} = 57766 \sim \SI{14}{s}$, which is much larger than the region in which $\sigma$ is small $\sim \SI{0.2}{s}$. This means that the series is very difficult to predict: the knowledge of past observations is not very helpful in predicting future observations.
+Similar performances in the sigma are observed also with the FPE model: in this case FPE selects a large prediction filter $p_{FPE} = 29924$ , similar to those selected by CAT.
+
+Despite poor predictions on long timescales, the autoregressive process obtained with MESA still can be useful on short timescales. Indeed, a precise prediction of the strain time series can be beneficial in anomaly detection and removal of glitches. The predictions can form an expected baseline for the strain; any anomaly (i.e. a glitch or even a transient of physical origin) can show up as a large departure from expected trend.
+Moreover, if a glitch is detected, its shape can be estimated (as well as the confidence level) by subracting the expected signal with the actual signal.
+This can work: a typical glitch \cite{Zevin_2017} can last as long as $\SI{0.2}{s}$, which is close to the time scale in which the forecasting is realiable.
+
+Of course, more sophisticated forecasting methods are available in the Machine Learning literature (see e.g. \cite{LSTM_article, oord2016wavenet}) and they can be trained for precision forecasting. However, a Maximum-Entropy trained autoregressive process can be a simple baseline for comparing such more advanced methods and might suffice for many purposes.
+This opens a promising path in GW data analysis and other fields of physics might also take advantage from this.
+
 \begin{figure}
-	\caption{Do a caption}
+	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
+	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
+	}
 	\label{fig:LIGO_forecast}
 	\includegraphics{Images/forecast_LIGO/forecast_accuracy.pdf}
 \end{figure}
@@ -846,6 +863,10 @@ On the other hand, the confidence interval is pretty large (almost as large as $
 \blindtext
 \blindtext
 \blindtext
+
+	\begin{acknowledgments}
+This research has made use of data, software and/or web tools obtained from the Gravitational Wave Open Science Center (https://www.gw-openscience.org/ ), a service of LIGO Laboratory, the LIGO Scientific Collaboration and the Virgo Collaboration. LIGO Laboratory and Advanced LIGO are funded by the United States National Science Foundation (NSF) as well as the Science and Technology Facilities Council (STFC) of the United Kingdom, the Max-Planck-Society (MPS), and the State of Niedersachsen/Germany for support of the construction of Advanced LIGO and construction and operation of the GEO600 detector. Additional support for Advanced LIGO was provided by the Australian Research Council. Virgo is funded, through the European Gravitational Observatory (EGO), by the French Centre National de Recherche Scientifique (CNRS), the Italian Istituto Nazionale di Fisica Nucleare (INFN) and the Dutch Nikhef, with contributions by institutions from Belgium, Germany, Greece, Hungary, Ireland, Japan, Monaco, Poland, Portugal, Spain.
+	\end{acknowledgments}
 
 \pagebreak
 \appendix

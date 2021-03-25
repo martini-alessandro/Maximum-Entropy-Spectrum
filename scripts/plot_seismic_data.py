@@ -8,6 +8,8 @@ import memspectrum
 
 from obspy import read
 
+#http://rdsa.knmi.nl/fdsnws/dataselect/1/builder
+
 plot_dir = '../paper/Images/seismic_plots/'
 
 st = read('knmi-fdsnws.mseed')
