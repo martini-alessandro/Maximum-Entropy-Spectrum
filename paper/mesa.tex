@@ -752,13 +752,13 @@ The result does not change much by changing the hyperparameters required for Wel
 
 
 \begin{figure}
-	\caption{Make here a comparison between Welch - Fake data}
+	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{synthetic} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$. In dashed black is reported the true PSD (from which data are generated).}
 	\label{fig:mem_welch_fakedata}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_True.pdf}
 \end{figure}
 
 \begin{figure}
-	\caption{Make here a comparison between Welch - True data}
+	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{real} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
 	\label{fig:mem_welch_realdata}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_False.pdf}
 \end{figure}
@@ -777,7 +777,7 @@ We clearly see that there is a peak on the PSD at the frequency $f_D = \SI{1}{da
 Higher order harmonics (corresponding to integer multiples of $f_D$) are also visible up to the Nyquist frequency ($f_D = \SI{0.5}{hour^{-1}}$): they corresponds to signals that preserve the 1 day period while, at the same time, capturing the complex variability of the daily temperature cycle throughout the year.
 
 Looking at the low frequencies, it is striking to note that FPE does not capture the peak $f_{yr} = \SI{1}{yr^{-1}}$ located at the frequency of a year. On the other hand, the peak is captured well by the CAT loss function.
-In analogy as what observed for the peak at $f_D$, in the CAT spectru we observe a higher order harmonic at a frequency $2 \cdot f_{yr}$. As in the previous case, this is required to better model the temperature variation in the year.
+In analogy as what observed for the peak at $f_D$, in the CAT spectrum we observe a higher order harmonic at a frequency $2 \cdot f_{yr}$. As in the previous case, this is required to better model the temperature variation in the year.
 
 The failure of FPE in catching the low frequency trend can be understood by looking at fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often understimating badly the actual value.
 In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
