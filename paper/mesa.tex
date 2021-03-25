@@ -83,7 +83,7 @@ A particularly interesting class of stochastic processes are the so-called \text
 	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
 \end{equation}
 or equivalently by the knowledge of their \emph{power spectral density} (PSD) $S(f)$. Thanks to the Wiener-Khinchin theorem the two are related by a Fourier transform: 
-\begin{equation}
+\begin{equation}\label{eq:psd-autocorrelation}
 	S(f) = \int_{-\infty}^{\infty} \textrm{d}\tau C(\tau) e^{-i 2 \pi f \tau}\,.
 \end{equation}
 In some literature, the PSD is introduced as  
@@ -110,21 +110,35 @@ without highlighting its connection with the time structure of the process itsel
 %A power spectral density fully describes a stationary noisy time series and this shows how important is in the study of noise.
 %\par
 %Thus, in many real application, the knowledge of the PSD is crucial for the understanding of the process and indeed algorithms for PSD computation are a standard part of every software package for computational physics.
-\sschmidt{Spiega bene i due metodi di windowing!}
-A ubiquitous method for such computation is due to Welch \cite{Welch} and it based on the method of periodograms. Basically, the PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many windowed batches and averaging the squared moduli of their Fourier transforms. The standard approach of periodograms \cite{Lomb,Scargle} consists in taking the Fourier Transform of the sample autocorrelation, written as \begin{equation}
-    \rho = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\}.
-\end{equation}
-The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD. \sschmidt{Here we say different things about periodigrams. We should be more clear...}
 
-The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa. Moreover, the final result depends on the choice of window function, hence begging the question of what the ``real" PSD is. \\  
-Another problem with this approach is the requirement for the window to be $0$ outside the interval: we are arbitrarily assuming $\rho_j = 0$ for $j > M$, and modifying the estimate if a non-rectangular window is chosen. Making assumptions on unobserved data and modifying the ones we have at our disposal introduces information about the process that is not really there. Moreover, this method requires a number of arbitrary choices to be made, e.g. the number of time slices, the kind of Window function, the overlap between consecutive slices, etc... All the knobs must be tuned by hand and their choice can dramatically affect the PSD estimation.
-\par
-An appealing alternative approach, based on the Maximum Entropy principle \cite{Jaynes}, has been put forward by Burg \cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the arbitrary parameters, as it provides an iterative closed form expression for the spectrum of a stochastic time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
+An ubiquitous method for such computation is due to Welch \cite{Welch} and it based on eqs.(\ref{eq:psd-autocorrelation}-\ref{eq:psd-f-definition}).
+Basically, the PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many windowed batches and averaging the squared moduli of their Fourier transforms.
+This approach is equivalent \cite{Lomb,Scargle} to taking the Fourier Transform of the sample autocorrelation $\rho$, written as
+\begin{equation}
+    \rho_{Windowed} = \left\{W_0\rho_0,W_{\pm 1}\rho_{\pm 1}, \dots, W_{\pm M}\rho_{\pm M}, 0, 0, \dots \right\},
+\end{equation}
+where $M$ is the maximum time lag at which the autocorrelation is computed.
+The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD.
+
+The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa.
+Besides the window function, Welch method requires a number of arbitrary choices to be made, as the number of time slices and the overlap between consecutive slices. All the knobs must be tuned by hand and their choice can dramatically affect the PSD estimation.
+The final PSD estimation depends on all such choices, hence begging the question of what the ``real" PSD is.
+
+Another problem with this approach is the requirement for the window to be $0$ outside the interval in which the autocorrelation is computed.
+We are arbitrarily assuming $\rho_j = 0$ for $j > M$ and modifying the estimate (i.e. the data) if a non-rectangular window is chosen.
+Making assumptions on unobserved data and modifying the ones we have at our disposal introduces a piece of ``spurious" information about the process that we are not allowed to use.
+
+An appealing alternative approach, based on the Maximum Entropy principle \cite{Jaynes}, has been put forward by Burg \cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the arbitrary parameters, as it provides an iterative closed form expression for the spectrum of a stochastic stationary time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
 Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provide a natural and simple machinery to forecast a time series, thus predicting past observations based on previous ones.
 
-In this paper we discuss the details of the Maximum entropy principle, its application to Power Spectral Density estimation with Burg algorithm and the link between Burg's algorithm and autoregressive process. Furthermore, we present and describe a new code, \texttt{memspectrum}, that provides a robust python implementation of the algorithm.
-We provide a thorough assessment of the performance of our code and we validate our results performing a number of tests. We compare our results with those of spectral analysis carried out with the standard Welch method.
-\par
+In this paper we discuss the details of the Maximum entropy principle, its application to Power Spectral Density estimation with Burg algorithm and the link between Burg's algorithm and autoregressive process.
+Our goal is to bring (again) to public attention Maximum Entropy Spectral analysis, in the hope that it will be widely employed as a way out to the many problem posed by the ubiquitous Welch algorithm (or other similar methods).
+To facilitate this goal, we present and describe a new code, \texttt{memspectrum}, that provides a robust python implementation of the algorithm. The code is ready to use and available at the PyPI repository\footnote{
+Available at link: \url{https://pypi.org/project/memspectrum/}.
+}
+We provide a thorough assessment of the performance of our code and we validate our results performing a number of tests. We also compare our results with those of spectral analysis carried out with the standard Welch method.
+In order to apply our model on a realistic setting, we analyse some time series of broad interest in the scientific community.
+
 Our paper is organized as follows: blablabla...
 
 
