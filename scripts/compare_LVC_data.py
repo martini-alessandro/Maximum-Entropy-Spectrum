@@ -9,7 +9,8 @@ from style_sheet import *
 import pandas as pd
 from scipy.interpolate import interp1d
 
-plot = True
+plot = False
+plot_same = True
 compute = False
 generate_fake_data = False
 use_fake_data = False
@@ -59,7 +60,59 @@ if compute:
 		PSD_MESA = M.spectrum(1./srate, freqs)
 		
 		np.savetxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data), np.column_stack([freqs, PSD_MESA, PSD_Welch]))
+
+if plot_same:
+	if use_fake_data:
+		true_PSD = np.loadtxt(true_PSD_file)
+
+	fig = init_plotting()
+	fig.clf()
+	fig.set_size_inches(3.4,3.4*2)
+	ax = fig.gca()
+
+	ax.set_xlabel(r"$f(Hz)$")
+	ax.set_ylabel(r"$PSD (a.u.)$") #No ylabel
 	
+	yticks = []
+	
+	for i, T in enumerate(T_list):
+		PSDs = np.loadtxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data))
+		N = PSDs.shape[0]
+		freqs, PSD_MESA, PSD_Welch = PSDs[:int(N/2),0], PSDs[:int(N/2),1], PSDs[:int(N/2),2]
+
+		offset = .1
+		if use_fake_data: step = 4.2
+		else: step = 4.
+		
+			#scaling PSDs
+		PSD_MESA =PSD_MESA/ 1e-41 *10**(step*i)*offset
+		PSD_Welch = PSD_Welch/ 1e-41 * 10**(step*i)
+
+		ax.loglog(freqs, PSD_Welch , c = 'g', zorder = 0, label = "Welch")
+		ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA")
+		
+		yticks.append(10**(step*i)/1000.)
+		print(yticks)
+		
+		if i == 0:
+			ax.legend(loc = 'upper center', ncol = 2+int(use_fake_data))
+		
+		if use_fake_data:
+			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i), '--', c = 'k', zorder = 2)
+			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i)*offset, '--', c = 'k', zorder = 2, label = "True")
+		
+	ax.set_xlim(20,1024)
+	ax.set_ylim(1e-8, 10**(step*len(T_list))/1000 )
+
+	tick_list = ['T = {} s'.format(t) for t in T_list]
+	ax.set_yticklabels(tick_list, rotation = 'vertical')
+	ax.set_yticks(yticks)
+
+	filename = save_folder+"comparison_LVC_data_fake_{}.pdf".format(use_fake_data)
+	plt.savefig(filename)
+	print("Save file @ {}".format(filename))
+
+	plt.show()
 	
 if plot:
 	if use_fake_data:
