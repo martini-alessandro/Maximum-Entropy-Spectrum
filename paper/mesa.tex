@@ -738,7 +738,7 @@ It is really interesting to have a qualitative comparison between the performanc
 We perform such comparison on the spectrum of LIGO (even though similar conclusions can be drawn from any other PSD).
 
 We perform two sets of experiments.
-In the first one (see fig.~\ref{fig:mem_welch_fakedata}), we simulate data from an analytical PSD and we make the comparison with them: this is to ensure the we have a baseline PSD to compare the data with.
+In the first one (see fig.~\ref{fig:mem_welch_fakedata}), we simulate data from the realesed LIGO intererferometer PSD and we make the comparison with them: this is to ensure the we have a baseline PSD to compare the data with.
 In a second experiment (see fig.~\ref{fig:mem_welch_realdata}), we employ the data released to the public by the LIGO/Virgo collaboration \cite{Abbott_2021}.
 In each experiment, we vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
 For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we employ a Tukey window, an overlap fraction of $0.5$ for the segments and a length of segments $L = 512, 1024, 2048, 8192, 32768$ datapoints.
@@ -752,18 +752,17 @@ The result does not change much by changing the hyperparameters required for Wel
 
 
 \begin{figure}
-	\label{fig:mem_welch_fakedata}
 	\caption{Make here a comparison between Welch - Fake data}
+	\label{fig:mem_welch_fakedata}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_True.pdf}
 \end{figure}
+
 \begin{figure}
-	\label{fig:mem_welch_realdata}
 	\caption{Make here a comparison between Welch - True data}
+	\label{fig:mem_welch_realdata}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_False.pdf}
 \end{figure}
 
-
-\sschmidt{Mettiamo da qualche parte una descrizione dettagliata del codice? No: solo rimandiamo al codice nell'intro}
 
 \section{Applications} \label{sec:applications}
 \subsection{Temperature Time Series} \label{sec:temp_timeseries}
@@ -870,8 +869,8 @@ This opens a promising path in GW data analysis and other fields of physics migh
 \blindtext
 \blindtext
 
-	\begin{acknowledgments}
 \sschimidt{Is it fine to ackonowledge people helping with temperature data and seismic data?}
+	\begin{acknowledgments}
 %S.S. wants to thank Maurizio Maugeri and Costanza Rossi for useful discussions.
 
 This research has made use of data, software and/or web tools obtained from the Gravitational Wave Open Science Center (\url{https://www.gw-openscience.org/}), a service of LIGO Laboratory, the LIGO Scientific Collaboration and the Virgo Collaboration. LIGO Laboratory and Advanced LIGO are funded by the United States National Science Foundation (NSF) as well as the Science and Technology Facilities Council (STFC) of the United Kingdom, the Max-Planck-Society (MPS), and the State of Niedersachsen/Germany for support of the construction of Advanced LIGO and construction and operation of the GEO600 detector. Additional support for Advanced LIGO was provided by the Australian Research Council. Virgo is funded, through the European Gravitational Observatory (EGO), by the French Centre National de Recherche Scientifique (CNRS), the Italian Istituto Nazionale di Fisica Nucleare (INFN) and the Dutch Nikhef, with contributions by institutions from Belgium, Germany, Greece, Hungary, Ireland, Japan, Monaco, Poland, Portugal, Spain.
@@ -997,4 +996,11 @@ Another faster recursion method is available in \cite{Vos} and it is also availa
 	\bibliographystyle{ieeetr}
 
 \end{document}
+
+
+
+
+
+
+
 
