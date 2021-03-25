@@ -69,7 +69,7 @@ ax.axvline(1./(3600.*24.)*unit_shift,lw = .5, c = 'b', ls = '--', zorder = 0)
 ax.set_xlabel("frequency (1/day)")
 ax.set_ylabel("PSD (1/Hz)")
 
-ax.legend(loc = 'upper left')
+ax.legend(loc = 'upper left')questo
 
 
 	#inset
