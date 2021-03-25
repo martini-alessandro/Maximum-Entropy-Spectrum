@@ -800,7 +800,9 @@ The predictions spans a two years range of time.
 We report our results in fig.~\ref{fig:temp_spectrum}.
 
 We note the observed difference is always well included in the $90\%$ confidence interval: the forecasting predictions seem reliable.
-On the other hand, the confidence interval is pretty large (almost as large as $\SI{15}{K}$), thus making easy for the actual data to fit the predictions. We believe that the origin of such large uncertainty is due to the complexity of the time series considered: any realistic model, even more complex than our autoregressive process, might not produce drastically lower uncertainties (in such a long term).
+On the other hand, the confidence interval is pretty large (almost as large as $\SI{15}{K}$), thus making ``easy" for the actual data to fit the predictions.
+Indeed, the prediction model, while suitable for spectral estimation, is nothing more than a linear regression (plus noise term). Such a simple model hardly catches the complex trend in the variability of the temperature daily trend during a year. For more precise predictions, probably one should consider nonlinear regression model, tapping into the wealth of non linear predictors offered by the field of Deep Lerning.
+
 
 \sschmidt{Data should be divided in train and test set for the purpose of forecasting!!}
 
@@ -852,7 +854,7 @@ Despite poor predictions on long timescales, the autoregressive process obtained
 Moreover, if a glitch is detected, its shape can be estimated (as well as the confidence level) by subracting the expected signal with the actual signal.
 This can work: a typical glitch \cite{Zevin_2017} can last as long as $\SI{0.2}{s}$, which is close to the time scale in which the forecasting is realiable.
 
-Of course, more sophisticated forecasting methods are available in the Machine Learning literature (see e.g. \cite{LSTM_article, oord2016wavenet}) and they can be trained for precision forecasting. However, a Maximum-Entropy trained autoregressive process can be a simple baseline for comparing such more advanced methods and might suffice for many purposes.
+As noted above, for pushing further the prediction performance from our simple linear predictor, more sophisticated forecasting methods are available in the Machine Learning literature (see e.g. \cite{LSTM_article, oord2016wavenet}) and they can be trained for precision forecasting. However, a Maximum-Entropy trained autoregressive process can be a simple baseline for comparing such more advanced methods and might suffice for many purposes.
 This opens a promising path in GW data analysis and other fields of physics might also take advantage from this.
 
 \begin{figure}
