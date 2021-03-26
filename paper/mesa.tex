@@ -149,46 +149,55 @@ After a short introduction to Jayne's MAXENT (sec.~\ref{sec:MAXENT}), we will de
 Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link for straightforwardly forecasting a time series.
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
-Before introducing MAXENT principle and its formulation, we will workout some simple examples to specify what the core quantities of the problem are and the 
-role they play. These are the 'evidence' and the 'information'. Let us start with the 'information' for one or more events: it is a measure of the degree of uncertainty on the outcomes of some experiment and specifies the length of the message necessary to provide a full description of the system under study. For instance, consider a perfectly sinusoidal signal: knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: 
-it has a low information entropy content. Even less information is required if we are studying a system whose outcome is 
-certain (has probability $p = 1$), as in this case, a communication is not even needed.  
+
+Before introducing MAXENT principle, we will define through some simple examples the two core concepts of the problem and the role they play: the 'evidence' and the 'information'.
+Let us start with the 'information' (or entropy): it is a measure of the degree of uncertainty on the outcomes of some experiment and specifies the length of the message necessary to provide a full description of the system under study. For instance, consider a perfectly sinusoidal signal: knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information content. Even less information is required if we are studying a system whose outcome is certain (has probability $p = 1$), as in this case, a communication is not even needed.  
 Shannon \cite{Shannon} proposed the quantity
 \begin{equation}\label{eq:information}
     I = \log_2 \frac{1}{p(x)}
 \end{equation}
-to represent the quantity of information brought by an outcome $x$ with probability $p(x)$. It is additive quantity as well as monotonically decreasing as a function of $p \in [0, 1]$: the more uncertain the outcome, the higher the information it brings.
-We now seek to generalize the measure for the information in the case where different outcomes are possible.
-To do so, let us consider an experiment with two different random outcomes $E_1, E_2$, with given probabilities $P_1$ and $P_2$, and we ask ourselfs which are the probability assignments that makes the outcome more uncertain (i.e. maximize the information).
-If $P_1$ and $P_2$ are largely different, for istance $P_1 = 0.999$ and $P_2 = 0.001$, we clearly have enough evidence to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome. The information content will be very low.
+to measure the quantity of information brought by an outcome $x$ with probability $p(x)$. It is additive quantity as well as monotonically decreasing as a function of $p \in [0, 1]$: the more uncertain the outcome, the higher the information it brings.
+
+We can generalize the definition of information in the case where two different outcomes $E_1, E_2$, with given probabilities $P_1$ and $P_2$, are possible.
+To gain some intuition on the problem, we ask ourselfs which are the probability assignments that makes the outcome more uncertain (i.e. maximize the information).
+If $P_1$ and $P_2$ are largely different, for istance $P_1 = 0.999$ and $P_2 = 0.001$, we are allowed to believe that event $E_1$ will occur almost certainly, considering $E_2$ to be a very implausible outcome. The information content will be very low.
 On the other hand, most unpredictable experiment happens when 
 \begin{equation}\nonumber
     P_1 = P_2 = \frac{1}{2}:
 \end{equation}
-this describes a situation of `maximum ignorance':  the information content of this system must be high. If an experiments with $N$ outcomes
-is  considered, the most uncertain experiment is the one in which 
-\begin{equation}\label{eq:indifference}
-P_1 = \dots = P_N = \frac{1}{N}.
+this describes a situation of `maximum ignorance': the information content of this system must be high.
+Any generalization of eq.~\eqref{eq:information}, must then have its maximum when $ P_1 = P_2$.
+For $N$ events, system with the highest possible information content is when:
+\begin{equation}\nonumber
+    P_1 = \hdots = P_N = \frac{1}{N}:
 \end{equation}
-In the above cases our knowledge on the system was the total number of different outcomes. Let us now reverse the perspective: what is the most unbiased probability assignment we can make if all we know is that one over $N$ outcomes will occur? Since we have no reason to prefere one outcome over the others, the least biased assignment is the one equivalent to (\ref{eq:indifference}) and is found to be coincident with the most uncertain experiment. This result represents the core idea of MAXENT principle: the least biased probability assignment can be obtained maximizing the "expected" information's entropy. \\ 
-In the previous example we had no reason to prefere one outcome over the others but that's not always the case. This hypothesis can be relaxed introducing the concept of 'evidence', that represents the knowledge we posses on the system under study. With proper evidence some outcomes can be preferred to others. Probability assignment must obey to all the evidence we possess. 
-\par
-MAXENT puts the aforementioned principle into a more precise mathematical context by stating that probabilities should be assigned by maximizing uncertainty using evidence as constraint. 
-This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. $H$ has to be a `generalization' of information defined in equation \ref{eq:information} to be something like the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
 
-Shannon \cite{Shannon} showed that the only functional form satisfying continuity with respect to its parameters and additivity is:
+Shannon \cite{Shannon} showed that the only functional form satisfying continuity with respect to its parameters, additivity and that has a maximum for equal probability events is:
 \begin{equation}\label{eq:entropy}
     H[p_1, \dots, p_N] = - \sum_{i = 1}^N p_i\log{p_i},
 \end{equation}
-or, in the continuous case:
+The equation can be interpreted as the `expected information' brought by an experiment with $N$ possible outcomes each with its own probability $p_i$.
+In the continuous case:
 \begin{equation}
     H[p(x)] = - \int p(x)\ln p(x) dx,
 \end{equation}
-and $H$ is what we will call (information) entropy.
+We call the function $H$ (information) entropy.
+
+We now turn the core of our problem: how do we make a probability assignment for a set of events, that keeps into account our knoledge of the system and, at the same time, it is non committal with unavailable knowledge?
+The knowledge at our disposal about the system under study is what we call `evidence' and of course, any probability assignment must agree with it.
+In the above cases our knowledge on the system was only the total number $N$ of different outcomes -- this is a minimal requirement. Of course, more complex evidence constraints can be applied.
+
+It is very common that the constraints provided by the evidence are not enough for setting the probabilities for each event: in this case, it is reasonable to assume that the probability assignment should make the experiment as unpredictable as possible. In other words, the amount of `information' introduced by the the probability assignment should be as high as possible.
+
+%Let us now reverse the perspective: what is the most unbiased probability assignment we can make if all we know is that one over $N$ outcomes will occur? Since we have no reason to prefere one outcome over the others, the least biased assignment is the one equivalent to (\ref{eq:indifference}) and is found to be coincident with the most uncertain experiment. This result represents the core idea of MAXENT principle: the least biased probability assignment can be obtained maximizing the "expected" information's entropy. \\ 
+%In the previous example we had no reason to prefere one outcome over the others but that's not always the case. This hypothesis can be relaxed introducing the concept of 'evidence', that represents the knowledge we posses on the system under study. With proper evidence some outcomes can be preferred to others. Probability assignment must obey to all the evidence we possess. 
+
+MAXENT puts the aforementioned principle into a more precise mathematical context by stating that probabilities should be assigned by maximizing uncertainty (information entropy) using evidence as constraint. 
+This defines a variational problem, where a numerical measure of uncertainty $H\left[p_1, \dots, p_N\right]$ has to maximized. 
 
 The maximisation of entropy, supplemented by evidence in the form of constraints to which the sought-for probability distribution must obey,
-gives rise to several of the most common probability distributions utilised commonly by data scientists. For instance, whenever the only constraint available is the normalisation of the probability distribution, the entropy is maximised by the uniform distribution. 
-If the information available is instead the expected value -- the mean -- entropy is maximised by the  exponential distribution
+gives rise to several of the most common probability distributions commonly employed in statistics. For instance, whenever the only constraint available is the normalisation of the probability distribution (i.e. no evidence is available), the entropy is maximised by the uniform distribution. 
+If we have evidence to constraint the expected value, the information entropy is maximised by the exponential distribution
 
 Of particular importance is the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
 We retain this particularly interesting from the foundational point of view, since it provides a deeper insight into the ubiquitous Gaussian distribution.
@@ -218,9 +227,9 @@ Some simple algebra shows that the time-domain multivariate Gaussian can be tran
 probability distribution:
 \begin{align}\label{eq:Whittle}
 p&\left((\tilde{x}_1, \ldots, \tilde{x}_n)\vert I\right) = \nonumber \\
-    &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i}\tilde{x}_i^2S^{-1}_{i} \right)\,,
+    &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{ij}\tilde{x}_i S^{-1}_{ij} {x}_j \right)\,,
 \end{align}
-where the matrix $S = S_i \delta_{ij}$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
+where the matrix $S_{ij} = S_i \delta_{ij}$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
 Many readers will recognise the familiar form of the Whittle likelihood that stands at the basis of the \emph{matched filter} method\cite{prob_information_theory}
 %P. M. Woodward, D. W. Fry, and W. Higinbotham, Probability and information theory, with applications to radar; 2nd ed. (Pergamon Press, Oxford, 1964), URL http://cds.cern.ch/record/2031792.
 and of gravitational waves data analysis, e.g. \cite{Finn_1992, FINDCHIRP}.
@@ -723,22 +732,25 @@ For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we emp
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
 
 First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time length is large.
-We can also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate expecially for short time series. This behaviour is more evident if the low frequencies are considered. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile. 
-Another important element is noise: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
-As we already said Welch method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made. We want to stress that this fact doesn't invalidate our discussion: a more accurate reconstruction can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  
+We can also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate expecially for short time series. This behaviour is more evident if the low frequencies are considered. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
+This is true in the low frequency sector, where the estimate requires longer time windows.
+Another important element is the estimation noise: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
+
+As already discussed Welch, method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results. We want to stress that this fact doesn't invalidate our discussion: one of the most appealing advantages of MESA is the absence of fine tuning.
+A more accurate reconstruction with Welch can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  
 The result does not change much by changing the hyperparameters required for Welch algorithm.
 
 
 \begin{figure}
 	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{synthetic} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$. In dashed black is reported the true PSD (from which data are generated).}
 	\label{fig:mem_welch_fakedata}
-	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_True.pdf}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_fake_True.pdf}
 \end{figure}
 
 \begin{figure}
 	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{real} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
 	\label{fig:mem_welch_realdata}
-	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_False.pdf}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_fake_False.pdf}
 \end{figure}
 
 
