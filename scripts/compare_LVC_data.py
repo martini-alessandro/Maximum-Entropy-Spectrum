@@ -9,11 +9,11 @@ from style_sheet import *
 import pandas as pd
 from scipy.interpolate import interp1d
 
-plot = False
+plot = True
 plot_same = True
 compute = False
 generate_fake_data = False
-use_fake_data = False
+use_fake_data = True
 
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
@@ -46,7 +46,7 @@ if compute:
 
 	for i, T in enumerate(T_list):
 		print("Batch length: {}s".format(T))
-		data_T = data[:int(srate*T)]
+		data_T = data[-int(srate*T)-4096*5:-4096*5]
 		
 		M = MESA()
 		M.solve(data_T, early_stop = True, method = 'Standard')

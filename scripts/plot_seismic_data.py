@@ -34,9 +34,9 @@ M_FPE = memspectrum.MESA()
 T_train = 10000
 
 if False:
-	M_CAT.solve(data[:int(T_train*srate)], optimisation_method = 'CAT', method = 'Standard' , verbose = True, m = 10000, early_stop = True)	
+	M_CAT.solve(data[-int(T_train*srate):], optimisation_method = 'CAT', method = 'Standard' , verbose = True, m = 10000, early_stop = True)	
 	M_CAT.save('seismic_model_CAT')
-	M_FPE.solve(data[:int(T_train*srate)], optimisation_method = 'FPE', method = 'Standard' , verbose = True, m = 10000, early_stop = True)	
+	M_FPE.solve(data[-int(T_train*srate):], optimisation_method = 'FPE', method = 'Standard' , verbose = True, m = 10000, early_stop = True)	
 	M_FPE.save('seismic_model_FPE')
 else:
 	M_CAT.load("seismic_model_CAT")
