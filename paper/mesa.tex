@@ -723,10 +723,10 @@ For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we emp
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
 
 First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time length is large.
-
-Turning to the comparison between MESA and Welch's method, we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA. The different behavior is more manifest in the low frequency sector.
+We can also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate expecially for short time series. This behaviour is more evident if the low frequencies are considered. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile. 
+Another important element is noise: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
+As we already said Welch method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made. We want to stress that this fact doesn't invalidate our discussion: a more accurate reconstruction can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  
 The result does not change much by changing the hyperparameters required for Welch algorithm.
-\sschmidt{Elaborate a bit more on this... Right now it is a very poor comment (blame is on me!)}
 
 
 \begin{figure}
