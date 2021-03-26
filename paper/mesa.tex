@@ -216,7 +216,7 @@ Toeplitz matrices are asymptotically equivalent to circulant matrices and thus d
 %R. M. Gray, Foundations and Trends⃝R in Communications and Information Theory 2, 155 (2005), URL https://doi.org/10.1561/0100000006.
 Some simple algebra shows that the time-domain multivariate Gaussian can be transformed into the equivalent frequency domain 
 probability distribution:
-\begin{align}
+\begin{align}\label{eq:Whittle}
 p&\left((\tilde{x}_1, \ldots, \tilde{x}_n)\vert I\right) = \nonumber \\
     &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{i}\tilde{x}_i^2S^{-1}_{i} \right)\,,
 \end{align}
@@ -855,8 +855,7 @@ It has to be said that our method can be quite computationally expensive, as com
 
 Besides providing an alternative to standard methods of spectral estimate, MESA opens up several oppurtunities in the context of time series analysis.
 
-First of all, as short time series are required to produce meaningful PSD estimations, it can be suitable in the context of PE...
-\textbf{##############PE part here#############}
+First of all, as short time series are required to produce meaningful PSD estimations, it can be suitable in the context of parameter estimation. To compute the posterior distribution for the parameters the knowledge of prior distributions and Likelihood for noise is required. A full description for noise can be obtained in Fourier Domain by the choice of the Whittle Likelihood \ref{eq:Whittle}, that is completely determined by the knowledge of the PSD for noise. While traditional methods might be instable with respect to the hypothesis (such as Welch) or require a Large number of prior assumptions, MESA represents a stable and parsimonious way to characterize noise and compute posterior distributions.  
 
 Furthermore, MESA provides a simple, but robust and quite accurate, predictor for the time series. This fact is remarkable and can be used in time series analysis for several purposes.
 As already discussed in sec~\ref{sec:LIGO_forecasting}, an anomaly detection pipeline can be easily built using the forecasts of MESA: the predictions can form a baseline to compare the actual observations with. Whenever the observed data are outside the expectations, an anomaly detection can be claimed.
