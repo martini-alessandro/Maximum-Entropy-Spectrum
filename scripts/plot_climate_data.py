@@ -18,13 +18,8 @@ M_CAT.load("../climate_data/model_CAT_long")
 M_FPE.load("../climate_data/model_FPE_long")
 
 N = len(data)
-spec_FPE, f_FPE = M_FPE.spectrum(1./srate)
-spec_FPE = spec_FPE[:int(N/2)]
-f_FPE = f_FPE[:int(N/2)]
-
-spec_CAT, f_CAT = M_CAT.spectrum(1./srate)
-spec_CAT = spec_CAT[:int(N/2)]
-f_CAT = f_CAT[:int(N/2)]
+spec_FPE, f_FPE = M_FPE.spectrum(1./srate, onesided = True)
+spec_CAT, f_CAT = M_CAT.spectrum(1./srate, onesided = True)
 
 print(len(M_CAT.a_k),len(M_FPE.a_k))
 
@@ -69,7 +64,7 @@ ax.axvline(1./(3600.*24.)*unit_shift,lw = .5, c = 'b', ls = '--', zorder = 0)
 ax.set_xlabel("frequency (1/day)")
 ax.set_ylabel("PSD (1/Hz)")
 
-ax.legend(loc = 'upper left')questo
+ax.legend(loc = 'upper left')
 
 
 	#inset

@@ -305,7 +305,7 @@ class MESA(object):
 
 
 
-    def spectrum(self, dt, frequencies = None): 
+    def spectrum(self, dt, frequencies = None, onesided = False): 
         """
         Computes the power spectral density of the model. Default returns power 
         spectral density and frequency array automatically computed by sampling theory. 
@@ -319,14 +319,18 @@ class MESA(object):
             
         frequencies: 'np.ndarray'        
             (positive) frequencies to evaluate the spectrum at (shape (N,))
-            must be equally spaced
+            If None, a equally spaced frequency grid is used (and returned)
+           
+        onesided: 'bool'
+            Whether the one sided PSD (only positive frequencies) shall be returned.
+            It has effect only if a frequency array is not given
 
         Returns: 
         ----------
         if no frequency array is given 
             spectrum: 'np.ndarray'           
                 Two sided power spectral density (shape = (N,))
-            frequencies: 'np.ndaarray'      
+            frequencies: 'np.ndarray'      
                 Frequencies at which power spectral density is evaluated (shape = (N,))
             
         if frequency array is given:
@@ -345,7 +349,10 @@ class MESA(object):
         spec, f_spec = self._spectrum(dt, self.N)
         
         if frequencies is None:
-            return spec, f_spec
+            if onesided:
+                return spec[:self.N//2], f_spec[:self.N//2]
+            else:
+                return spec, f_spec
         
         elif isinstance(frequencies, np.ndarray):
             if np.max(frequencies) > f_ny *1.01: 

@@ -10,6 +10,8 @@ from obspy import read
 
 #http://rdsa.knmi.nl/fdsnws/dataselect/1/builder
 
+#[y] = v
+
 plot_dir = '../paper/Images/seismic_plots/'
 
 st = read('knmi-fdsnws.mseed')
@@ -64,6 +66,10 @@ else:
 l,m,h = np.percentile(forecast[:,:N_forecast],[5,50,95],axis = 0)
 sigma = np.std(forecast[:,:N_forecast], axis = 0)
 true = data[int(T_train*srate):int(T_train*srate)+N_forecast]
+
+	#plot data
+fig = init_plotting()
+plt.plot(np.linspace(0, len(data)/srate/60, len(data)),data*1e4)
 
 	
 	#plot forecasting
