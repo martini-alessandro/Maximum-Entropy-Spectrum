@@ -28,21 +28,21 @@ _________
 Call it as 
 ```Python
 from memspectrum import MESA
-M = MESA(data) 
+M = MESA() 
 ```
 #### methods: 
 
-	`mesa.solve()`
-	Solve the Levinson recursion for the computation of the a_k and P
+	`mesa.solve(data)`
+	Solve the Levinson recursion for the computation of the a_k and P for the input data
 	coefficients. 
 
-	`mesa.spectrum()` 
+	`mesa.spectrum(dt)` 
 	Computes the value of the power spectral density. It can be returned as both a function of the sampling frequencies or on a user-given 
-	frequency grid. 
+	frequency grid. The sampling interval is required. 
 	Since P and a_k are needed, it is necessary to call .solve() method first. 
 	
-	`mesa.forecast()`
-	It uses the forward prediction error coefficients to predict the future values of 	the time series. User can choose both the 'time len-gth' for the forecasting and the total number of simulations. 
+	`mesa.forecast(data)`
+	It uses the forward prediction error coefficients to predict the future values of the input time series. User can choose both the 'time len-gth' for the forecasting and the total number of simulations. 
 	Since P and a_k are needed, it is necessary to call .solve() method first. 
 
 
@@ -80,8 +80,8 @@ data = np.sin(2 * np.pi * f * time) + np.random.normal(scale = 0.4,
 
 #### Solving the recursion: 
 ```Python
-M = mesa.mesa(data) 		#Initialize MESA class
-P, a_k, opt = M.solve() 	#Solve method and returns the 
+M = mesa.mesa() 		#Initialize MESA class
+P, a_k, opt = M.solve(data) 	#Solve method and returns the 
                             #coefficients and values of the opimizer
 ```
 	
@@ -101,9 +101,9 @@ user_spectrum = M.spectrum(dt, user_frequencies)
 
 #### Forecasting and comparing result with real data 
 ```Python
-M = MESA(data[:-100]) 
-M.solve() 
-forecast = M.forecast(length = 100, number_of_simulations = 1000)
+M = MESA() 
+M.solve(data[:-100]) 
+forecast = M.forecast(data[:-100], length = 100, number_of_simulations = 1000)
 ```
 
 # Installation and documentation

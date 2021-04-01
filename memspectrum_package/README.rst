@@ -39,20 +39,20 @@ To get the PSD computed, the following steps are required
 ::
 
 	from memspectrum import MESA
-	m = MESA(data)
+	m = MESA()
 
 + Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
 
 ::
 
-	m.solve()
+	m.solve(data)
 
 + At this point you can compute the spectrum and forecast
 
 ::
 
-	m.spectrum()
-	m.forecast()
+	m.spectrum(dt)
+	m.forecast(data)
 
 Sinusoid example 
 ================
@@ -79,8 +79,8 @@ Generating the data:
 Solving MESA is needed to compute PSD or forecast. 
 ::
 
-	M = MESA(data) 
-	M.solve() 
+	M = MESA() 
+	M.solve(data) 
 	
 The spectrum can be computed on sampling frequencies (automatically generated) or on 
 some given interval 
@@ -102,9 +102,9 @@ of the data and try to infer the upcoming signal. 1000 simulations of 100 points
 Real observed data are compared with median estimate and 90% Credibility regions 
 ::
 
-	M = MESA(data[:-100]) 
-	M.solve() 
-	forecast = M.forecast(length = 100, number_of_simulations = 1000, include_data = False) 
+	M = MESA() 
+	M.solve(data[:-100]) 
+	forecast = M.forecast(data[:-100], length = 100, number_of_simulations = 1000, include_data = False) 
 	median = np.median(forecast, axis = 0) #Ensemble median 
 	p5, p95 = np.percentile(forecast, (5, 95), axis = 0) #90% credibility boundaries
 	
