@@ -123,13 +123,8 @@ The forecast result is:
 
 Generating data from PSD
 ============================
-memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power 
-<<<<<<< HEAD
-spectral density. It can be called as 
+memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power spectral density. It can be called as 
 :: 
-=======
-spectral density. It can be called as :: 
->>>>>>> af7984f4cf9ef4ad7b528e26a5fd54e6ccbfb4d4
 
 	from memspectrum.generateTimeSerie import generate_data
 	f, psd = import wanted psd and frequency array 
@@ -159,3 +154,5 @@ For more advanced use or for more information, please refer to the code document
 	help(memspectrum.<function_name>)
 
 For full source code (and much more) see: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum
+
+If you feel that you need to know more about the code, or you just want to say hi, feel free to contact one of the authors.
