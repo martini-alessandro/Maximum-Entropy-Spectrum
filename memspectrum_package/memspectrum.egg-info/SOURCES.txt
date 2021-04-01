@@ -10,6 +10,7 @@ ReadMeFigures/Spectrum.jpeg
 dist/memspectrum-1.0.0.tar.gz
 memspectrum/GenerateTimeSeries.py
 memspectrum/__init__.py
+memspectrum/memspectrum.py
 memspectrum.egg-info/PKG-INFO
 memspectrum.egg-info/SOURCES.txt
 memspectrum.egg-info/dependency_links.txt

@@ -11,7 +11,8 @@ Algorithm for the computation of the power spectral density.
 import sys
 import numpy as np
 import warnings
-from scipy.signal import correlate
+warnings.simplefilter('once', RuntimeWarning)
+from scipy.signal import correlate, convolve
 
 #############DEBUG LINE PROFILING
 try:
@@ -44,13 +45,13 @@ class optimizer:
     def __init__(self, method):
         """
         Implements various method to choose the best recursive order for Burg's Algorithm
-        Avilable methods are "FPE", "OBD", "CAT", "AIC". The most representative order is 
+        Avilable methods are "FPE", "OBD", "CAT", "AIC", "Fixed". The most representative order is 
         chosen to be the one that minimized the related function. 
         Parameters
         ----------
         method : 'str'
             Selects the method to be used to estimate the best order between "FPE",
-            "OBD", "CAT", "AIC"
+            "OBD", "CAT", "AIC", "Fixed"
 
 
         """
@@ -175,29 +176,31 @@ class MESA(object):
     """
     Class the implement the reproduces the Maximum Entropy Spectrum of a given 
     time-series. 
-    
-    init: data: `np.ndarray` shape (N,)
-    solve(): 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self,filename = None, *args, **kwargs):
         """ 
         Class that implements Burg method to estimate power spectral densitiy of
         time series. 
         
         Parameters
         ----------
-        data: 'np.ndarray'       
-            Time series with power spectral density to be computed 
+        filename: 'str'       
+            Name of file from which the model is loaded.
+            If None, the model is not initialized
         """
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
+        self.N = None
+        self.mu = None
         self.optimization = None
+        if isinstance(filename,str):
+        	self.load(filename)
 
     def save(self,filename):
         """
         Save the class to file (if the spectral density analysis is already performed).
         The output file can be used to load the class with method load()
-        File is a 1D array with the format: [P, N, a_k]. The header holds the shapes for each array
+        File is a 1D array with the format: [P, N, mu, a_k]. The header holds the shapes for each array
         
         Parameters
         ----------
@@ -207,8 +210,8 @@ class MESA(object):
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to save the model. You should call solve() before saving to file") 
         
-        to_save = np.concatenate([[self.P], [self.N], self.a_k])
-        header = "(1,1,{})".format(len(self.a_k))
+        to_save = np.concatenate([[self.P], [float(self.N)],[self.mu], self.a_k])
+        header = "(1,1,1,{})".format(len(self.a_k))
         np.savetxt(filename, to_save, header = header)
         return
         
@@ -235,11 +238,11 @@ class MESA(object):
         shapes = eval(first_line.translate({ord('#'): None, ord(' '): None}))
             #checking for the header
         if not isinstance(shapes, tuple):
-            if len(shapes) != 3 or not np.all([isinstance(s, int) for s in shapes]):
+            if len(shapes) != 4 or not np.all([isinstance(s, int) for s in shapes]):
                 raise ValueError("Wrong format for the header: unable to load the model")
 
             #assigning values
-        self.P, self.N, self.a_k = np.split(data, np.cumsum(shapes)[:-1])
+        self.P, self.N, self.mu, self.a_k = np.split(data, np.cumsum(shapes)[:-1])
         self.N = int(self.N.real)
         
         return
@@ -302,7 +305,7 @@ class MESA(object):
 
 
 
-    def spectrum(self, dt, frequencies = None): 
+    def spectrum(self, dt, frequencies = None, onesided = False): 
         """
         Computes the power spectral density of the model. Default returns power 
         spectral density and frequency array automatically computed by sampling theory. 
@@ -316,16 +319,18 @@ class MESA(object):
             
         frequencies: 'np.ndarray'        
             (positive) frequencies to evaluate the spectrum at (shape (N,))
-            must be equally spaced
-
-        
+            If None, a equally spaced frequency grid is used (and returned)
+           
+        onesided: 'bool'
+            Whether the one sided PSD (only positive frequencies) shall be returned.
+            It has effect only if a frequency array is not given
 
         Returns: 
         ----------
         if no frequency array is given 
             spectrum: 'np.ndarray'           
                 Two sided power spectral density (shape = (N,))
-            frequencies: 'np.ndaarray'      
+            frequencies: 'np.ndarray'      
                 Frequencies at which power spectral density is evaluated (shape = (N,))
             
         if frequency array is given:
@@ -338,16 +343,20 @@ class MESA(object):
             ValueError if frequencies greater then Nyquist frequencies are given 
             
         """
+        if self.a_k is None:
+            raise RuntimeError("Model is not initialized: unable to compute spectrum. Call MESA.solve() or load a model from file to initialize the model")
         f_ny = .5 / dt 
-        
         spec, f_spec = self._spectrum(dt, self.N)
         
         if frequencies is None:
-            return spec, f_spec
+            if onesided:
+                return spec[:self.N//2] * np.sqrt(2), f_spec[:self.N//2]
+            else:
+                return spec, f_spec
         
         elif isinstance(frequencies, np.ndarray):
-            if np.max(frequencies) > f_ny *1.01: 
-                warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny))
+            if np.max(frequencies) > f_ny * 1.01: 
+                warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny), UserWarning)
                 
             f_interp = np.interp(frequencies, f_spec[:int(self.N/2+0.5)], spec.real[:int(self.N/2+0.5)], left = 0., right = 0.)
         
@@ -355,18 +364,48 @@ class MESA(object):
         else:
             raise ValueError("Type of frequencies not understood: expected to be None or np.ndarray but given {} insted".format(type(frequencies)))
 
+        return
+    
+    def compute_autocovariance(self, dt, normalize = False):
+        """
+        Compute the autocovariance of the data based on the autoregressive coefficients.
+        The autocovariance is defined as: C(tau) = E_t[(x_t -mu)(x_t+tau -mu)]
         
+        Parameters: 
+        ----------
+        dt: 'np.float'                   
+            Sampling rate for the time series 
+            
+        normalize: 'bool'        
+            Whether the autocovariance should be normalized s.t. it is 1 at t =0
+
+        Returns: 
+        ----------
+        autocov: 'np.ndarray'                   
+            Autocovariance of the model
+        """
+        spec, f = self.spectrum(dt)
+        spec = spec[:int(self.N/2)]
+        f = f[:int(self.N/2)]
+        autocov = np.fft.irfft(spec) #or there is a +1 in there...
+        #autocov -= np.square(self.mu)
+        #print(self.mu)
+        if normalize:
+            autocov /= autocov[0]
+        return autocov       
+     
     def solve(self,
               data,
               m = None,
               optimisation_method = "FPE",
               method              = "Fast",
               regularisation      = 1.0,
-              early_stop          = True):
+              early_stop          = True,
+              verbose = False):
         """
         Computes the power spectral density of the attribute data for the class
         using standard Burg method recursive and a Faster (but less stable) version. 
-        Default is Fast. 
+        Default is Fast.
 
         Parameters
         ----------
@@ -374,13 +413,15 @@ class MESA(object):
               data for the spectrum calculation
               
         m : 'np.int'                   
-            Maximum number of recursions for the computation of the  power spectral density. 
+            Maximum number of recursions for the computation of the  power spectral density.
+            Maximum autoregressive order is p = m-1
             Default is None, that means m = 2N / log(2N)
                                  
         optimisation_method: 'str'     
             Method used to select the best recursive order. The order is chosen
             minimizing the corresponding method. 
-            Available methods are "FPE", "OBD", "CAT", "AIC".
+            Available methods are "FPE", "OBD", "CAT", "AIC", "Fixed".
+            If optimisation_method is "Fixed", the autoregressive order is always set to m, without looking for a minimum.
             Deafult is "FPE".   
         
         method: 'str'                  
@@ -393,8 +434,12 @@ class MESA(object):
                                        
         early_stop: 'boolean'          
             Default is True. Breaks the iteration if there is no new global 
-            maximum after 200 iterations. 
+            maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
+            Has no effect with "Fixed" optimizer.
+        
+        verbose: 'boolean'
+            Whether to print the status of the mesa solution
 
         Returns
         -------
@@ -409,7 +454,6 @@ class MESA(object):
             (Shape (N,))   
 
         """
-        
         data = np.array(data)
         data = np.squeeze(data)
         
@@ -419,17 +463,22 @@ class MESA(object):
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
         
         self.data = data
-        self.N    = len(data)
+        self.N  = len(data)
+        self.mu = np.mean(data)
         self.regularisation = regularisation
         self.early_stop = early_stop
+        self.verbose = verbose
         if m is None:
-            self.mmax = int(2*N/np.log(2.*N))
+            self.mmax = int(2*self.N/np.log(2.*self.N))
         else:
             self.mmax = m
+        
+        if optimisation_method == 'Fixed':
+            self.early_stop = False
            
-        if method == "Fast":
+        if method.lower() == "fast":
             self._method = self._FastBurg
-        elif method == "Standard":
+        elif method.lower() == "standard":
             self._method = self._Burg
         else:
             print("Method {0} unknown! Valid choices are 'Fast' and 'Standard'".format(method))
@@ -487,9 +536,10 @@ class MESA(object):
         old_idx = 0
         #Loop for the FastBurg Algorithm
         for i in range(self.mmax):
+            if self.verbose: sys.stderr.write('\r\tIteration {0} of {1}'.format(i + 1, self.mmax))
             #Update prediction error filter and reflection error coefficient
             k, new_a = self._updateCoefficients(a[-1], g)
-            #Update variables. Check paper for indeces at j-th loop.
+            #Update variables. Check paper for indices at j-th loop.
             r = self._updateR(i, r, c[i + 2])
             #Construct the array in two different, equivalent ways.
             DrA = self._constructDr2(i, new_a)
@@ -499,18 +549,27 @@ class MESA(object):
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
             #Compute optimizer value for chosen method
-            optimization.append( self._optimizer(P, a[-1], self.N, i + 1) )
+            optimization.append( self._optimizer(P, a[-1], self.N, i + 1))
             
+            is_nan = np.isnan(new_a).any() #checking for nans
+            if np.abs(k)>1 or is_nan:
+                warnings.warn("There is a numerical stability issue. Results might not be what you expect", RuntimeWarning)
+                
+                #dealing with stopping of the iteration
                 #checking if there is a minimum (every some iterations) if early_stop option is on
-            if ((i % 200 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
-                idx = np.argmin(optimization) + 1
-                if old_idx < idx:
+            if is_nan and not self.early_stop:
+                idx = np.nanargmin(optimization)
+                break
+            if ((i % 100 == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
+                idx = np.nanargmin(optimization)
+                if old_idx < idx: #if True, an improvement is made
                     old_idx = idx
                 else:
-                    old_idx = idx
                     break
         if not self.early_stop:
-            idx = np.argmin(optimization) + 1
+            idx = np.nanargmin(optimization)
+
+        if self.verbose: sys.stderr.write('\n')
 
         return P[idx], a[idx], np.array(optimization)
    
@@ -536,6 +595,13 @@ class MESA(object):
 
         """
         a = np.concatenate((a, np.zeros(1)))
+                #regularizing? Doesn't really work unfortunately...        
+            # a -> a/alpha
+            # g -> g/gamma
+            # N = len(a)
+            # alpha = sqrt(N)*median_magnitude_of_a
+            # a*a ~ 1
+            # median_magnitude_of_a = a[0]
         k = - (np.dot(a.conj(), g[::-1])) / (np.dot(a, g))
         aUpd = a + k * a[::-1].conj()
         return k, aUpd
@@ -547,7 +613,6 @@ class MESA(object):
         return np.concatenate((rUp, rDown))
         
     def _constructDr(self, i, a):
-        #print(i, 'Outer')
         data1 = self.data[ : i + 2][::-1]
         data2 = self.data[self.N - i - 2 :]
         d1 = -np.outer(data1, data1.conj())
@@ -563,7 +628,7 @@ class MESA(object):
 
     def _updateG(self, g, k, r, a, Dra):
         gUp = g + (k * g[::-1]).conj() + Dra
-        gDown = np.array([np.dot(r ,a.conj())])
+        gDown = np.array([np.dot(r, a.conj())])
         return np.concatenate((gUp, gDown))
 
     def _Burg(self, **kwargs):
@@ -585,22 +650,33 @@ class MESA(object):
         """
         
         #initialization of variables
-        P_0 = (self.data ** 2).mean()
+        P_0 = np.var(self.data)#(self.data ** 2).mean()
         P = [P_0]
         a_0 = 1
         a_k = [np.array([a_0])]
         _f = np.array(self.data)
         _b = np.array(self.data)
         optimization = []
-        early_stop_step = self.mmax/50
+        early_stop_step = 100
         idx = None
         old_idx = 0
         #Burg's recursion
         for i in range(self.mmax):
+            if self.verbose: sys.stderr.write('\r\tIteration {0} of {1}'.format(i + 1, self.mmax))
             f = _f[1:]
             b = _b[:-1]
-            den = np.dot(f, f) + np.dot(b, b)
-            k = - 2 * np.dot(f.T, b) / den
+
+            den = convolve(f,f[::-1], 'valid')[0] + convolve(b,b[::-1], 'valid')[0]
+            k = - 2 * convolve(f,b[::-1], 'valid')[0] / den
+
+            if False:
+                print(len(f))
+                den_old = np.dot(f, f) + np.dot(b, b)
+                k_old = - 2 * np.dot(f.T, b) / den
+                print(den, den_old)
+                print(k, k_old)
+                print(np.allclose(den, den_old, atol = 0), np.allclose(k_old,k, atol = 0))
+            
             a_k.append(self._updatePredictionCoefficient(a_k[i], k))
             P.append(P[i] * (1 - k * k.conj()))
             _f = f + k * b
@@ -609,15 +685,18 @@ class MESA(object):
             optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
-                idx = np.argmin(optimization) + 1
-                if old_idx < idx:
+                idx = np.argmin(optimization) #+ 1
+                #print(i, optimization[idx]) #DEBUG
+                if old_idx < idx and optimization[idx]*1.01 < optimization[old_idx]:
                     old_idx = idx
                 else:
                     old_idx = idx
                     break
         if not self.early_stop:
-            idx = np.argmin(optimization) + 1
-
+            idx = np.argmin(optimization) #+ 1
+        
+        if self.verbose: sys.stderr.write('\n')
+        
         return P[idx], a_k[idx], optimization
     
     def _updatePredictionCoefficient(self, x, reflectionCoefficient):
@@ -650,9 +729,9 @@ class MESA(object):
         p : 'int'
             Order of the autoregressive process that define the PSD
         """
-        return self.a_k.size - 1
+        return self.a_k.size - 1 #why -1???
     
-    def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, verbose = False):
+    def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, seed = None, verbose = False):
         """
         Forecasting on an observed process for a total number of points given 
         by length. It computes number_of_simulations realization of the forecast time series.
@@ -677,6 +756,9 @@ class MESA(object):
             
         include_data: `bool`
             Whether to prepend to the output the input time series
+        
+        seed: `int`
+            Seed for the random generator. If is None, no initialization of the seed is done and the authomatic numpy setting is used.
         
         verbose: `bool`
             Whether to print the status of the forecasting
@@ -705,6 +787,10 @@ class MESA(object):
                 raise ValueError("Data are not long enough for forecasting")
         else:
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
+        if isinstance(seed, int):
+            np.random.seed(seed)
+        elif seed is not None:
+            warnings.warn("Invalid seed given for the generator. Default one used",UserWarning)            
         coef = - self.a_k[1:][::-1]
         for i in range(length): 
             if verbose: sys.stderr.write('\r {0} of {1}'.format(i + 1, length))
