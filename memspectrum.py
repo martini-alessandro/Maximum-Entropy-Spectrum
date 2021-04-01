@@ -350,12 +350,12 @@ class MESA(object):
         
         if frequencies is None:
             if onesided:
-                return spec[:self.N//2], f_spec[:self.N//2]
+                return spec[:self.N//2] * np.sqrt(2), f_spec[:self.N//2]
             else:
                 return spec, f_spec
         
         elif isinstance(frequencies, np.ndarray):
-            if np.max(frequencies) > f_ny *1.01: 
+            if np.max(frequencies) > f_ny * 1.01: 
                 warnings.warn("Some of the required frequencies are higher than the Nyquist frequency ({} Hz): a zero PSD is returned for f>Nyquist".format(f_ny), UserWarning)
                 
             f_interp = np.interp(frequencies, f_spec[:int(self.N/2+0.5)], spec.real[:int(self.N/2+0.5)], left = 0., right = 0.)
