@@ -99,22 +99,6 @@ ax.set_ylabel("PSD (1/Hz)")
 
 ax.legend(loc = 'upper left')
 
-
-if False:	#inset
-	axins =  ax.inset_axes([0.25, 0.65, 0.75, 0.35])
-	ids_CAT = np.where(f_CAT>.75/unit_shift)
-	ids_FPE = np.where(f_FPE>.75/unit_shift)
-	axins.loglog(f_CAT[ids_CAT] * unit_shift , spec_CAT[ids_CAT], label = "CAT", c = 'k')
-	axins.loglog(f_FPE[ids_FPE] * unit_shift, spec_FPE[ids_FPE], label = "FPE", c = 'r')
-	axins.set_yticks([])
-	axins.set_yticklabels([])
-	#axins.set_xlabel("Frequency (1/day)")
-	tick_list = [str(i) for i in range(1,13)]
-	tick_list[8] = ''
-	tick_list[10] = ''
-	axins.set_xticklabels(tick_list)
-	axins.set_xticks([i for i in range(1,13)])
-
 fig.tight_layout()
 plt.savefig(plot_dir+"seismic_spectrum.pdf")
 

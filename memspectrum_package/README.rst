@@ -3,7 +3,7 @@ memspectrum
 
 **Authors** Alessandro Martini, Stefano Schmidt, Walter del Pozzo
 
-**email** martini.alessandr@gmail.com
+**emails** martini.alessandr@gmail.com, stefanoschmidt1995@gmail.com, walter.delpozzo@ligo.org
 
 **Copyright** Copyright (C) 2020 Alessandro Martini
 
@@ -11,22 +11,24 @@ memspectrum
 
 **Version** 1.1.0
 
-MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR FAST PSD COMPUTATION
-=============================================================
+MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR ACCURATE PSD COMPUTATION
+=================================================================
 
-``memspectrum`` is a package for the computation of power spectral densities of a time series. 
-It implements a Fast verions of Burg method of Maximum Entropy Spectral Analysis.
-The method is fast and reliable and provides better performance than other standard methods.
- 
-The computation of the power spectral density requires solving the Levinson recursion for the 
-forward prediction error coefficients a_k.
-The knowledge of such coefficients allows to characterize the observed process in terms of 
-an autoregressive process of order p (AR(p)), being p + 1 the lenght of the a_k array. Together
-with a_k coefficients a P coefficient is estimated, and is to be interpreted as the variance of 
-white noise component for the process. 
-The computation of these quantities allow to perform high quality forecast for the time series.
-The estimate of the autoregressive order is via a second class, that implements several methods
-available in literature. 
+``memspectrum`` is a package for the computation of power spectral densitiy (PSD) of time series. 
+It implements a fast numpy verion of the Burg method for Maximum Entropy Spectral Analysis.
+The method is fast and reliable and shows better performance than other standard methods.
+
+The method is based on the maximum entropy principle, and it allows to make minimal
+ assumptions on unavailable information. Furthermore, it provides a beatiful link between spectral 
+ analysis and the theory of autoregressive processes
+
+The PSD is expressed in terms of a set of coefficients a_k plus an overall scale factor P.
+The a_ks are obtained recursively through the Levinson recursion.
+The knowledge of such coefficients allows to characterize the observed time series in terms of 
+an autoregressive process of order p (AR(p)), being p + 1 the lenght of the a_k array.
+The a_k coefficients are the autoregressive coefficients, while the P scale factor can be interpreted 
+as the variance of white noise component for the process. 
+Once the link with an AR(p) process is established, high quality forecast for the time series is straightforward.
 
 Usage of memspectrum
 ====================
@@ -34,25 +36,25 @@ Usage of memspectrum
 To get the PSD computed, the following steps are required
 
 + Import the data
-+ Call ``MESA`` class passing data as argument
++ Import `memspectrum` and create an instance of ``MESA`` class:
 
 ::
 
 	from memspectrum import MESA
 	m = MESA()
 
-+ Compute the coefficients via the ``solve()`` method: MANDATORY for further computations 
++ Compute the autoregressive coefficients via the ``solve()`` method (*required* for further computations)
 
 ::
 
 	m.solve(data)
 
-+ At this point you can compute the spectrum and forecast
++ At this point you can compute the spectrum and forecast N future observations
 
 ::
 
-	m.spectrum(dt)
-	m.forecast(data)
+	spec, frequencies = m.spectrum(dt)
+	predicted_data = m.forecast(data, N)
 
 Sinusoid example 
 ================
@@ -61,6 +63,7 @@ To compute (and plot) the spectrum of a (noisy) sinusoidal signal:
 
 	from memspectrum import MESA 
 	import numpy as np
+	import matplotlib.pyplot as plt
 
 Generating the data: 
 ::
@@ -88,13 +91,12 @@ some given interval
 
 	spectrum, frequencies = M.spectrum(dt)  #Computes on sampling frequencies 
 	user_frequencies = np.linspace(1.5, 2.5)
-	user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired window
+	user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired frequency grid
 	
-Plotting the two the following is obtained: 
+The two spectra look like
 
 .. image:: https://raw.githubusercontent.com/martini-alessandro/Maximum-Entropy-Spectrum/main/memspectrum_package/ReadMeFigures/Spectrum.jpeg
    :width: 700px
-   
    
    
 It can also be used to perform forecasting. For example, we consider the first 900 points 
@@ -123,14 +125,14 @@ The forecast result is:
 
 Generating data from PSD
 ============================
-memspectrum.generateTimeSeries provides a function that construct a time-series with a user-given power spectral density. It can be called as 
+Module ``memspectrum.GenerateTimeSeries`` provides a function that construct a time-series with a user-given power spectral density. It can be called as 
 :: 
 
-	from memspectrum.generateTimeSerie import generate_data
-	f, psd = import wanted psd and frequency array 
+	from memspectrum.GenerateTimeSeries import generate_data
+	f, psd = (whathever psd and frequency array you like)
 	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
 	
-T represent the time length of the observation and sampling rate is equivalent to 1 / dt, with dt the sampling interval
+where T represents the time length of the observation and the sampling rate is equivalent to the inverse of the sampling interval
  
 
 Installation & documentation

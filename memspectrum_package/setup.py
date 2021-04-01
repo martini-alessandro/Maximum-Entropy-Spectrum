@@ -10,8 +10,8 @@ def readme():
 setup(
     name='memspectrum',
     version='1.1.0',
-    author='Alessandro Martini, Walter Del Pozzo',
-    author_email='martini.alessandr@gmail.com,walter.delpozzo@ligo.org',
+    author='Alessandro Martini',
+    author_email='martini.alessandr@gmail.com',
     packages=['memspectrum'],
     package_dir = {'memspectrum':'./memspectrum'},
     url="https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/",
