@@ -9,7 +9,7 @@ memspectrum
 
 **Licence** CC BY 4.0
 
-**Version** 1.1.0
+**Version** 1.1.0.post
 
 MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR ACCURATE PSD COMPUTATION
 =================================================================
