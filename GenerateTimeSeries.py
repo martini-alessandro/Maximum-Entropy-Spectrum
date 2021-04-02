@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 22 15:50:17 2020
-
-@author: Workplace
+Module that generates a random time series with a given power spectral density
 """
 
 import numpy as np

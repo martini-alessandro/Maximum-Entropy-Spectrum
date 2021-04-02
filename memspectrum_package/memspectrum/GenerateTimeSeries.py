@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 22 15:50:17 2020
-
-@author: Workplace
+Module that generates a random time series with a given power spectral density
 """
 
 import numpy as np
@@ -15,10 +13,9 @@ def generate_data(f,
                   sampling_rate = 1.,
                   fmin = None,
                   fmax = None,
-                  zero_noise = False,
                   asd = False):
     """
-    Generate a time series with a given power spectraul density 
+    Generate a time series with a given power spectral density 
 
     Parameters
     ----------
@@ -53,8 +50,7 @@ def generate_data(f,
     # f, psd = np.loadtxt(psd_file, unpack=True)
     if asd is True : psd *= psd
     # generate an interpolant for the PSD
-    #psd_int = interp1d(f, psd, bounds_error=False, fill_value= 'extrapolate')
-    psd_int = interp1d(f, psd, bounds_error=False, fill_value= 0.) #proposed change
+    psd_int = interp1d(f, psd, bounds_error=False, fill_value='extrapolate')
     df      = 1 / T
     N       = int(sampling_rate * T)
     times   = np.linspace(0, T, N) 
@@ -66,7 +62,7 @@ def generate_data(f,
     
 
     # generate the FD noise
-    frequencies = df * np.linspace(kmin, kmax, int(N / 2 + 1)) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
+    frequencies = df * np.arange(kmin, kmax) #df * N / 2 is Ny frequency, + 1 needed because arange cuts last term
     frequency_series = np.zeros(len(frequencies), dtype = np.complex128)
 
 
@@ -74,9 +70,7 @@ def generate_data(f,
     frequency_series = sigma * (np.random.normal(0, 1, len(sigma)) + 1j * np.random.normal(0, 1, len(sigma)))
       
     # inverse FFT to return the TD strain
-    time_series = np.fft.irfft(frequency_series) * df * N 
+    time_series = np.fft.irfft(frequency_series, n=N) * df * N
     return times, time_series, frequencies, frequency_series, psd_int(frequencies)
 
 
-
-    

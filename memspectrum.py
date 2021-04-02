@@ -161,7 +161,7 @@ class optimizer:
 
         Returns
         -------
-        TYPE
+        'np.float'
             The value of OBD optimizer.
 
         """
@@ -170,6 +170,21 @@ class optimizer:
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
     
     def _Fixed(self, m):
+        """
+        Returns a fixed recursive order m. Is implemented via a monotonically
+        decreasing loss function
+
+        Parameters
+        ----------
+        m : 'np.int':
+            The selected recursive order
+
+        Returns
+        -------
+        'np.float'
+            The value of the loss functiona at order m
+
+        """
         return 1./m
 
 class MESA(object):
@@ -508,22 +523,6 @@ class MESA(object):
             (Shape (N,))   
         """
         c = correlate(self.data, self.data)[self.N-1:self.N+self.mmax+1] #(M,) #very fast scipy correlation!!
-
-            #this if is just for showing that the two methods give the same results
-            #can remove, onve we are all convinced that the new method works
-        if False:
-            c_slow = np.zeros(self.mmax + 2, dtype = self.data.dtype)
-
-            for j in range(self.mmax + 2):
-                c_slow[j] = np.dot(self.data[: self.N - j],self.data[j : ])
-            print("The two methods agree? ",np.allclose(c_slow,c))
-
-            import matplotlib.pyplot as plt
-            plt.plot(c, label = "scipy")
-            plt.plot(c_slow, label = "slow")
-            plt.legend()
-            plt.show()
-
         c[0] *= self.regularisation
         #Initialize variables
         a = [np.array([1])]
@@ -668,14 +667,6 @@ class MESA(object):
 
             den = convolve(f,f[::-1], 'valid')[0] + convolve(b,b[::-1], 'valid')[0]
             k = - 2 * convolve(f,b[::-1], 'valid')[0] / den
-
-            if False:
-                print(len(f))
-                den_old = np.dot(f, f) + np.dot(b, b)
-                k_old = - 2 * np.dot(f.T, b) / den
-                print(den, den_old)
-                print(k, k_old)
-                print(np.allclose(den, den_old, atol = 0), np.allclose(k_old,k, atol = 0))
             
             a_k.append(self._updatePredictionCoefficient(a_k[i], k))
             P.append(P[i] * (1 - k * k.conj()))
@@ -729,7 +720,7 @@ class MESA(object):
         p : 'int'
             Order of the autoregressive process that define the PSD
         """
-        return self.a_k.size - 1 #why -1???
+        return self.a_k.size - 1 
     
     def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, seed = None, verbose = False):
         """
