@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='memspectrum',
-    version='1.1.0',
+    version='1.1.0.post',
     author='Alessandro Martini',
     author_email='martini.alessandr@gmail.com',
     packages=['memspectrum'],

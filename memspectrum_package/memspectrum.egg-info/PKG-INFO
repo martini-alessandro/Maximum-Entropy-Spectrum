@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: memspectrum
-Version: 1.1.0
+Version: 1.1.0.post0
 Summary: maximum entropy spectral analysis
 Home-page: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/
 Author: Alessandro Martini
@@ -17,7 +17,7 @@ Description: memspectrum
         
         **Licence** CC BY 4.0
         
-        **Version** 1.1.0
+        **Version** 1.1.0.post
         
         MAXIMUM ENTROPY ESTIMATION ALGORITHM FOR ACCURATE PSD COMPUTATION
         =================================================================
@@ -140,7 +140,7 @@ Description: memspectrum
         	f, psd = (whathever psd and frequency array you like)
         	time, time_series, frequency, frequency_series, psd = generate_data(f, psd, T, sampling_rate)
         	
-        T represent the time length of the observation and sampling rate is equivalent to 1 / dt, with dt the sampling interval
+        where T represents the time length of the observation and the sampling rate is equivalent to the inverse of the sampling interval
          
         
         Installation & documentation
