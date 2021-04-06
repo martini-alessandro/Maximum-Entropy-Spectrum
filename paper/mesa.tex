@@ -49,10 +49,11 @@ superscriptaddress,10pt]{revtex4-1}
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ABSTRACT
 \begin{abstract}
-Burg method of Maximum Entropy Spectral Analysis (MESA) provides a powerful tool to perform spectral estimation of a time-series. The method is a generalization of Jaynes maximum entropy principle and provides the estimate for the spectrum in terms of the coefficients of some autoregressive process AR(p) of order $p$.
+The Maximum Entropy Spectral Analysis (MESA) method, developed by Burg, provides a powerful tool to perform spectral estimation of a time-series. The method relies on a generalization of Jaynes' maximum entropy principle and provides the means of inferring the spectrum of a stochastic process in terms of the coefficients of some autoregressive process AR(p) of order $p$.
 A closed form recursive solution provides an estimate of the autoregressive coefficients as well as of the order $p$ of the process.
-We provide a ready to use implementation of the algorithm in the form of a python package `memspectrum`. We characterize our code performing a power spectral density analysis on some syntethic generated data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the traditional Welch algorithm, using both syntethic data and real gravitational waves data from the LIGO-Virgo collaboration.
-We find that, when compared to the Welch's method, the Burg's method provides a power spectral density (PSD) estimation with a systematically lower variance. This is particularly manifest in the case of a little number of datapoints, making Burg method most suitable to work in this regime.
+We provide a ready-to-use implementation of the algorithm in the form of a python package `memspectrum`. We characterize our implementation by performing a power spectral density analysis on syntethic data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the traditional Welch algorithm, using both syntethic data and real gravitational wave data from the LIGO-Virgo collaboration.
+We find that, when compared to Welch's method, Burg's method provides a power spectral density (PSD) estimation with a 
+systematically lower variance. This is particularly manifest in the case of a little number of data points, making Burg method most suitable to work in this regime.
 %Several methods are characterized on synthetic noise having a known power spectral density (PSD) via the computation of the percentage error and then compared.  
 
 \end{abstract}
@@ -77,7 +78,7 @@ We find that, when compared to the Welch's method, the Burg's method provides a 
 
 \section{Introduction}
 
-The study of the properties of  stochastic processes is a crucial task in many fields of physics and mathematical physics \sschmidt{Here we should make some examples... Or at least cite something}.
+The study of the properties of stochastic processes is a crucial task in many fields of physics and mathematical physics \sschmidt{Here we should make some examples... Or at least cite something}.
 A particularly interesting class of stochastic processes are the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the autocorrelation function 
 \begin{equation}
 	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
