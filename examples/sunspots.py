@@ -13,7 +13,7 @@ if __name__ == "__main__":
     datafile = "data/zuerich-monthly-sunspot-numbers-.tsv"
     _, data = np.genfromtxt(datafile, unpack = True)
     T = len(data)
-    print([d for d in data])
+    #print([d for d in data])
     dt = 1.
     srate = 1./dt
     N = data.shape[0]
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     t = np.arange(0,T,step=dt)
     M = MESA()
     P, ak, _ = M.solve(data, method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
-    print("p = {0}".format(len(ak)))
+    print("Length of the selected filter: p = {0}".format(len(ak)))
     PSD, _     = M.spectrum(dt)[:N//2]
 
     fig = plt.figure(1)

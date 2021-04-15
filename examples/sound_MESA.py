@@ -74,22 +74,7 @@ plt.yscale('log')
 plt.xlabel("frequency (Hz)")
 plt.legend()
 
-#comparison between two different values of N
-PSD_N, f_PSD_N = M._spectrum(dt, len(data_MESA))
-PSD_ak, f_PSD_ak = M._spectrum(dt, len(M.a_k))
-
-
-plt.figure()
-plt.title("Comparison between two different choices of N")
-plt.loglog(f_PSD_N[:int(len(data_MESA)/2)+1],PSD_N.real[:int(len(data_MESA)/2)+1], c='r')
-plt.loglog(f_PSD_ak[:int(len(M.a_k)/2)+1], PSD_ak.real[:int(len(M.a_k)/2)+1], c = 'b')
-plt.axvline(1./(dt*len(data_MESA)))
-plt.axvline(1./(dt*len(M.a_k)))
-plt.axvline(1./(dt*2.))
-
 plt.show()
-
-
 
 
 

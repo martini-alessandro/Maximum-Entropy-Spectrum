@@ -40,7 +40,7 @@ except:
 
 #################
 
-class optimizer:
+class loss_function:
 
     def __init__(self, method):
         """
@@ -88,7 +88,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of FPE optimizer.
+            The value of FPE loss function.
 
         """
         return P[-1] * (N + m + 1) / (N - m - 1)
@@ -110,7 +110,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of AIC optimizer.
+            The value of AIC loss function.
 
         """
         return np.log(P[-1]) + (2 * m) / N
@@ -132,7 +132,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of CAT optimizer.
+            The value of CAT loss function.
 
         """
         if m == 0:
@@ -162,7 +162,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of OBD optimizer.
+            The value of OBD loss function.
 
         """
         P_m = P[-1]
@@ -451,7 +451,7 @@ class MESA(object):
             Default is True. Breaks the iteration if there is no new global 
             maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
-            Has no effect with "Fixed" optimizer.
+            Has no effect with "Fixed" loss function.
         
         verbose: 'boolean'
             Whether to print the status of the mesa solution
@@ -499,7 +499,7 @@ class MESA(object):
             print("Method {0} unknown! Valid choices are 'Fast' and 'Standard'".format(method))
             exit(-1)
         
-        self._optimizer = optimizer(optimisation_method)
+        self._loss_function = loss_function(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
         del self.data
         return self.P, self.a_k, self.optimization
@@ -547,8 +547,8 @@ class MESA(object):
             #Append values to respective lists
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
-            #Compute optimizer value for chosen method
-            optimization.append( self._optimizer(P, a[-1], self.N, i + 1))
+            #Compute loss function value for chosen method
+            optimization.append( self._loss_function(P, a[-1], self.N, i + 1))
             
             is_nan = np.isnan(new_a).any() #checking for nans
             if np.abs(k)>1 or is_nan:
@@ -673,7 +673,7 @@ class MESA(object):
             _f = f + k * b
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
-            optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
+            optimization.append(self._loss_function(P, a_k[-1], self.N, i + 1))
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) #+ 1

@@ -6,7 +6,7 @@ Fourier Transform of some coefficients a_k, known as forward prediction error co
 The a_k coefficients are computed recursively by the use of Levinson Recursion. The role of 
 MESA class is to solve the recursion. 
 Various method exist to estimate the recursive order that better approximate the power spectral 
-density.  A second class is inserted to implement different optimzers to choose the recursive order. 
+density.  A second class is inserted to implement different loss functions to choose the recursive order. 
 
 The a_k coefficients are found to be the "best linear predictor" for the time series under study,
 their computation via the former method is equivalent to a least square fitting with an autoregressive
@@ -48,12 +48,11 @@ M = MESA()
 
 _________
 
-## class: optimizer
+## class: loss_function
 	
-	Implements one of the various method to estimate the best recursive order. Once an optimizer is selected, the order is estimated as the order that minimizes the given functional relation. 
-	This class is not to be called and cooperates with mesa. 
-	
-	
+	Implements one of the various method to estimate the best recursive order.
+	The order is etimated as to minimize the selected loss function
+	This class is not intented to work as a stand-alone, but cooperates with mesa. 
 
 _________
 
@@ -85,7 +84,7 @@ P, a_k, opt = M.solve(data) 	#Solve method and returns the
                             #coefficients and values of the opimizer
 ```
 	
-Defaul argument for solve uses Akaike's Final Prediction Error (FPE) optimizer and the fast algorithm 
+Defaul argument for solve uses Akaike's Final Prediction Error (FPE) loss function and the fast algorithm 
 	
 
 #### Computing spectrum - two different ways 
