@@ -51,9 +51,9 @@ superscriptaddress,10pt]{revtex4-1}
 \begin{abstract}
 The Maximum Entropy Spectral Analysis (MESA) method, developed by Burg, provides a powerful tool to perform spectral estimation of a time-series. The method relies on a Jaynes' maximum entropy principle and provides the means of inferring the spectrum of a stochastic process in terms of the coefficients of some autoregressive process AR($p$) of order $p$.
 A closed form recursive solution provides an estimate of the autoregressive coefficients as well as of the order $p$ of the process.
-We provide a ready-to-use implementation of the algorithm in the form of a python package `memspectrum`. We characterize our implementation by performing a power spectral density analysis on syntethic data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the ubiquitous Welch algorithm, using both syntethic data and real gravitational wave data from the LIGO-Virgo collaboration.
+We provide a ready-to-use implementation of the algorithm in the form of a python package \texttt{memspectrum}. We characterize our implementation by performing a power spectral density analysis on syntethic data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the ubiquitous Welch algorithm, using both syntethic data and real gravitational wave data from the LIGO-Virgo collaboration.
 We find that, when compared to Welch's method, Burg's method provides a power spectral density (PSD) estimation with a 
-systematically lower variance. This is particularly manifest in the case of a little number of data points, making Burg's method most suitable to work in this regime.
+systematically lower variance and bias. This is particularly manifest in the case of a little number of data points, making Burg's method most suitable to work in this regime.
 
 \end{abstract}
 	
@@ -563,14 +563,14 @@ For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we emp
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
 For the Welch algorithm, we use the standard implementation provided by the python library \texttt{scipy} \cite{numpy,scipy}.
 
-First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time length is large.
-We can also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate expecially for short time series. This behaviour is more evident if the low frequencies are considered. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
-This is true in the low frequency sector, where the estimate requires longer time windows.
-Another important element is the estimation noise: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
+First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time scale is large. Indeed, the higher frequencies are alway better resolved than the lower ones: there is alway more information in the high frequency part of a signal.
 
-As already discussed Welch, method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results. We want to stress that this fact doesn't invalidate our discussion: one of the most appealing advantages of MESA is the absence of fine tuning.
-A more accurate reconstruction with Welch can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  
-The result does not change much by changing the hyperparameters required for Welch algorithm.
+We also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate even in the case of short time series. Although observed at every frequency, this behaviour is more evident in the low frequency region. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
+
+Another important element is the noise noise of the spectral estimation: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
+
+Finally, as already discussed Welch, method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results. We want to stress that this fact doesn't invalidate our discussion: one of the most appealing advantages of MESA is the absence of fine tuning.
+%A more accurate reconstruction with Welch can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  The result does not change much by changing the hyperparameters required for Welch algorithm.
 
 
 \begin{figure}
@@ -588,9 +588,8 @@ The result does not change much by changing the hyperparameters required for Wel
 
 \section{Applications} \label{sec:applications}
 \subsection{Temperature Time Series} \label{sec:temp_timeseries}
-We apply our code to the study of the temperature time series. This will allow to test the code performance on a different time series, of great importance in physics. We will also assess the quality of the forecasting predictions: this task has a great impact also on practical applications.
-We used the historical reanalysis data from the ``ERA5-Land hourly data from 1981 to present" dataset, downloaded from the Climate Data Store \cite{ERA5_dataset}
-
+We apply our code to the study of the temperature time series. This will allow to test our model performance on an example of great importance in physics. We will also assess the quality of the forecasting predictions: this task has a great impact also on practical applications.
+We used the historical reanalysis data from the ``ERA5-Land hourly data from 1981 to present" dataset, downloaded from the Climate Data Store \cite{ERA5_dataset}.
 Data refers to the temperature measure at coordinates $\textrm{N}\;\ang{45;5;} \;\; \textrm{E}\;\ang{9;1;}}$, corresponding about to the city of Milan, Italy. The temperature is measured once per hour for almost 31 years from 31st December 1989 to 30th November 2020.
 
 In fig.~\ref{fig:temp_spectrum}, we compute the spectrum over all the data. We employ both FPE and CAT loss functions.
@@ -603,20 +602,18 @@ In analogy as what observed for the peak at $f_D$, in the CAT spectrum we observ
 
 The failure of FPE in catching the low frequency trend can be understood by looking at fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often understimating badly the actual value.
 In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
-Clearly, the autoregressive process selected by FPE cannot produce a meaningful prediction on the timescale of a few months and for this reason it is unable to capture the peak at $f_{yr}$. In other words, the model is too simple to capture \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
+Clearly, the autoregressive process selected by FPE cannot produce a meaningful prediction on the timescale longer than a few weeks and for this reason it is unable to capture the peak at $f_{yr}$. In other words, the model is too simple to model \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
 On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour.
 The ``actual" length of the autoregressive process should be closer to the choice of CAT.
 
 We now assess the accuracy of the forecasting of new observations of the time series.
-Based on actual data, we try to predict future values as described in sec.~\ref{sec:forecasting}. We produce $N =100$ indepedent predictions and we compute the median as well as the $90\%$ confidence interval. This is compared with the actual measured temparature values.
+Based on actual data, we try to predict future values as described in sec.~\ref{sec:forecasting} (of course the MESA is performed with CAT loss function). We produce $N =100$ indepedent predictions and we compute the median as well as the $90\%$ confidence interval. This is compared with the actual measured temparature values.
 The predictions spans a two years range of time.
 We report our results in fig.~\ref{fig:temp_spectrum}.
 
 We note the observed difference is always well included in the $90\%$ confidence interval: the forecasting predictions seem reliable.
 On the other hand, the confidence interval is pretty large (almost as large as $\SI{15}{K}$), thus making ``easy" for the actual data to fit the predictions.
 Indeed, the prediction model, while suitable for spectral estimation, is nothing more than a linear regression (plus noise term). Such a simple model hardly catches the complex trend in the variability of the temperature daily trend during a year. For more precise predictions, probably one should consider nonlinear regression model, tapping into the wealth of non linear predictors offered by the field of Deep Lerning.
-
-\sschmidt{Data should be divided in train and test set for the purpose of forecasting!!}
 
 \begin{figure}
 	\caption{Spectrum for the historical temperature time series. The two lines refers to different loss functions (CAT and FPE); the inset shows the harmonics of the fundamental frequency of a day. Two vertical lines are drawn in correspondence to the frequency $f_D$ of a day and $f_{yr}$ of a year.}
@@ -631,14 +628,14 @@ Indeed, the prediction model, while suitable for spectral estimation, is nothing
 \end{figure}
 
 \subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
-As a last example of and application of the maximum entropy method on real data, we come back to the strain produced by the LIGO-Virgo interferometers and we forecast the future observations. The spectral analysis is performed with CAT and FPE loss functions on $\SI{1000}{s}$ of data \cite{Abbott_2021} sampled at $\SI{4096}{Hz}$ observed at Livingston observatory starting from GPS time $1164603392$.
+As a last example of an application of the maximum entropy method on real data, we come back to the strain produced by the LIGO-Virgo interferometers and we forecast the future observations. The spectral analysis is performed with CAT and FPE loss functions on $\SI{1000}{s}$ of data \cite{Abbott_2021} sampled at $\SI{4096}{Hz}$ observed at Livingston observatory starting from GPS time $1164603392$.
 We then forecast the following $\SI{100}{s}$ of observations with the model optimized with CAT. The results are shown in fig.~\ref{fig:LIGO_forecast}.
 
 By looking at the figure, we note that the forecasted prediction is always in the $90\%$ confidence interval.
 The confidence interval, however, is very broad and the prediction is not very accurate (being the same order of magnitude of the strain).
 By looking at the standard deviation $\sigma$ of the predictions (bottom panel in fig.~\ref{fig:LIGO_forecast}), we note that it increases very quickly in the first $\SI{0.5}{s}$ and then its trend stabilizes to a constant value.
 The order of the autoregressive process selected is $p_{CAT} = 57766 \sim \SI{14}{s}$, which is much larger than the region in which $\sigma$ is small $\sim \SI{0.2}{s}$. This means that the series is very difficult to predict: the knowledge of past observations is not very helpful in predicting future observations.
-Similar performances in the sigma are observed also with the FPE model: in this case FPE selects a large prediction filter $p_{FPE} = 29924$ , similar to those selected by CAT.
+Similar performances in $\sigma$ are observed also with the FPE model: in this case FPE selects a large prediction filter $p_{FPE} = 29924$ , similar to those selected by CAT.
 
 Despite poor predictions on long timescales, the autoregressive process obtained with MESA still can be useful on short timescales. Indeed, a precise prediction of the strain time series can be beneficial in anomaly detection and removal of glitches. The predictions can form an expected baseline for the strain; any anomaly (i.e. a glitch or even a transient of physical origin) can show up as a large departure from expected trend.
 Moreover, if a glitch is detected, its shape can be estimated (as well as the confidence level) by subracting the expected signal with the actual signal.
@@ -658,7 +655,7 @@ This opens a promising path in GW data analysis and other fields of physics migh
 
 \section{Final remarks and future prospects} \label{sec:conclusion}
 \sschmidt{Check this section}
-We presented a case study of the application of Maximum Entropy principle in the realm of spectral estimation: it provides a closed form estimation of the power spectral density, bridging the spectral analysis with the study of autoregressive processes. The method has the towfold advantage of avoiding any unjustified assumption on the observed time series and of providing a simple context for forecasting the time series. We provided a ready to use python code, called `memspectrum' and we performed numerical studies of its performance.
+We presented a case study of the application of Maximum Entropy principle in the realm of spectral estimation: it provides a closed form estimation of the power spectral density, bridging the spectral analysis with the study of autoregressive processes. The method has the towfold advantage of avoiding any unjustified assumption on the observed time series and of providing a simple context for forecasting the time series. We provided a ready to use python code, called \texttt{memspectrum} and we performed numerical studies of its performance.
 We investigated the use of different loss functions for the purpose of correctly estimating the autoregressive order for the estimation and we found that different loss functions are required for different situations.
 Finally, we performed a comparison between PSDs computed with MESA and standard Welch's algorithm and we applied our method to several time series of interest in physics.
 
@@ -672,10 +669,10 @@ This can make the approach particularly conveniente in the context of Bayesian p
 \begin{equation}
 	\mathcal{L}(d_t | \theta) \propto exp\left[ -\frac{1}{2} \frac{(\tilde{d}(f)- \tilde{x}(f;\theta))^2}{S(f)} \right]
 \end{equation}
-where $\tilde{\hphantom{a}}$ denotes Fourier transform and $x_t(\theta)$ is a prediction for the time series dependent on some parameter $\theta$.
-This likelihood corresponds to looking for a signal $x_t$ into noisy data.
+where $\tilde{\hphantom{a}}$ denotes Fourier transform and $x_t(\theta)$ is a prediction for a signal hidden in the observed time series $d(t)$, dependent on some parameter $\theta$.
+This likelihood corresponds to looking for a signal $x_t$ into some (possibly very) noisy data.
 Usually the PSD is estimated offline on a large batch of data, that might also contain the signal to analyse and in general it might not reflect the structure of noise in the time slice to analyse.
-MESA can offer a way out fromm this problem: at each evaluation od the likelihood, a new spectral analysis is performed by computing the PSD on $d_t-x_t$.
+MESA can offer a way out from this problem: at each evaluation of the likelihood, a new spectral analysis is performed by computing the PSD on $d_t-x_t$.
 In this way, the PSD would depend also on $\theta$ and would effectively model the residual of noise subtracted with the signal.
 %To compute the posterior distribution for the parameters the knowledge of prior distributions and Likelihood for noise is required. A full description for noise can be obtained in Fourier Domain by the choice of the Whittle Likelihood \eqref{eq:Whittle}, that is completely determined by the knowledge of the PSD for noise. While traditional methods might be instable with respect to the hypothesis (such as Welch) or require a Large number of prior assumptions, MESA represents a stable and parsimonious way to characterize noise and compute posterior distributions.  
 
@@ -690,7 +687,8 @@ We believe that Maximum Entropy Spectral Analysis, despite being an ``old" theor
 
 
 	\begin{acknowledgments}
-We are grateful to S.~Shore and PLEASE ADD WHOEVER WE INTERACTED WITH IN THIS PAPER for useful discussions. This research has made use of data, software and/or web tools obtained from the Gravitational Wave Open Science Center (\url{https://www.gw-openscience.org/}), a service of LIGO Laboratory, the LIGO Scientific Collaboration and the Virgo Collaboration. LIGO Laboratory and Advanced LIGO are funded by the United States National Science Foundation (NSF) as well as the Science and Technology Facilities Council (STFC) of the United Kingdom, the Max-Planck-Society (MPS), and the State of Niedersachsen/Germany for support of the construction of Advanced LIGO and construction and operation of the GEO600 detector. Additional support for Advanced LIGO was provided by the Australian Research Council. Virgo is funded, through the European Gravitational Observatory (EGO), by the French Centre National de Recherche Scientifique (CNRS), the Italian Istituto Nazionale di Fisica Nucleare (INFN) and the Dutch Nikhef, with contributions by institutions from Belgium, Germany, Greece, Hungary, Ireland, Japan, Monaco, Poland, Portugal, Spain.
+We are grateful to S.~Shore, M.~Maugeri and C.~Rossi for useful discussions.\\
+This research has made use of data, software and/or web tools obtained from the Gravitational Wave Open Science Center (\url{https://www.gw-openscience.org/}), a service of LIGO Laboratory, the LIGO Scientific Collaboration and the Virgo Collaboration. LIGO Laboratory and Advanced LIGO are funded by the United States National Science Foundation (NSF) as well as the Science and Technology Facilities Council (STFC) of the United Kingdom, the Max-Planck-Society (MPS), and the State of Niedersachsen/Germany for support of the construction of Advanced LIGO and construction and operation of the GEO600 detector. Additional support for Advanced LIGO was provided by the Australian Research Council. Virgo is funded, through the European Gravitational Observatory (EGO), by the French Centre National de Recherche Scientifique (CNRS), the Italian Istituto Nazionale di Fisica Nucleare (INFN) and the Dutch Nikhef, with contributions by institutions from Belgium, Germany, Greece, Hungary, Ireland, Japan, Monaco, Poland, Portugal, Spain.
 	\end{acknowledgments}
 
 \pagebreak
@@ -703,7 +701,7 @@ We write instead the PSD $S(f)$ as the Fourier Transform of the sample autocorre
 \begin{equation}
     S(f) = \frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{- \imath 2 \pi n \Delta t},
 \end{equation}
-and the entropy gain expression eq.~\eqref{eq:EntropyGain} becomes:
+and, plugging it in the entropy gain expression eq.~\eqref{eq:EntropyGain}, we obtain:
 \begin{equation}
     \Delta H = \int_{-Ny}^{Ny}  
     \log\left(\frac{1}{2 Ny}\sum_{n = -\infty}^{\infty} \bar r_n e^{-\imath 2 \pi f n \Delta t} 
@@ -716,9 +714,9 @@ Excplitely they are:
 \begin{equation} \label{eq:lamdas}
       \lambda_s \coloneqq \frac{\delta H}{\delta \bar r_s} = \frac{1}{2Ny}\int_{-Ny}^{Ny} S(f)^{-1}e^{-\imath 2 \pi f s \Delta t } df
 \end{equation} 
-and we will show that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of such coefficients. Thenm the determination of the values for the $\lambda_s$ uniquely solves the problem of power-spectral density estimation.
+and we will show that $S(f)^{-1}$ can be written as a Fourier Expansion in terms of such coefficients. Then, the determination of the values for the $\lambda_s$ uniquely solves the problem of power-spectral density estimation.
 
-Some properties for the coefficients can be worked out easily. First, since $S(f)$ is positive definite the $\lambda_s$ show the property 
+Some properties for the coefficients can be worked out easily. First, since $S(f)$ is real, the $\lambda_s$ show the property 
 \begin{equation}
 	\nonumber 
 	\lambda_s = \lambda_{-s}^*. 
@@ -749,7 +747,7 @@ It is easy to show that if $z_0$ is a root for the polynomial $(z_0^*)^{-1}$ is 
 \end{equation}
 with $a_0 = 1$ and $\Delta t$ the uniform sampling interval for the time series. The vector obtained as $(1, a_1, \dots, a_N)$ is the prediction error filter. The power spectral density $S(f)$ is uniquely determined if both the prediction error filter and $P_N$ coefficients are computed.
 
-To compute the $a_s$ is convenient to plug into eq.~\eqref{eq:MaxConstraint} the Laurent Polynomial exansion for $S(f)$ eq.~\eqref{eq:MESApsd_appendix} and then integrating over $z$. In this way the equation becomes:
+To compute the $a_s$ is convenient to plug into eq.~\eqref{eq:MaxConstraint} the Laurent Polynomial exansion for $S(f)$ eq.~\eqref{eq:MESApsd_appendix} and then integrating over $z$ (taking values on ${\mathbb S^1}$). In this way the equation becomes:
 \begin{equation}
     \label{eq:contourintegral}
    \frac{P_N}{2 \pi \imath} \oint _{\mathbb S^1}\frac{z^{-s - 1}}{\sum_{n = 0}^N a_n z^n \sum_{n = 0}^N a^*_n z^{-n}}dz = \bar r_s. 
@@ -793,7 +791,7 @@ and
 0 \\ b_{N -1}^* \\ \vdots \\ b^*_1 \\ 1
 \end{pmatrix}. 
 \end{equation}
-where $b$ is the forward prediction error coefficients at order $N-1$. 
+where $b$ holds the value of the $a_s$ coeffiecients at order $N-1$. 
 The 0-th order element can be easily initialized reminding that $a_0 = 1$ (always) and that $P_0$ can be determined from \eqref{eq:errorFilter1}.
 Its values turns out to be: 
 \begin{equation}
@@ -808,6 +806,7 @@ These expressions allow us to compute $\vec a$ and $P_N$ to any order by simply 
 Burg's method for spectral analysis is solved via Levinson is implmenteed in the released \texttt{memspectrum} package.
 Another faster recursion method is available in \cite{Vos} and it is also available in \texttt{memspectrum}.
 
+\newpage
 
 	\bibliography{Bibliography.bib}
 	\bibliographystyle{ieeetr}
