@@ -551,38 +551,37 @@ On the other hand, CAT loss function shows a different behaviour. The selected a
 Of course, CAT does not perform a good job in reconstructing an autoregressive process. However, for high order autoregressive process the error introduced by CAT is more tolerable than the error introduced by FPE and OBD. This is a good reason to prefer CAT optimizer in such situations (see sec.~\ref{sec:temp_timeseries} for another example of this).
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
-\sschmidt{Make a good plot here...}
 It is really interesting to have a qualitative comparison between the performance of the MESA and of the standard Welch algorithm.
 We perform such comparison on the spectrum of LIGO (even though similar conclusions can be drawn from any other PSD).
 
-We perform two sets of experiments.
-In the first one (see fig.~\ref{fig:mem_welch_fakedata}), we simulate data from the realesed LIGO intererferometer PSD and we make the comparison with them: this is to ensure the we have a baseline PSD to compare the data with.
-In a second experiment (see fig.~\ref{fig:mem_welch_realdata}), we employ the data released to the public by the LIGO/Virgo collaboration \cite{Abbott_2021}.
-In each experiment, we vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
-For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we employ a Tukey window, an overlap fraction of $0.5$ for the segments and a length of segments $L = 512, 1024, 2048, 8192, 32768$ datapoints.
+In order to ensure the we have a baseline PSD to compare the data with, we simulate data from the realesed LIGO intererferometer PSD and we employ both Welch's method and MESA to estimate the PSD.
+We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
+For the MESA algorithm, we employ FPE optimizer. For the Welch algorithm, we employ a Tukey window, an overlap fraction of $0.5$ for the segments and a length of segments $L = 512, 1024, 2048, 8192, 32768$ datapoints, depending on the observation time.
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
 For the Welch algorithm, we use the standard implementation provided by the python library \texttt{scipy} \cite{numpy,scipy}.
+The estimations with MESA and Welch's algorithm are reported in fig.~\ref{fig:MESA_LIGO_data} and fig.~\ref{fig:welch_LIGO_data} respectively.
 
 First of all, we note that using a longer time series results in a more stable estimation of the PSD, especially in the low frequency sector. This is somehow obvious: more data provide more information available for spectral estimation. This fact is more important at lower frequencies, where the natural time scale is large. Indeed, the higher frequencies are alway better resolved than the lower ones: there is alway more information in the high frequency part of a signal.
 
-We also note that MESA converges to the real spectrum faster than Welch method, providing a better estimate even in the case of short time series. Although observed at every frequency, this behaviour is more evident in the low frequency region. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
+We also note that MESA converges to the ``real" spectrum much faster than Welch's method, providing a better estimate even in the case of short time series. Although observed at every frequency, this behaviour is more evident in the low frequency region. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
+Furthermore, MESA method is able to model all the details of the peak at around $\sim \SI{40}{Hz}$ (even with $T=\SI{100}{s}$), while the Welch's algorithm fails to do so even with an observation time of $T=\SI{1000}{s}$.
 
-Another important element is the noise noise of the spectral estimation: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function. If longer datasets are considered, even if MESA is found to be a little more accurate and less noisy than Welch, all of the above differences become negligible. 
+Another important element is the noise of the spectral estimation: we find that the PSD estimation provided by the Welch's method is more noisy (i.e. has a large number of spurious peaks) rather than PSD provided by MESA with FPE loss function (the picture might change if instead CAT loss function is employed). This is especially true at high frequencies and for long observation times $T$.
 
 Finally, as already discussed Welch, method is very instable with respect to the windowing choices we made. We tried to find the best compromize between noise and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results. We want to stress that this fact doesn't invalidate our discussion: one of the most appealing advantages of MESA is the absence of fine tuning.
 %A more accurate reconstruction with Welch can only be obtained introducing a greater amount of noise: a greater accuracy requires longer sub-segments of data, reducing the number of spectra over which we average. Reducing noise require the opposite choices, and we can conclude that MESA represents a better compromise between noise and accuracy than Welch's method.  The result does not change much by changing the hyperparameters required for Welch algorithm.
 
 
-\begin{figure}
-	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{synthetic} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$. In dashed black is reported the true PSD (from which data are generated).}
-	\label{fig:mem_welch_fakedata}
-	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_True.pdf}
+\begin{figure}[!t]
+	\caption{Comparison between analytic (dashed line) and estimated (red line) spectrum. The estimation is perfomed with Maximum Entropy method on \textit{synthetic} data. The estimation is performed with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
+	\label{fig:MESA_LIGO_data}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_MESA.pdf}
 \end{figure}
 
-\begin{figure}
-	\caption{Comparison between PSD estimation with Welch method (blue) and Maximum Entropy (red) for \textit{real} LIGO data. The estimation is based data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
-	\label{fig:mem_welch_realdata}
-	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_overall_fake_False.pdf}
+\begin{figure}[!t]
+	\caption{Comparison between analytic (dashed line) and estimated (green line) spectrum. The estimation is perfomed with Welch's method on \textit{synthetic} data. The estimation is performed with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
+	\label{fig:welch_LIGO_data}
+	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_Welch.pdf}
 \end{figure}
 
 
@@ -628,7 +627,9 @@ Indeed, the prediction model, while suitable for spectral estimation, is nothing
 \end{figure}
 
 \subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
-As a last example of an application of the maximum entropy method on real data, we come back to the strain produced by the LIGO-Virgo interferometers and we forecast the future observations. The spectral analysis is performed with CAT and FPE loss functions on $\SI{1000}{s}$ of data \cite{Abbott_2021} sampled at $\SI{4096}{Hz}$ observed at Livingston observatory starting from GPS time $1164603392$.
+As a last example of an application of the maximum entropy method on real data, we come back to the strain produced by the LIGO-Virgo interferometers and we forecast the future observations.
+We employ the data released to the public by the LIGO/Virgo collaboration \cite{Abbott_2021}.,
+The spectral analysis is performed with CAT and FPE loss functions on $\SI{1000}{s}$ of data \cite{Abbott_2021} sampled at $\SI{4096}{Hz}$ observed at Livingston observatory starting from GPS time $1164603392$.
 We then forecast the following $\SI{100}{s}$ of observations with the model optimized with CAT. The results are shown in fig.~\ref{fig:LIGO_forecast}.
 
 By looking at the figure, we note that the forecasted prediction is always in the $90\%$ confidence interval.
