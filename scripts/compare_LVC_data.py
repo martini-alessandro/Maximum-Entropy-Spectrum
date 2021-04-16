@@ -15,6 +15,8 @@ compute = False
 generate_fake_data = False
 use_fake_data = True
 
+plot_welch = True #if plot_same is true, this decides whether to plot welch method or MESA
+
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
 true_PSD_file = 'GWTC1_GW150914_PSDs.dat'
@@ -80,7 +82,7 @@ if plot_same:
 		N = PSDs.shape[0]
 		freqs, PSD_MESA, PSD_Welch = PSDs[:int(N/2),0], PSDs[:int(N/2),1], PSDs[:int(N/2),2]
 
-		offset = .1
+		offset = 1.
 		if use_fake_data: step = 4.2
 		else: step = 4.
 		
@@ -88,27 +90,31 @@ if plot_same:
 		PSD_MESA =PSD_MESA/ 1e-41 *10**(step*i)*offset
 		PSD_Welch = PSD_Welch/ 1e-41 * 10**(step*i)
 
-		ax.loglog(freqs, PSD_Welch , c = 'g', zorder = 0, label = "Welch")
-		ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA")
+		if plot_welch:
+			filename = save_folder+"comparison_LVC_data_Welch.pdf".format(use_fake_data)
+			ax.loglog(freqs, PSD_Welch , c = 'g', zorder = 0, label = "Welch", lw = 0.5)
+		else:
+			filename = save_folder+"comparison_LVC_data_MESA.pdf".format(use_fake_data)
+			ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA", lw = 0.5)
 		
 		yticks.append(10**(step*i)/1000.)
 		print(yticks)
 		
 		if i == 0:
-			ax.legend(loc = 'upper center', ncol = 2+int(use_fake_data))
+			ax.legend(loc = 'upper center', ncol = 1, fontsize = 10)
 		
 		if use_fake_data:
-			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i), '--', c = 'k', zorder = 2)
-			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i)*offset, '--', c = 'k', zorder = 2, label = "True")
+			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i), '--', c = 'k', zorder = 2, lw = 0.75)
+			#ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i)*offset, '--', c = 'k', zorder = 2, label = "True", lw = 0.75)
 		
 	ax.set_xlim(20,1024)
 	ax.set_ylim(1e-8, 10**(step*len(T_list))/1000 )
 
 	tick_list = ['T = {} s'.format(t) for t in T_list]
-	ax.set_yticklabels(tick_list, rotation = 'vertical')
 	ax.set_yticks(yticks)
+	ax.set_yticklabels(tick_list, rotation = 'vertical', fontdict = {'verticalalignment':'center'})
+	ax.yaxis.set_tick_params(width=0)
 
-	filename = save_folder+"comparison_LVC_data_fake_{}.pdf".format(use_fake_data)
 	plt.savefig(filename)
 	print("Save file @ {}".format(filename))
 
