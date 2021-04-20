@@ -207,7 +207,7 @@ Some simple algebra shows that the time-domain multivariate Gaussian can be tran
 probability distribution:
 \begin{align}\label{eq:Whittle}
 p&\left((\tilde{x}_1, \ldots, \tilde{x}_n)\vert I\right) = \nonumber \\
-    &\frac{1}{\left(2 \pi \det S\right)^{k / 2}}\exp\left(-\frac{1}{2}\sum_{ij}\tilde{x}_i S^{-1}_{ij} \tilde{x}_j \right)\,,
+    &\frac{1}{\left(2 \pi \det S\right)^{n / 2}}\exp\left(-\frac{1}{2}\sum_{ij}\tilde{x}_i S^{-1}_{ij} \tilde{x}_j \right)\,,
 \end{align}
 where the matrix $S_{ij} = S_i \delta_{ij}$ is an $n\times n$ diagonal matrix whose elements are the PSD $S(f)$ calculated at frequency $f_i$.
 Many readers will recognise the familiar form of the Whittle likelihood that stands at the basis of the \emph{matched filter} method\cite{prob_information_theory}
