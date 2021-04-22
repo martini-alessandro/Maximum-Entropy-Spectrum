@@ -320,7 +320,7 @@ class MESA(object):
 
 
 
-    def spectrum(self, dt, frequencies = None, onesided = False): 
+    def spectrum(self, dt = 1., frequencies = None, onesided = False): 
         """
         Computes the power spectral density of the model. Default returns power 
         spectral density and frequency array automatically computed by sampling theory. 
@@ -343,10 +343,10 @@ class MESA(object):
         Returns: 
         ----------
         if no frequency array is given 
-            spectrum: 'np.ndarray'           
-                Two sided power spectral density (shape = (N,))
             frequencies: 'np.ndarray'      
                 Frequencies at which power spectral density is evaluated (shape = (N,))
+            spectrum: 'np.ndarray'           
+                Two sided power spectral density (shape = (N,))
             
         if frequency array is given:
             spectrum: 'np.ndarray'           
@@ -367,7 +367,7 @@ class MESA(object):
             if onesided:
                 return spec[:self.N//2] * np.sqrt(2), f_spec[:self.N//2]
             else:
-                return spec, f_spec
+                return f_spec, spec
         
         elif isinstance(frequencies, np.ndarray):
             if np.max(frequencies) > f_ny * 1.01: 

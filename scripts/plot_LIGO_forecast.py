@@ -82,9 +82,7 @@ fig = init_plotting()
 ax = fig.gca()
 
 N = M.N
-spec, f = M.spectrum(1./srate)
-spec = spec[:int(N/2)]
-f = f[:int(N/2)]
+f, spec = M.spectrum(1./srate, onesided = True)
 
 ax.loglog(f , spec, label = "CAT", c = 'b', zorder = 1)
 

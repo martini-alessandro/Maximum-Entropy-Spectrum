@@ -45,11 +45,11 @@ else:
 	M_FPE.load("seismic_model_FPE")
 
 N = int(T_train*srate)
-spec_FPE, f_FPE = M_FPE.spectrum(1./srate)
+f_FPE, spec_FPE = M_FPE.spectrum(1./srate)
 spec_FPE = spec_FPE[:int(N/2)]*1e8
 f_FPE = f_FPE[:int(N/2)]
 
-spec_CAT, f_CAT = M_CAT.spectrum(1./srate)
+f_CAT, spec_CAT = M_CAT.spectrum(1./srate)
 spec_CAT = spec_CAT[:int(N/2)]*1e8
 f_CAT = f_CAT[:int(N/2)]
 

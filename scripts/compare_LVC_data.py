@@ -119,6 +119,7 @@ if plot_same:
 	print("Save file @ {}".format(filename))
 
 	plt.show()
+	quit()
 	
 if plot:
 	if use_fake_data:

@@ -18,8 +18,8 @@ M_CAT.load("../climate_data/model_CAT_long")
 M_FPE.load("../climate_data/model_FPE_long")
 
 N = len(data)
-spec_FPE, f_FPE = M_FPE.spectrum(1./srate, onesided = True)
-spec_CAT, f_CAT = M_CAT.spectrum(1./srate, onesided = True)
+f_FPE, spec_FPE = M_FPE.spectrum(1./srate, onesided = True)
+f_CAT, spec_CAT = M_CAT.spectrum(1./srate, onesided = True)
 
 print(len(M_CAT.a_k),len(M_FPE.a_k))
 

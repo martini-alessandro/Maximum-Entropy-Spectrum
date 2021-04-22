@@ -60,7 +60,7 @@ if simulate_data:
             p, a_k, opt = M.solve(time_series, optimisation_method = method, early_stop = False)
             optimisers[method].append(opt)
             orders[method].append(M.a_k.size)
-            spectra[method].append(M.spectrum(dt)[0][: number_of_points // 2])    
+            spectra[method].append(M.spectrum(dt)[1][: number_of_points // 2])    
 
         #saving data
     s, o, orde = [], [], []

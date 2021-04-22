@@ -67,7 +67,7 @@ if __name__ == '__main__':
         if white_noise: 
             w_welchFreq, w_welchSpectrum = welch.psd(Wtime_series[:int(N[i])], 1 / dt, n * dt)
             M.solve(Wtime_series[:int(N[i])])
-            w_mesaSpectrum, w_mesaFreq = M.spectrum(dt)
+            w_mesaFreq, w_mesaSpectrum = M.spectrum(dt)
             
             fig, ax = plt.subplots() 
             ax.loglog(w_welchFreq[ : n // 2], w_welchSpectrum[: n // 2], color = 'blue')
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         if Ligo_noise: 
             l_welchFreq, l_welchSpectrum = welch.psd(Ltime_series[:int(N[i])], 1 / dt, n * dt )
             M.solve(Ltime_series[:int(N[i])])
-            l_mesaSpectrum, l_mesaFreq = M.spectrum(dt)
+            l_mesaFreq, l_mesaSpectrum = M.spectrum(dt)
     
             fig2, ax2 = plt.subplots()
             ax2.loglog(l_welchFreq[: n // 2], l_welchSpectrum[: n // 2], color = 'blue')

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     M = MESA()
     P, ak, _ = M.solve(data, method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
     print("Length of the selected filter: p = {0}".format(len(ak)))
-    PSD, _     = M.spectrum(dt)[:N//2]
+    _, PSD     = M.spectrum(dt)[:N//2]
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)
