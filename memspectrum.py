@@ -135,6 +135,9 @@ class loss_function:
     def _LL(self, spectrum):
         """
         Implements data log-likelihood as a loss function
+        Log-likelihood is composed of two terms A = 0.5*|x_f|**2/S(f) and B = 0.5*N*log(S(f))
+        A wants to be large (whyyyy?) to agree with data; |B| wants to be small to keep the model simple
+        The loss function to minimize is the balance of the two: L =  -A+|B|
         
         Parameters
         ----------
@@ -152,14 +155,11 @@ class loss_function:
         if self.data_autocorr is None:
             raise ValueError("Autocorrelation of data shall be set, before computing the LL loss function")
         assert spectrum.shape == self.data_autocorr.shape, "Log-likelihood calculation: shape of the spectrum and of data do not match"
-        #import matplotlib.pyplot as plt
-        #plt.loglog(spectrum)
-        #plt.show()
-        LL = -0.5* np.sum(np.divide(self.data_autocorr, spectrum)) - 0.5*len(spectrum)*np.sum(np.log(spectrum))
-        LL_new = -0.5* np.sum(np.divide(self.data_autocorr, spectrum)+ len(spectrum)*np.log(spectrum))
-        #print(LL, -0.5* np.sum(np.divide(self.data_autocorr, spectrum)), - 0.5*len(spectrum)*np.sum(np.log(spectrum)))
-        #print(LL, LL_new)
-        return -LL #this is a loss function, we want to minimize it (maybe)
+        autocorr = 0.5* np.sum(np.divide(self.data_autocorr, spectrum))
+        det_S = 0.5*len(spectrum)*np.sum(np.log(spectrum))
+        LL =  - autocorr + np.abs(det_S)
+#        print(autocorr, det_S, LL) #DEBUG
+        return LL #this is a loss function, we want to minimize it (maybe)
         
     
     def _CAT(self, P, N, m):
