@@ -7,6 +7,9 @@ setup.py
 ReadMeFigures/Data.jpeg
 ReadMeFigures/Forecast.jpeg
 ReadMeFigures/Spectrum.jpeg
+dist/memspectrum-1.0.0.tar.gz
+dist/memspectrum-1.1.0.post0-py3-none-any.whl
+dist/memspectrum-1.1.0.post0.tar.gz
 dist/memspectrum-1.1.0.tar.gz
 memspectrum/GenerateTimeSeries.py
 memspectrum/__init__.py
