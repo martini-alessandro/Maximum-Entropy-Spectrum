@@ -68,7 +68,7 @@ class loss_function:
         elif self.method =='AIC':
             return self._AIC(args[0], args[2], args[3])
         elif self.method =='LL':
-            return self._LL(args[4])
+            return self._LL(args[3], args[4])
         elif self.method == 'Fixed':
             return self._Fixed(args[3])
         else:
@@ -132,12 +132,14 @@ class loss_function:
         """
         return np.log(P[-1]) + (2 * m) / N
     
-    def _LL(self, spectrum):
+    def _LL(self, m, spectrum):
         """
         Implements data log-likelihood as a loss function
         Log-likelihood is composed of two terms A = 0.5*|x_f|**2/S(f) and B = 0.5*N*log(S(f))
-        A wants to be large (whyyyy?) to agree with data; |B| wants to be small to keep the model simple
-        The loss function to minimize is the balance of the two: L =  -A+|B|
+        A wants to be large to agree with data; |B| wants to be small to keep the model simple
+        The loss function to minimize is the balance of the two: L =  -A - B
+        
+        #WARNING: Untested: the performance of this loss function are not studied
         
         Parameters
         ----------
@@ -155,11 +157,13 @@ class loss_function:
         if self.data_autocorr is None:
             raise ValueError("Autocorrelation of data shall be set, before computing the LL loss function")
         assert spectrum.shape == self.data_autocorr.shape, "Log-likelihood calculation: shape of the spectrum and of data do not match"
+        T = len(spectrum)*4096
         autocorr = 0.5* np.sum(np.divide(self.data_autocorr, spectrum))
         det_S = 0.5*len(spectrum)*np.sum(np.log(spectrum))
-        LL =  - autocorr + np.abs(det_S)
-#        print(autocorr, det_S, LL) #DEBUG
-        return LL #this is a loss function, we want to minimize it (maybe)
+        LL =  - autocorr/T - det_S
+        #LL -= m*np.log(2)+np.log(m)
+        #print(autocorr, det_S, m*np.log(2)+np.log(m), LL) #DEBUG
+        return -LL #this is a loss function, we want to minimize it (maybe)
         
     
     def _CAT(self, P, N, m):
@@ -542,6 +546,9 @@ class MESA(object):
         
         if optimisation_method == 'Fixed':
             self.early_stop = False
+        
+        if optimisation_method == 'LL':
+        	warnings.warn('The performance of the \'LL\' loss function are not studied. There is no guarantee of stable and meaningful results')
            
         if method.lower() == "fast":
             self._method = self._FastBurg

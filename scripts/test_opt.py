@@ -6,32 +6,33 @@ import numpy as np
 import scipy.stats 
 import matplotlib.pyplot as plt
 
-data = np.loadtxt('../../GWAnomalyDetection/maxent/data/H-H1_GWOSC_4KHZ_R1-1126259447-32.txt.gz')
-#data = np.loadtxt('../climate_data/data_@1h_len95689.dat')
+data = np.loadtxt('../../GWAnomalyDetection/maxent/data/H-H1_GWOSC_4KHZ_R1-1126259447-32.txt.gz')[:int(5*4096)]
+data = np.loadtxt('../climate_data/data_@1h_len95689.dat')[:24*4*365]
 
-plot_type = 'LIGO' #'climate' #'LIGO'
+plot_type = 'climate' #'climate' #'LIGO'
 srate = 1. #4096.
 
 m_FPE = MESA()
 m_LL = MESA()
 
 print(plot_type)
+#P, a_k_LL, opt_LL = m_LL.solve(data, optimisation_method = 'LL', early_stop = False, m = 10000, verbose = True)
 
-if False:
+if True:
 	P, a_k_FPE, opt_FPE = m_FPE.solve(data, optimisation_method = 'FPE', verbose = False)
-	m_FPE.save('LL_validation/FPE_model_{}'.format(plot_type))
-	np.savetxt('LL_validation/FPE_opt_{}'.format(plot_type), opt_FPE)
+	m_FPE.save('LL_validation_call/FPE_model_{}_minLL'.format(plot_type))
+	np.savetxt('LL_validation_call/FPE_opt_{}_minLL'.format(plot_type), opt_FPE)
 
-	P, a_k_LL, opt_LL = m_LL.solve(data, optimisation_method = 'LL', early_stop = False, m = 10000, verbose = True)
-	m_LL.save('LL_validation/LL_model_{}'.format(plot_type))
-	np.savetxt('LL_validation/LL_opt_{}'.format(plot_type), opt_LL)
+	P, a_k_LL, opt_LL = m_LL.solve(data, optimisation_method = 'LL', early_stop = False, m = 10000, verbose = False)
+	m_LL.save('LL_validation_call/LL_model_{}_minLL'.format(plot_type))
+	np.savetxt('LL_validation_call/LL_opt_{}_minLL'.format(plot_type), opt_LL)
 else:
-	m_LL.load('LL_validation/LL_model_{}'.format(plot_type))
-	m_FPE.load('LL_validation/FPE_model_{}'.format(plot_type))
+	m_LL.load('LL_validation/LL_model_{}_mLL'.format(plot_type))
+	m_FPE.load('LL_validation/FPE_model_{}_mLL'.format(plot_type))
 	a_k_FPE = m_FPE.a_k
 	a_k_LL = m_LL.a_k
-	opt_LL = np.loadtxt('LL_validation/LL_opt_{}'.format(plot_type))
-	opt_FPE = np.loadtxt('LL_validation/FPE_opt_{}'.format(plot_type))
+	opt_LL = np.loadtxt('LL_validation/LL_opt_{}_mLL'.format(plot_type))
+	opt_FPE = np.loadtxt('LL_validation/FPE_opt_{}_mLL'.format(plot_type))
 
 l = loss_function('LL')
 l._set_data(data)
