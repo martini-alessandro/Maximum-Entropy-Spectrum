@@ -833,6 +833,7 @@ class MESA(object):
             process (Shape (number_of_simulations, length))
 
         """
+        #FIXME: this function does not work when len(a.k) ==1. Fix this problem
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to forecast the data. You should call solve() before forecasting")
         if P is None: P = self.P 
@@ -844,10 +845,12 @@ class MESA(object):
         
         if isinstance(data.flatten()[0],np.number):
             assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
-            if len(data) >= p:
+            if len(data) >= p > 0:
                 predictions[:,:p] = data[-p:]
-            else:
+            elif p!=0:
                 raise ValueError("Data are not long enough for forecasting")
+            else:
+            	pass
         else:
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
         if isinstance(seed, int):

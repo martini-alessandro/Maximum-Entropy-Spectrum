@@ -9,7 +9,7 @@ from style_sheet import *
 import pandas as pd
 from scipy.interpolate import interp1d
 
-plot = True
+plot = False
 plot_same = True
 compute = False
 generate_fake_data = False
@@ -92,10 +92,10 @@ if plot_same:
 
 		if plot_welch:
 			filename = save_folder+"comparison_LVC_data_Welch.pdf".format(use_fake_data)
-			ax.loglog(freqs, PSD_Welch , c = 'g', zorder = 0, label = "Welch", lw = 0.5)
+			ax.loglog(freqs, PSD_Welch , c = 'g', zorder = 0, label = "Welch", lw = 1.)
 		else:
 			filename = save_folder+"comparison_LVC_data_MESA.pdf".format(use_fake_data)
-			ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA", lw = 0.5)
+			ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA", lw = 1.)
 		
 		yticks.append(10**(step*i)/1000.)
 		print(yticks)
@@ -104,7 +104,7 @@ if plot_same:
 			ax.legend(loc = 'upper center', ncol = 1, fontsize = 10)
 		
 		if use_fake_data:
-			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i), '--', c = 'k', zorder = 2, lw = 0.75)
+			ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i), '--', c = 'k', zorder = 2, lw = .9)
 			#ax.loglog(true_PSD[:,0], true_PSD[:,1]/1e-41*10**(step*i)*offset, '--', c = 'k', zorder = 2, label = "True", lw = 0.75)
 		
 	ax.set_xlim(20,1024)
@@ -115,7 +115,7 @@ if plot_same:
 	ax.set_yticklabels(tick_list, rotation = 'vertical', fontdict = {'verticalalignment':'center'})
 	ax.yaxis.set_tick_params(width=0)
 
-	plt.savefig(filename)
+	plt.savefig(filename, transparent = True)
 	print("Save file @ {}".format(filename))
 
 	plt.show()

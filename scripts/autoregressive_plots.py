@@ -103,10 +103,10 @@ if plot:
 		#plotting
 	for i, l in enumerate(loss_functions):
 #		ax_scatter.scatter(p_rec[:,i], np.sqrt(np.mean(np.square(diff_ak[...,i]), axis = 1)), c = colors[l], label = l)
-		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l, s = 2)
+		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l, s = 5)
 		ax_p.plot(range(N_data), diff_ak[:N_p_plot,:,i].T, 'o', c = colors[l])
 		#ax_p.set_yscale('log')
-	ax_scatter.legend(loc = 'upper left')
+	ax_scatter.legend(loc = 'upper center')
 	ax_p.legend()
 	ax_p.set_xlim([0,200])
 	ax_p.set_ylim([-0.15,0.15])
@@ -123,8 +123,8 @@ if plot:
 	fig_p.tight_layout()
 	fig_scatter.tight_layout()
 	
-	fig_scatter.savefig(plot_dir+'scatter_deltap_ptrue.pdf')
-	fig_p.savefig(plot_dir+'scatter_deltaak_p.pdf')
+	fig_scatter.savefig(plot_dir+'scatter_deltap_ptrue.pdf', transparent = True)
+	fig_p.savefig(plot_dir+'scatter_deltaak_p.pdf', transparent = True)
 	print("Saved fig @ "+plot_dir+'scatter_deltap_ptrue.pdf')
 	print("Saved fig @ "+plot_dir+'scatter_deltaak_p.pdf')
 	

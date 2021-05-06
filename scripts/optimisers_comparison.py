@@ -231,7 +231,8 @@ for method in methods:
 ax.legend(loc = 'upper left')
 ax.set_xlabel("Filter Length estimate")
 ax.set_ylabel('Frequency averaged error')
-fig.savefig(savedir + 'error_length_contour.pdf', bbox_inches = 'tight')
+fig.savefig(savedir + 'error_length_contour.pdf', bbox_inches = 'tight', transparent = True)
+print("saved file @ ", savedir + 'error_length_contour.pdf')
 
         
 plt.show()

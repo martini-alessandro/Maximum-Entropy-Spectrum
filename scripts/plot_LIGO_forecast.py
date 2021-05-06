@@ -61,8 +61,8 @@ ax.fill_between(t_grid, -true+h, -true+l, color = 'r',alpha = 0.3, zorder = 0)
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true- l, c = 'r')
 ax.set_ylabel(r"$h_{forecast} -h$")
 
-ax2.plot(t_grid, sigma, c = 'k', zorder = 1, label = 'CAT')
-ax2.plot(t_grid, sigma_FPE, c = 'r', zorder = 0, label = 'FPE')
+ax2.plot(t_grid, sigma, c = 'k', zorder = 1, label = 'CAT', lw = 1)
+ax2.plot(t_grid, sigma_FPE, c = 'r', zorder = 0, label = 'FPE', lw = 1)
 plt.legend(loc= 'upper left')
 
 ax2.set_xlabel("Time (s)")
@@ -75,8 +75,8 @@ axins.fill_between(t_grid[:N_inset], (-true+h)[:N_inset], (-true+l)[:N_inset], c
 axins.set_ylabel(r"$h_{forecast} -h$")
 
 plt.tight_layout()
-plt.savefig(plot_dir+"forecast_accuracy.pdf")
-
+plt.savefig(plot_dir+"forecast_accuracy.pdf", transparent = True)
+print("Saved file @",plot_dir+"forecast_accuracy.pdf")
 	#plot spectrum
 fig = init_plotting()
 ax = fig.gca()

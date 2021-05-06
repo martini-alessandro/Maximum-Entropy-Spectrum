@@ -28,8 +28,8 @@ if __name__ == '__main__':
     save_dir = os.getcwd() + '/alessandro_fake_comparisons/'
     seglen_factor = 1
     save = False 
-    white_noise = False 
-    Ligo_noise = True 
+    white_noise = True 
+    Ligo_noise = False
     
     #Sampling variables 
     dt = 1. / 4096
