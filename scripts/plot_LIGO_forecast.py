@@ -54,15 +54,15 @@ plt.close()
 fig, (ax,ax2) = plt.subplots(nrows=2, sharex=True)
 
 t_grid = np.linspace(0,N_forecast/srate,N_forecast)
-ax.plot(t_grid, -(true-m), c = 'b', zorder = 1)
+ax.plot(t_grid, -(true-m), c = 'b', zorder = 1, lw = .4)
 ax.fill_between(t_grid, -true+h, -true+l, color = 'r',alpha = 0.3, zorder = 0)
 #ax.plot(t_grid, (true-m)/(h-l), c = 'b', zorder = 1)
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true-h, c = 'r')
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true- l, c = 'r')
 ax.set_ylabel(r"$h_{forecast} -h$")
 
-ax2.plot(t_grid, sigma, c = 'k', zorder = 1, label = 'CAT', lw = 1)
-ax2.plot(t_grid, sigma_FPE, c = 'r', zorder = 0, label = 'FPE', lw = 1)
+ax2.plot(t_grid, sigma, c = 'k', zorder = 1, label = 'CAT', lw = .7)
+ax2.plot(t_grid, sigma_FPE, c = 'r', zorder = 0, label = 'FPE', lw = .7)
 plt.legend(loc= 'upper left')
 
 ax2.set_xlabel("Time (s)")
@@ -70,7 +70,7 @@ ax2.set_ylabel(r"$\sigma$")
 
 axins =  ax2.inset_axes([0.6, 0.15, 0.5, 0.35])
 N_inset = int(0.5*srate)
-axins.plot(t_grid[:N_inset], -(true-m)[:N_inset], c = 'b', zorder = 1)
+axins.plot(t_grid[:N_inset], -(true-m)[:N_inset], c = 'b', zorder = 1, lw = 0.5)
 axins.fill_between(t_grid[:N_inset], (-true+h)[:N_inset], (-true+l)[:N_inset], color = 'r',alpha = 0.3, zorder = 0)
 axins.set_ylabel(r"$h_{forecast} -h$")
 

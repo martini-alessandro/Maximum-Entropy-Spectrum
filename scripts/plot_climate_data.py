@@ -40,13 +40,13 @@ fig = init_plotting()
 ax = fig.gca()
 
 t_grid = np.linspace(0,N_forecast/24.,N_forecast)
-ax.plot(t_grid, -(true-m), c = 'b', zorder = 1)
+ax.plot(t_grid, -(true-m), c = 'b', zorder = 1, lw = .5)
 ax.fill_between(t_grid, -true+h, -true+l, color = 'r',alpha = 0.3, zorder = 0)
 #ax.plot(t_grid, (true-m)/(h-l), c = 'b', zorder = 1)
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true-h, c = 'r')
 #ax.plot(np.linspace(0,N_forecast,N_forecast), true- l, c = 'r')
 ax.set_xlabel("Time (days)")
-ax.set_ylabel(r"$T_{forecast} -T (K)$")
+ax.set_ylabel(r"$[T_{forecast} -T]\; (K)$")
 plt.tight_layout()
 plt.savefig(plot_dir+"forecast_accuracy.pdf")
 
@@ -55,7 +55,7 @@ fig = init_plotting()
 ax = fig.gca()
 
 unit_shift = 3600*24 #frequency is made 1/day
-ax.loglog(f_CAT * unit_shift , spec_CAT, label = "CAT", c = 'b', zorder = 1)
+ax.loglog(f_CAT * unit_shift , spec_CAT, label = "CAT", c = 'k', zorder = 1)
 ax.loglog(f_FPE * unit_shift , spec_FPE, label = "FPE", c = 'r', zorder = 2)
 
 ax.axvline(1./(3600.*24.*365.)*unit_shift,lw = .5, c = 'b', ls = '--', zorder = 0)

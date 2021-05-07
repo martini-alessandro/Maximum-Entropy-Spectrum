@@ -51,7 +51,7 @@ superscriptaddress,10pt]{revtex4-1}
 \begin{abstract}
 The Maximum Entropy Spectral Analysis (MESA) method, developed by Burg, provides a powerful tool to perform spectral estimation of a time-series. The method relies on a Jaynes' maximum entropy principle and provides the means of inferring the spectrum of a stochastic process in terms of the coefficients of some autoregressive process AR($p$) of order $p$.
 A closed form recursive solution provides an estimate of the autoregressive coefficients as well as of the order $p$ of the process.
-We provide a ready-to-use implementation of the algorithm in the form of a python package \texttt{memspectrum}. We characterize our implementation by performing a power spectral density analysis on syntethic data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the ubiquitous Welch algorithm, using both syntethic data and real gravitational wave data from the LIGO-Virgo collaboration.
+We provide a ready-to-use implementation of the algorithm in the form of a python package \texttt{memspectrum}. We characterize our implementation by performing a power spectral density analysis on syntethic data (with known power spectral density) and we compare different criteria for stopping the recursion. Furthermore, we compare the performance of our code with the ubiquitous Welch algorithm, using syntethic data generated from the released spectrum by the LIGO-Virgo collaboration.
 We find that, when compared to Welch's method, Burg's method provides a power spectral density (PSD) estimation with a 
 systematically lower variance and bias. This is particularly manifest in the case of a little number of data points, making Burg's method most suitable to work in this regime.
 
@@ -77,7 +77,7 @@ systematically lower variance and bias. This is particularly manifest in the cas
 
 \section{Introduction}
 
-The study of the properties of stochastic processes is a crucial task in many fields of physics, astronomy, quantitative biology, astronomy as well as engineering and finance. Of particular interest for several areas of physics is the study of stochastic time series. Among those, a special place is occupied by the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the autocorrelation function 
+The study of the properties of stochastic processes is a crucial task in many fields of physics, astronomy, quantitative biology, as well as engineering and finance. Among those, a special place is occupied by the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the autocorrelation function 
 \begin{equation}
 	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
 \end{equation}
@@ -91,7 +91,7 @@ In some literature, especially in the context of gravitational waves physics, e.
 \end{equation}
 without highlighting its connection with the time structure of the process itself, thus masking some important properties that will explore further in what follows. The latter definition in~\eqref{eq:psd-f-definition} gives, however, i) a straightforward interpretation of the PSD: it measures how much signal ``power" is located in each frequency; ii) an operative way of estimating it for an unknown process.  
 
-A ubiquitous method for such computation is due to Welch \cite{Welch1967} and it based on eqs.(\ref{eq:psd-autocorrelation}-\ref{eq:psd-f-definition}).
+An ubiquitous method for such computation is due to Welch \cite{Welch1967} and it based on eqs.(\ref{eq:psd-autocorrelation}-\ref{eq:psd-f-definition}).
 The PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many window-corrected batches and averaging the squared moduli of their Fourier transforms.
 This approach is equivalent~\cite{Lomb,Scargle} to taking the Fourier Transform of the windowed sample autocorrelation $\rho_W$, written as
 \begin{equation}
@@ -101,25 +101,25 @@ where $\rho$ is the empirical autocorrelation and $M$ is the maximum time lag at
 The sequence $W$ is a window function that can be chosen in several different way, each choice presenting advantages and disadvantages for the final estimate of the PSD.
 
 The choice of a window function is arbitrary and typically is made by trial and error, until a satisfactory compromise between variance and resolution of the estimate of PSD is reached. A high frequency resolution implies high variance and vice-versa.
-Besides the window function, Welch's method requires a number of arbitrary choices to be made, such as the number of time slices and the overlap between consecutive slices. All these knobs must be tuned by hand and their choice can dramatically affect the PSD estimation, hence begging the question of what the ``real" PSD is.
+Besides the window function, Welch's method requires a number of arbitrary choices to be made, such as the number of time slices and the overlap between consecutive slices. All these knobs must be tuned by hand and their choice can dramatically affect the PSD estimation, hence begging the question of what the ``best" PSD estimate is.
 
 Another problem with this approach is the requirement for the window to be $0$ outside the interval in which the autocorrelation is computed.
 We are arbitrarily assuming $\rho_j = 0$ for $j > M$ and modifying the estimate (i.e. the data) if a non-rectangular window is chosen.
 Making assumptions on unobserved data and modifying the ones we have at our disposal introduces ``spurious" information about the process that we, in general, do not really have.
 
 An appealing alternative approach, based on the Maximum Entropy principle \cite{JaynesArticle,jaynes2003ptl, Jaynes_MAXENT}, has been put forward by Burg \cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the algorithm parameters, since it provides an iterative closed form expression for the spectrum of a stochastic stationary time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
-Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provide a natural and simple machinery to forecast a time series, thus predicting future observations based on previous ones.
+Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provides a natural and simple machinery to forecast a time series, thus predicting future observations based on previous ones.
 
 In this paper, we discuss the details of the Maximum entropy principle, its application to the problem of PSD estimation with Burg's algorithm and the link between Burg's algorithm and autoregressive process.
 Our goal is to bring (again) to public attention Maximum Entropy Spectral analysis, in the hope that it will be widely employed as a way out to the many problems posed by the Welch's algorithm (or other similar methods).
-To facilitate this goal, we present and describe a new implementation, \texttt{memspectrum}, that provides a robust and easy-to-use python implementation of the algorithm\footnote{
-Available at link: \url{https://pypi.org/project/memspectrum/}.
+To facilitate this goal, we present and describe a new code, \texttt{memspectrum}, that provides a robust and easy-to-use python implementation of the algorithm\footnote{
+It is available at link: \url{https://pypi.org/project/memspectrum/}.
 }.
 We provide a thorough assessment of the performance of our code and we validate our results performing a number of tests on simulated and real data.
 We also compare our results with those of spectral analysis carried out with the standard Welch's method.
 In order to apply our model on a realistic setting, we analyse some time series of broad interest in the scientific community.
 
-Our paper is organized as follows: we being by briefly reviewing the theoretical foundations of the maximum entropy principle in Sec.~\ref{sec:foundations}. Sec.~\ref{sec:validation} presents the validation of Burg's method as well as of our implementation on simulated data. In Sec.~\ref{sec:Welch_comparison} we compare the results from \texttt{memspectrum} with the Welch method; Sec.~\ref{sec:applications} presents a few applications to time series and, finally, we conclude with a discussion in Sec.~\ref{sec:conclusion}.
+Our paper is organized as follows: we being by briefly reviewing the theoretical foundations of the maximum entropy principle in Sec.~\ref{sec:foundations}. Sec.~\ref{sec:validation} presents the validation of Burg's method as well as of our implementation on simulated data. In Sec.~\ref{sec:Welch_comparison} we compare the results from \texttt{memspectrum} with the Welch method; Sec.~\ref{sec:applications} presents a few applications to real time series and, finally, we conclude with a discussion in Sec.~\ref{sec:conclusion}.
 
 
 \section{Theoretical foundations}\label{sec:foundations}
@@ -130,8 +130,8 @@ Next, we will discuss an interesting link between Burg's method and autoregressi
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
 
-Before introducing MAXENT principle, we will define through some simple examples the two core concepts of the problem and the role they play: the 'evidence' and the 'information'.
-Let us start with the 'information' (or entropy): it is a measure of the degree of uncertainty on the outcomes of some experiment and specifies the length of the message necessary to provide a full description of the system under study. For instance, consider a perfectly sinusoidal signal: knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information content. Even less information is required if we are studying a system whose outcome is certain (has probability $p = 1$), as in this case, a communication is not even needed.  
+Before introducing MAXENT principle, we will define through some simple examples the two core concepts of the problem and the role they play: the `evidence' and the `information'.
+Let us start with the `information' (or entropy): it is a measure of the degree of uncertainty on the outcomes of some experiment and specifies the length of the message necessary to provide a full description of the system under study. For instance, consider a perfectly sinusoidal signal: knowledge of amplitude, frequency and phase are sufficient to fully reproduce it: it has a low information content. Even less information is required if we are studying a system whose outcome is certain (has probability $p = 1$), as in this case, a communication is not even needed.  
 Shannon \cite{Shannon} proposed the quantity
 \begin{equation}\label{eq:information}
     I = \log_2 \frac{1}{p(x)}
@@ -145,7 +145,7 @@ On the other hand, most unpredictable experiment happens when
 \begin{equation}\nonumber
     P_1 = P_2 = \frac{1}{2}:
 \end{equation}
-this describes a situation of `maximum ignorance': the information content of this system must be high.
+this describes a situation of `maximum ignorance' and the information content of such system must be high.
 Any generalization of eq.~\eqref{eq:information}, must then have its maximum when $ P_1 = P_2$.
 For $N$ events, system with the highest possible information content is when:
 \begin{equation}\nonumber
@@ -179,9 +179,9 @@ The maximisation of entropy, supplemented by evidence in the form of constraints
 gives rise to several of the most common probability distributions commonly employed in statistics. For instance, whenever the only constraint available is the normalisation of the probability distribution (i.e. no evidence is available), the entropy is maximised by the uniform distribution. 
 If we have evidence to constraint the expected value, the information entropy is maximised by the exponential distribution
 
-Of particular importance is the case in which, in addition to the mean, also the variance is known. MAXENT leads to the Gaussian distribution. 
+Of particular importance is the case in which, in addition to the mean, also the variance is known: MAXENT leads to the Gaussian distribution. 
 We retain this particularly interesting from the foundational point of view, since it provides a deeper insight into the ubiquitous Gaussian distribution.
-Indeed, the Gaussian distribution is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy.
+Indeed, it is not only the limit distribution provided by the central limit theorem for finite variance processes but it is also the distribution that maximizes the entropy. For this reason, appealing to MAXENT principle, it is the correct assignment if mean and covariance are the only quantities that fully define our process. In some sense, we can interpret the central limit theorem as the natural `statistical' evolution toward a configuration that maximizes entropy.
 
 For this work, we are particularly interested in the multi-dimensional case. Suppose we have a vector of measurements $(x(t_1),\ldots,x(t_n)) = (x_1, \ldots, x_n)$ that we conveniently express as a single realisation of an unknown stochastic process $x(t)$ and we have information about the expectation value of the process $\mu(t)$ and on the matrix of autocovariances $C_{ij} \equiv C(t_i,t_j)$, then the MAXENT distribution is the $n$-dimensional multivariate Gaussian distribution~\cite{gregory_2005}: 
 \begin{align}
@@ -224,10 +224,10 @@ However, in any realistic setting, we are dealing with a finite number of sample
 is impossible.
 Moreover, the error $\sigma_k$ in the estimate of the autocorrelation after $k$ steps increases as $\sigma \sim 1/\sqrt{N - k}$\footnote{
 This is clearly understood: when computing the autocorrelation at order $k$, only $N-k$ examples of the product $x_t x_{t+k}$ are available and the variance of the average value goes as the inverse of the square root of the points considered.
-}, so that only a few values for the autocorrelation function can actually be computed reliably.
+}, so that only few values for the autocorrelation function can actually be computed reliably.
 This bring us the core of the problem: how to give an estimate from partial (and noisy) knowledge of the autocorrelation function? MAXENT can guide us in this task without any a priori assumptions on the unavailable data\footnote{Indeed this is the largest difference with the most common Welch method. The latter assumes that the unknown values of the autocorrelation are $0$. Clearly, this assumption is unjustified and MAXENT is a good way to drop this assumption.}.
 
-As in the previous examples, one needs to set up a variational problem where the entropy eq.~\eqref{eq:entropy} is maximized 
+As in the previous examples, one needs to set up a variational problem where the entropy eq.~\eqref{eq:entropy_continuos} is maximized 
 subject to some problem-specific constraints. 
 In our case, they are i) the PSD estimate has to be non-negative; ii) its Fourier transform has to match the sample autocorrelation (wherever an estimate of this is available).
 
@@ -242,7 +242,7 @@ The difference in entropy between the input and the output time series (i.e. the
     \Delta H = \int_{- Ny}^{Ny}\log S(f) df\,.
 \end{equation}
 where $\Delta t$ is sampling rate and $Ny \equiv \frac{1}{2 \Delta t}$  is the Nyquist frequency.
-Thus maximising Eq.~\eqref{eq:EntropyGain} is equivalent to maximising Eq.~\eqref{eq:entropy_continuos}.
+Thus maximising Eq.~\eqref{eq:EntropyGain} is equivalent to maximise Eq.~\eqref{eq:entropy_continuos}.
 
 Before maximising the entropy gain, we need to include the evidence available as a form of mathematical constraints for the assignment of $S(f)$.
 This is equivalent in imposing that the variational solution $S(f)$ for the PSD matches the empirical autocorrelation.
@@ -252,7 +252,8 @@ Let us define a realisation of a stochastic process $(x_1,\ldots,x_N)$ with samp
 \end{equation}
 
 Thus, by maximizing Eq.~\eqref{eq:EntropyGain} with constraints in eq.~\eqref{eq:MaxConstraint}, we can give an estimate of the spectrum given an empirical time series.
-This approach on PSD computation provide a result consistent with the epirical autocorrelation function whenever this is available and, at the same time, it does not make any assumption for the unavailable estimates for the autocorelation at large time lags.
+This approach on PSD computation provides a result consistent with the epirical autocorrelation function whenever this is available and, at the same time, it does not make any assumption for the unavailable estimates for the autocorelation at large time lags.
+
 Most importantly, the variational problem admits a closed-form analytical expression for $S(f)$.
 The expression was first found by Burg~\cite{burg1975maximum}:
 \begin{equation}\label{eq:MESApsd}
@@ -260,13 +261,13 @@ The expression was first found by Burg~\cite{burg1975maximum}:
 \end{equation}
 where $\Delta t$ is the sampling interval of the time series, $z=\exp{(2\pi i f\Delta t)}$, $a_0$ = 1.
 The vector obtained as $(1, a_1, \dots, a_N)$ is also known as the \textit{prediction error filter}.
-The coefficients $P_N$ and $a_s (s > 0)$ are to be determined by an iterative process (called Burg's algorithm). The details of the derivation and the actual form for the coefficients $a_s$ can be found in appendix \ref{sec:MESA_solution}.
+The coefficients $P_N$ and $a_s (s > 0)$ are to be determined by an iterative process (called Burg's algorithm). The details of the derivation and the actual form for the coefficients $a_s$ can be found in appendix \ref{sec:appendix}.
 
 \subsection{Autoregressive Process Analogy} \label{sec:autoregr}
 
 The application of MESA is not limited to spectral estimates, but it also provides a link between spectral analysis and the study
 of autoregressive processes (AR)~\cite{doi:10.1029/RG013i001p00183}.
-An autoregressive stationary process of order $p$ (AR($p$)) is a time series whose values satisfy the following expression: 
+An autoregressive stationary process of order $p$, AR($p$), is a time series whose values satisfy the following expression: 
 \begin{equation} \label{eq:AR_p}
     x_t - b_1 x_{t-1} - b_2 x_{t-2} \dots b_p x_{t - p} = \nu_t
 \end{equation}
@@ -294,21 +295,22 @@ Since we assumed a wide-sense stationary process, $\tilde{x}(z)$ is analytic bot
 The numerator is the spectral density of white noise $\nu_t$, i.e. its (constant) variance $\sigma^2$.
 
 Eqs.~\eqref{eq:ARspectrum} and ~\eqref{eq:MESApsd} are equivalent, if we identify $b_i = - a_i$ and $P_N \Delta t= \sigma ^ 2$.
-This shows that the MAXENT estimation of the PSD also computes the coefficients of the AR 
-process that models the observed process.
+This shows that the MAXENT estimation of the PSD models the observed times series as an AR process and provides a {\it fit} for the autoregressive coefficients.
+Furthermore, as a consequence of Wold's theorem, there is the theoretical guarantee that every stationary time series can be modelled faithfully by the MAXENT.
 
 \subsection{Forecasting} \label{sec:forecasting}
-The link between MESA and AR processes is of particular interest. Given the solution to Burg's recursion to determine the $a_k$, see Appendix~\ref{sec:appendix}, we automatically obtain the coefficients of the equivalent AR process, hence we are able to exploit Eq.~\ref{eq:AR_p} to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
+The link between MESA and AR processes is of particular interest. Given the solution to Burg's recursion to determine the $a_k$, we automatically obtain the coefficients of the equivalent AR process, hence we are able to exploit Eq.~\ref{eq:AR_p} to perform \emph{forecasting}, thus providing plausible future observations, conditioned on the observed data.
 Indeed, for an AR($p$) process the conditional probability $p(x_t|x_{t-1}, \ldots , x_{t-p})$ of the observation at time $t$ with respect to the past $p$ observation has the form:
 \begin{align}\label{eq:p_forecast}
 	p&(x_t|x_{t-1}, \ldots , x_{t-p}) \nonumber\\
 	&= \frac{1}{\sigma\sqrt{2\pi}} \exp\left[-\frac{1}{2} \left(\frac{x_t - \sum_{i = 1}^p b_i x_{t-i}}{\sigma}\right)^2\right]\,.
 \end{align}
 The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follows a Gaussian distribution with a fixed variance an a mean value $m_t = \sum_{i = 1}^p b_i x_{t-i}$ computed from past observations.
-Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computations.
+Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation methods.
 
 \section{Validation of the model}\label{sec:validation}
-It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is the same as the number of time steps considered in the computation of the autocorrelation $\bar{r}_m$. In an ideal scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $m$, as the estimation for  $\bar{r}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
+It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is
+equivalent to the maximum order of the autocorrelation $\bar{r}_m$ considered. In an ideal scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $m$, as the estimation for  $\bar{r}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
 
 It is then clear that the choice of the number of samples of the discrete autocorrelation to consider is important: 
 on the one hand it is advisable to include as much knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_m$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
@@ -319,8 +321,8 @@ In Section~\ref{sec:optimizers}, we are going to define three different \textit{
 algorithm is able to reproduce a known PSD.
 The basic idea is to validate, as the autoregressive order considered increase, the performance of the algorithm results 
 by measuring the loss function and pick, among the orders the one that yields better results.
-Second, the performance of different loss functions will be assessed by performing the spectral analysis on time series with given analytical PSD, Sec.~\ref{sec:arp_validation}.
-In a last subsection~\ref{sec:LIGO_validation}, the same analysis is performed on real data from the LIGO-Virgo gravitational waves observatories.
+Second, the performance of different loss functions will be assessed by performing the spectral analysis on time series with an analytical gaussian PSD, sec.~\ref{sec:arp_validation}.
+In a last subsection~\ref{sec:LIGO_validation}, the same analysis is performed on syntetic data generated from the analytical spectrum released by the LIGO-Virgo collaboration.
 
 \subsection{Choice of the autoregressive order}\label{sec:optimizers} 
 
@@ -336,7 +338,7 @@ We summarise them below:
 
 \begin{itemize}
 \item \textbf{Final prediction Error} 
-The first criterion is due to Akaike~\cite{Akaike1970StatisticalPI}. He proposed that $m$ should be chosen as the 
+The first criterion is due to Akaike~\cite{Akaike1970StatisticalPI}. It was proposed that $m$ should be chosen as the 
 length that minimises the error when the filter is used as a predictor, the \emph{final prediction} error (FPE): 
 \begin{equation}
     FPE(m) = \mathbb{E}\left[ \left((x_t - \hat x_t) ^ 2\right) \right]
@@ -364,8 +366,8 @@ and the so-chosen order is found to be asymptotically unbiased for $P_N$.
 
 \item \textbf{Optimum Bayes Decision rule} 
 The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\cite{doi:10.1029/WR018i004p01097}. Let $x(t)$ be the observed 
-time series for the process that has to be described as an autoregressive process of order $m$ ($AR(m)$), with $m$ to be determined. The OBD is obtained choosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
-hypothesis is uniquely determined from both the length and the values of the filter under study. Choosing a Likelihood of the form \eqref{eq:p_forecast} and uniform priors for both the coefficients and the hypotheses, Rao has shown that choosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of:
+time series for the process that has to be described as an $AR(m)$ process, with $m$ to be determined. The OBD is obtained choosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
+hypothesis is uniquely determined from both the length and the values of the filter under study. Choosing a Likelihood of the form eq.~\eqref{eq:p_forecast} and uniform priors for both the coefficients and the hypotheses, Rao has shown that choosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of:
 
    \begin{align}
         \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
@@ -494,7 +496,7 @@ We report our findings in Figs.~\ref{fig:ligospectrum}~and~\ref{fig:LigoOrderErr
        \label{fig:ligospectrum}
 \end{figure}
 
-Fig.~\ref{fig:ligospectrum} shows the simulated spectrum (dashed line) and the ensemble-averaged reconstructed PSD adopting the FPE (green line), OBD(red line) and CAT(black line).
+Fig.~\ref{fig:ligospectrum} shows the simulated spectrum (dashed line) and the ensemble-averaged reconstructed PSD adopting the FPE (green line), OBD (red line) and CAT (black line).
 In all cases, the spectrum is well reconstructed, but with a fairly distinct behaviour at low frequency, where CAT -- as in the Gaussian case -- better captures and resolves the distinct spectral feature at $\sim \SI{17}{Hz}$.
 In Fig.~\ref{fig:ligoPeaks}, we report the reconstructed spectra around the two peaks at $\sim \SI{17}{Hz}$ and $\sim \SI{438}{Hz}$ (left and right panel respectively).
 
@@ -504,7 +506,7 @@ Hence, also the study of simulated LIGO data seems to indicate that whenever and
 
 Let us summarise some key general conclusions:
 \begin{itemize}
-	\item There are no reasons to prefer OBD over CAT or FPE;
+	\item there are no reasons to prefer OBD over CAT or FPE;
 	\item if we have one single realization for the process, we recommend the use of FPE, that would get the best resolution possible. In this situation, CAT would provide spurious and unreliable results, with large error;
 	\item in the case of several realizations of the same process, CAT ensemble-average properties provide very a precise spectral estimation.\end{itemize}
 
@@ -545,9 +547,9 @@ Of course, CAT does not perform a good job in reconstructing the AR process. How
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
 In this section we perform a qualitative comparison between the performance of the MESA and of the standard Welch algorithm.
-For definiteness, we focus on LIGO[which one?], although similar conclusions can be drawn from any other PSDs.
+Although similar studies can be drawn from any other PSD, for definiteness, we focus on the analytical PSD computed for LIGO Handford interferometer, released together with the GWCT-1 catalog \cite{GWTC1}.
 
-In order to ensure the we have a baseline PSD to compare the data with, we simulate data from the released LIGO intererferometer PSD and we employ both Welch's method and MESA to estimate the PSD.
+We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD around the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
 We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
 For the MESA algorithm, we choose the FPE loss function. For the Welch algorithm, we employ a Tukey window with a parameter $\alpha$ 
 equal to 0.4, an overlap fraction of $1/2$ for the segments and a length of 
@@ -567,7 +569,7 @@ Another important element is the noise of the spectral estimation: we find that 
 Finally, as already discussed Welch's method is very dependent on the choice of window function. 
 Our choice, a Tukey window with aforementioned parameters, is the best compromise with found between noise 
 and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results than the ones reported here. 
-However, we want to stress that this fact does not invalidate our discussion but it reinforces it: one of the most appealing advantages of MESA is the minimal amount of fine tuning required.
+However, we want to stress that this fact does not invalidate our discussion but reinforces it: one of the most appealing advantages of MESA is the minimal amount of fine tuning required.
 
 \begin{figure}[!t]
 	\caption{Comparison between analytic (dashed line) and estimated (red line) spectrum. The estimation is perfomed with Maximum Entropy method on \textit{synthetic} data. The estimation is performed with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
@@ -592,15 +594,15 @@ The data consist in temperatures taken at coordinates $\textrm{N}\;\ang{45;5;} \
 
 Fig.~\ref{fig:temp_spectrum}, shows the MESA spectrum inferred from the data. As a comparison, we adopt both the FPE and the CAT loss functions.
 In agreement with what we found in previous sections, the FPE PSD is more regular compared to the one from CAT. Both spectra show a
-peak at the frequency $f_D = \SI{1}{day^{-1}}$ corresponding to one day, corresponding to the day-night cycle. This is expected.
+peak at the frequency $f_D = \SI{1}{day^{-1}}$ corresponding to one day, corresponding to the day-night cycle: this is expected.
 Higher order harmonics (corresponding to integer multiples of $f_D$) are also visible up to the Nyquist frequency ($f_D = \SI{0.5}{hour^{-1}}$): they corresponds to signals that preserve the 1 day period while, at the same time, capturing the complex variability of the daily temperature cycle throughout the year.
 
 Looking at low frequencies, FPE does not capture the yearly variability at $f_{yr} = \SI{1}{yr^{-1}}$. On the other hand, the peak is captured well by the CAT loss function. In analogy as what observed for the peak at $f_D$, in the CAT spectrum we observe a higher order harmonics at a frequency $2 \cdot f_{yr}$. As in the previous case, this is required to better model the temperature variation in the year.
 
-The failure of FPE in capturign the low frequency trend can be understood by looking at Fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often underestimating the actual value.
+The failure of FPE in capturing the low frequency trend can be understood by looking at Fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often underestimating the actual value.
 In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
 The autoregressive process selected by FPE, hence cannot produce a meaningful prediction on the timescale longer than a few weeks and for this reason it is unable to capture the low frequency peak at $f_{yr}$. In other words, the model is too simple to model \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
-On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour.
+On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour, at the expense of making a more noisy estimation.
 The ``actual" length of the autoregressive process should be closer to the choice of CAT.
 
 We now assess the accuracy of the forecasting of new observations of the time series. 
@@ -630,8 +632,8 @@ starting from GPS time $1164603392$. The data are sampled at $\SI{4096}{Hz}$.
 
 We then forecast the following $\SI{100}{s}$ of observations with the model optimized with CAT. The results are shown in fig.~\ref{fig:LIGO_forecast}.
 The prediction is always in the $90\%$ confidence interval. The confidence interval, however, is very broad and the prediction is not very accurate (being the same order of magnitude of the strain).
-By looking at the standard deviation $\sigma$ of the predictions (bottom panel in Fig.~\ref{fig:LIGO_forecast}), we note that it increases very quickly in the first $\SI{0.5}{s}$ and then it converges to a constant value.
-The order of the autoregressive process selected is $p_{CAT} = 57766 \sim \SI{14}{s}$, which is much larger than the region in which $\sigma$ is small $\sim \SI{0.2}{s}$. The implication is that the series is very difficult to predict: the knowledge of past observations is not very helpful to predict future observations. Although FPE selects a prediction filter order $p_{FPE} = 29924$ smaller than CAT,  the forecasted time series behaves very similarly.
+By looking at the standard deviation $\sigma$ of the predictions (bottom panel in Fig.~\ref{fig:LIGO_forecast}), we note that it increases very quickly in the first $\SI{0.5}{s}$.
+The order of the autoregressive process selected is $p_{CAT} = 57766 \sim \SI{14}{s}$, which is much larger than the region in which $\sigma$ is small $\sim \SI{0.2}{s}$. The implication is that the series is very difficult to predict: the knowledge of past observations is not very helpful to predict future observations. Although FPE selects an autoregressive order $p_{FPE} = 29924 \sim \SI{7}{s}$ smaller than CAT,  the forecasted time series behaves very similarly.
 
 Despite poor predictions on long timescales, the AR process obtained with MESA still can be useful on short timescales. Indeed, a precise prediction of the strain time series can be beneficial in the detection of anomalies in the data and, eventually, their removal. The predictions can form an expected baseline for the strain; any anomaly (i.e. a glitch or even a transient of physical origin) can show up as a large departure from expected trend.
 Moreover, if a glitch is detected, its shape can be estimated (as well as the confidence level) by subracting the expected signal with the actual signal.
@@ -652,15 +654,16 @@ This opens a promising path in GW data analysis and other fields of physics migh
 \section{Final remarks and future prospects} \label{sec:conclusion}
 We presented a case study of the application of Maximum Entropy principle to the realm of spectral estimation. Albeit the methodology hereby presented is grounded on solid theoretical foundations and its merits are widely recognised, Maximum Entropy methods have yet to be adopted routinely in the study of problems related to time series. The superior nature of maximum entropy methods, and in particular of Burg's method, is exemplified by the closed form estimate of the power spectral density and by the theoretical bridge between spectral analysis and AR processes. Moreover, the method presents, in our view, two main advantages when compared with more traditional ones; first there is no need to choose an arbitrary window function to correct the data and, second it provides as straightforward way to compute predictions given past observations. Accompanying this work, we provide a publicly available \texttt{Python} implementation, called \texttt{memspectrum}, that we used to perform the numerical studies presented in this work.. 
 
-Since the order of the AR process is not yet determined by the theory, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance than Welch algorithm. The use of MESA is particularly useful for short time series samples, where Welch's method is outperformed in accuracy and confidence. 
-This observation suggests a promising avenue to pursue in future developments: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD, hence MESA could be employed for a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalising over the detector noise PSD. Whenever the log-likelihood of the model for a time series takes the form
+Since the order of the AR process is not yet determined by the theory, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance and better accuracy than Welch algorithm. The use of MESA is particularly useful for short time series samples, where Welch's method is outperformed in both precision and confidence.
+ 
+This observation suggests a promising avenue to pursue in future developments of gravitational waves data analysis: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD, hence MESA could be employed for a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalising over the detector noise PSD. Whenever the log-likelihood of the model for a time series takes the form
 \begin{equation}
-	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{(\tilde{d}(f)- \tilde{x}(f;\theta))^2 - \frac{1}{2}\log\left[\int  df\,S(f)} \right]}
+	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{(\tilde{d}(f)- \tilde{x}(f;\theta))^2}{S(f)} - \frac{1}{2}\log\left[\int  df\,S(f)\right]
 \end{equation}
 where $\tilde{\hphantom{a}}$ denotes the Fourier transform and the signal model $x(t;\theta)$, dependent on some parameter $\theta$, is a prediction for a deterministic signal buried in the observed time series $d(t)$. The typical approach is to estimate the PSD offline on a large batch of data and off-source (see~\cite{lalinference}), that might not reflect the structure of noise in the time slice to analyse. MESA can offer a way out from this problem: at each evaluation of the likelihood, a new spectral analysis is performed by computing the PSD on $d_t-x_t$.
 In this way, the PSD would depend also on $\theta$ and would effectively model the residuals. Preliminary studies suggest that this is possible~\cite{martini_thesis}.
 
-Furthermore, MESA provides a simple, but robust and quite accurate, albeit for short times, predictor for the time series. This fact is remarkable and can be used in time series analysis for several purposes. As discussed in Sec.~\ref{sec:LIGO_forecasting}, an anomaly detection pipeline could be built using the forecasts of MESA: the predictions can form a baseline to compare the actual observations with. Whenever the observed data are outside the expectations, an anomaly detection can be claimed. Of course such predictions can be done with a more accurate (perhaps nonlinear model); however MESA has the advantage of being simple and fast to construct, while providing good predictions. At the same time, several instruments present gaps in their data stream, for instance LISA is expected to show such gaps~(e.g. \cite{lisa_gaps} and references therein), MESA forecasting capabilities could be used to fill those gaps with predicted data from past observations.
+Furthermore, MESA provides a simple, but robust and quite accurate, albeit for short times, predictor for the time series. This fact is remarkable and can be used in time series analysis for several purposes. As discussed in Sec.~\ref{sec:LIGO_forecasting}, an anomaly detection pipeline could be built using the forecasts of MESA: the predictions can form a baseline to compare the actual observations with. Whenever the observed data are outside the expectations, an anomaly detection can be claimed. Of course such predictions can be done with a more accurate (perhaps nonlinear model); however MESA has the advantage of being simple and fast to construct, while providing decent predictions. At the same time, several instruments present gaps in their data stream, for instance LISA is expected to show such gaps~(e.g. \cite{lisa_gaps} and references therein), MESA forecasting capabilities could be used to fill those gaps with predicted data from past observations.
 
 In conclusion, we reiterate that MESA is a theoretically sound, computationally feasible and reliable way of studying the properties of stochastic processes and we hope that the investigations presented in this work will further stimulate developments and applications of this method.
 
@@ -736,7 +739,7 @@ Substituting $s \to s - r$, multiplying by $a^*_s$ and summing over $s$, the pre
     \label{eq:errorFilter}
     \sum_{s = 0}^N a_s \bar r_{s - r} = \frac{P_N}{2 \pi \imath}\oint \frac{z^{r -1}}{\sum_{s = 0}^N a_s z^s}dz
 \end{equation}
-For a wide-sense stationary processes \sschmidt{Justify this assumption!}, all the poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following, well known, equations: 
+For a wide-sense stationary processes, all the poles lay outside the unit circle so that the previous integral can be easily computed obtaining the following, well known, equations: 
 \begin{align}
     \label{eq:errorFilter1}
     \sum_{s = 0}^N a_s \bar r_{r - s} &= P_N \quad \text{ if } r = 0 \\ \label{eq:errorFilter2}
