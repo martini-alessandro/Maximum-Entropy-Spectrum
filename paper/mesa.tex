@@ -71,7 +71,7 @@ systematically lower variance and bias. This is particularly manifest in the cas
   
 	
 	\maketitle
-	\tableofcontents
+	%\tableofcontents %comment this to hide the table of content
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY  
 
@@ -571,17 +571,21 @@ Our choice, a Tukey window with aforementioned parameters, is the best compromis
 and accuracy for the reconstruction, but different choices can be made, possibly providing more accurate results than the ones reported here. 
 However, we want to stress that this fact does not invalidate our discussion but reinforces it: one of the most appealing advantages of MESA is the minimal amount of fine tuning required.
 
-\begin{figure}[!t]
-	\caption{Comparison between analytic (dashed line) and estimated (red line) spectrum. The estimation is performed with Maximum Entropy method on \textit{synthetic} data. The estimation is performed with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
+\begin{figure*}
+
+\begin{minipage}{0.99\columnwidth}
+	\caption{Comparison between analytic (dashed line) and estimated (red line) spectrum. The estimation is performed with Maximum Entropy method on \textit{synthetic} data, with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
 	\label{fig:MESA_LIGO_data}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_MESA.pdf}
-\end{figure}
-
-\begin{figure}[!t]
-	\caption{Comparison between analytic (dashed line) and estimated (green line) spectrum. The estimation is performed with Welch's method on \textit{synthetic} data. The estimation is performed with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
+\end{minipage}\hfill
+\begin{minipage}{0.99\columnwidth}
+	\caption{Comparison between analytic (dashed line) and estimated (green line) spectrum. The estimation is performed with Welch's method on \textit{synthetic} data with an increasing observation time $T = 1, 5, 10, 100, \SI{1000}{s}$.}
 	\label{fig:welch_LIGO_data}
 	\includegraphics{Images/comparison_LVC_data/comparison_LVC_data_Welch.pdf}
-\end{figure}
+\end{minipage}
+
+\end{figure*}
+
 
 
 \section{Applications} \label{sec:applications}
