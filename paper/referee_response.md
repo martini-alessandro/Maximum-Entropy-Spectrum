@@ -28,7 +28,7 @@ We read carefully throught the proposed changes and we amended the text accordin
 	+ Done: on sec. V.B, page 13
 
 - I’m not sure if this qualifies as a PnP comment, but a significant omission is the lack of discussion of the Bayeswave method of PSD estimation, which is the official method for calculating PSDs for parameter estimation results by the LVC. In addition to citing the papers described above, I think it would be appropriate to add a discussion, either in the Introduction or the Final Remarks comparing MESA to this “on-source” PSD estimation and citing the relvant papers disucssing the Bayeswave PSD method in comparison to the Welch method, some repeated from the above requests (1907.06540, 2006.05292).
-	+ This is a very good suggestion... Are we gonna include BayesLine among our comparison? It looks like a good idea. If we do so, probably we want to say something about it in the beginning.The paper 1907.06540 is already cited together with BayesWave
+	+ Work in progress: This is a very good suggestion... Are we gonna include BayesLine among our comparison? It looks like a good idea. If we do so, probably we want to say something about it in the beginning.The paper 1907.06540 is already cited together with BayesWave
 
 ## Personal comments
 
@@ -49,7 +49,7 @@ We fixed all the typos that the referee pointed out. We are thankful for that.
 ### Final Remarks and Future Prospects
 
 - In addition to adding the citations to other LVC works presenting methods and results for marginalizing over the PSD uncertainty (see PnP comments above), a more detailed discussion of how MESA compares to these other methods (particularly the error in the PSD measurement) would be appropriate here.
-	+ Working on it: shall we quote some numbers about the accuracy? Or we just reitarete the qualitative findings we had?
+	+ Work in progress: shall we quote some numbers about the accuracy? Or we just reitarete the qualitative findings we had?
 
 
 
