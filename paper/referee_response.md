@@ -34,6 +34,11 @@ We read carefully throught the proposed changes and we amended the text accordin
 
 We fixed all the typos that the referee pointed out. We are thankful for that.
 
+### Validations of the model:
+- I wasn't able to get a good grasp of the practical applications of the estimation of the autoregressive process order while reading this section. Is gravitational-wave data expected to be stationary enough to reliably model as an autoregressive process? If not, what are some other examples? It would be very helpful to elaborate on this, perhaps when the connection to AR is introduced.
+	+ Work in progress: I guess we could just point out that it is just a way to validate the accuracy of the method and to test which loss function is better. Does it makes sense?
+
+
 ### Comparison with Welch method:
 - Maybe it’s because of the broken citation, but I don’t understand which PSD is being used in the simulation. Is it the same “analytical PSD computed for the LIGO Hanford interferometer” used in the previous section, or is it a PSD calculated using the real LIGO data from around GW150914? If so, how was that PSD calculated?
 	+ The two PSDs are different. In the validation part, we used the design sensitivity of aLIGO (we quoted the relevant paper as well as the DCC link for the file). In the Welch comparison part, we employed the PSD released together with GW150914 (again we quoted the GWTC-1 paper and the link).

@@ -1,6 +1,6 @@
 all: mesa.pdf
 
-mesa.pdf: mesa.tex mesa.bbl mesa.aux
+mesa.pdf: mesa.tex mesa.bbl mesa.aux Bibliography.bib
 	pdflatex -synctex=1 -interaction=nonstopmode "mesa".tex
 
 mesa.aux: Bibliography.bib
