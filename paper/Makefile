@@ -3,10 +3,10 @@ all: mesa.pdf
 mesa.pdf: mesa.tex mesa.bbl mesa.aux
 	pdflatex -synctex=1 -interaction=nonstopmode "mesa".tex
 
-mesa.aux:
+mesa.aux: Bibliography.bib
 	pdflatex -synctex=1 -interaction=nonstopmode "mesa".tex
 
-mesa.bbl: mesa.aux
+mesa.bbl: mesa.aux  Bibliography.bib
 	bibtex "mesa".aux
 
 clean:
