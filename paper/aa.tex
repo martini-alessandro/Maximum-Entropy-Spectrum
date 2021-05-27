@@ -1,0 +1,188 @@
+%                                                                 aa.dem
+% AA vers. 8.2, LaTeX class for Astronomy & Astrophysics
+% demonstration file
+%                                                       (c) EDP Sciences
+%-----------------------------------------------------------------------
+%
+%\documentclass[referee]{aa} % for a referee version
+%\documentclass[onecolumn]{aa} % for a paper on 1 column  
+%\documentclass[longauth]{aa} % for the long lists of affiliations 
+%\documentclass[rnote]{aa} % for the research notes
+%\documentclass[letter]{aa} % for the letters 
+%\documentclass[bibyear]{aa} % if the references are not structured 
+% according to the author-year natbib style
+
+%
+\documentclass{aa}  
+
+%
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{txfonts}
+\usepackage{color}
+\usepackage{calc}
+\usepackage{amsmath,amssymb,graphicx}
+\usepackage{tensor}
+\usepackage{bm}
+\usepackage{times}
+\usepackage[varg]{txfonts}
+\usepackage[colorlinks, linkcolor=blue, pdfborder={0 0 0}, breaklinks=true]{hyperref}
+\usepackage{float}
+\usepackage{dcolumn}
+\usepackage[nolist,nohyperlinks]{acronym}
+\usepackage{xspace}
+\usepackage[abs]{overpic}
+\usepackage{pict2e}
+\usepackage{enumitem}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{gensymb}
+\usepackage[capitalize]{cleveref}
+\Crefname{figure}{Fig.}{Figs.}% {<type>}{<singular>}{<plural>}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+\interfootnotelinepenalty=10000
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{tabularx}
+\usepackage{etoolbox}
+\usepackage{lineno}
+\linenumbers
+
+% WATERMARK settings
+%\usepackage{draftwatermark}
+%\SetWatermarkText{Draft-V2}
+%\SetWatermarkScale{1.3}
+%\SetWatermarkColor[gray]{0.85}
+%\usepackage{draftwatermark}
+%\SetWatermarkText{Draft}
+%\SetWatermarkScale{5}
+
+\usepackage{scrextend}
+\usepackage{textgreek}
+%\renewcommand{\mymacro}[1]{{\ensuremath{#1}}}
+
+%\renewcommand{\ThisEvent}{GW190521\xspace}
+\newcommand{\Msun}{\ensuremath{\mathrm{M}_\odot}}
+\newcommand{\likelihood}{\ensuremath{\mathcal{L}}}
+\newcommand{\note}[1]{\textit{\color{blue}Note: #1}}
+\newcommand{\rough}[1]{\textit{\color{brown} #1}}
+\newcommand{\todo}[1]{\textbf{\color{red} Todo: #1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[options]{hyperref}
+% To add links in your PDF file, use the package "hyperref"
+% with options according to your LaTeX or PDFLaTeX drivers.
+%
+\begin{document} 
+
+
+   \title{Hydrodynamics of giant planet formation}
+
+   \subtitle{I. Overviewing the $\kappa$-mechanism}
+
+   \author{G. Wuchterl
+          \inst{1}
+          \and
+          C. Ptolemy\inst{2}\fnmsep\thanks{Just to show the usage
+          of the elements in the author field}
+          }
+
+   \institute{Institute for Astronomy (IfA), University of Vienna,
+              T\"urkenschanzstrasse 17, A-1180 Vienna\\
+              \email{wuchterl@amok.ast.univie.ac.at}
+         \and
+             University of Alexandria, Department of Geography, ...\\
+             \email{c.ptolemy@hipparch.uheaven.space}
+             \thanks{The university of heaven temporarily does not
+                     accept e-mails}
+             }
+
+   \date{Received September 15, 1996; accepted March 16, 1997}
+
+% \abstract{}{}{}{}{} 
+% 5 {} token are mandatory
+ 
+  \abstract
+  % context heading (optional)
+  % {} leave it empty if necessary  
+{Intermediate-mass black holes (IMBH), spanning the approximate mass range 
+$100$--$10^5$\,\Msun, lie between black holes (BH) formed by stellar collapse
+%lying between the known population of black holes (BH) formed via stellar collapse whose 
+%mergers have been observed by LIGO-Virgo, 
+and the super-massive BH lying at the centre of galaxies.  Mergers of IMBH binaries are 
+the most intense gravitational-wave sources accessible by the Advanced detector network. 
+Searches of the first two Advanced LIGO-Virgo observing runs did not yield any 
+significant IMBH binary signals.  With the increased detector sensitivity of the third
+observing run (O3), GW190521, a signal consistent with a binary merger of mass $\sim 150$\,\Msun\, 
+provided the direct evidence of IMBH formation.  Here 
+%After the first clear IMBH detection implied by the remnant of the merger event GW190521, 
+we report on a dedicated search of O3 data
+%from the third Advanced LIGO-Virgo observing run 
+for further IMBH binary mergers, combining both modelled (template matched filter) and 
+unmodelled search methods. 
+We detail the most significant new candidate events: %obtained in addition to GW190521; 
+\rough{these events are, however, not strongly inconsistent with instrumental noise origin
+and thus do not indicate detection of further IMBH mergers.} 
+%\footnote{(this statement we need to discuss with detchar)}.  
+We quantify the sensitivity of the individual search methods and of the combined search
+using a suite of IMBH binary signals simulated by numerical solution of general relativity, 
+including the effects of spins misaligned with the binary orbital axis, and give upper 
+limits on the corresponding astrophysical merger rates.  Our most stringent limit is for 
+[MASSES/SPINS] at [NUMBER]\,Gpc$^{-3}$yr$^{-1}$ (90\% confidence), a factor of [NUMBER] 
+more constraining than previous LIGO-Virgo limits.  We also update the estimated rate of
+mergers similar to GW190521 to \todo{NUMBER}.}
+  % aims heading (mandatory)
+
+  % conclusions heading (optional), leave it empty if necessary 
+   {}
+
+   \keywords{giant planet formation --
+                $\kappa$-mechanism --
+                stability of gas spheres
+               }
+
+   \maketitle
+%
+%________________________________________________________________
+%\section{Introduction}
+
+ \input{introduction.tex}
+%__________________________________________________________________
+\input{data.tex}
+
+%BOB, GV, KC, TD, DM
+%\input{searches.tex}
+
+%KC, BOB, TD, WP, PG, DM
+%\input{results.tex}
+
+%BOB, KC, TD
+\input{rate.tex}
+
+%AP
+\input{conclusion.tex}
+
+%\acknowledgments
+%\input{LVCack.tex}
+
+%\appendix
+%\input{appendix.tex}
+%\input{s200114f.tex}
+
+
+%\section{Conclusions}
+
+
+\begin{acknowledgements}
+
+\end{acknowledgements}
+
+
+%-------------------------------------------------------------------
+
+\end{document}
+
+
