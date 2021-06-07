@@ -54,7 +54,7 @@ We fixed all the typos that the referee pointed out. We are thankful for that.
 ### Final Remarks and Future Prospects
 
 - In addition to adding the citations to other LVC works presenting methods and results for marginalizing over the PSD uncertainty (see PnP comments above), a more detailed discussion of how MESA compares to these other methods (particularly the error in the PSD measurement) would be appropriate here.
-	+ Work in progress: shall we quote some numbers about the accuracy? Or we just reitarete the qualitative findings we had?
+	+ We believe we discussed in details the matter in section 4, which we refer the reader to. At the beginning of the section, we addeed two lines explaining why the comparison shall be qualitative (being the results very problem dependent, we believe that every measure of error hardly generalises to other problems).
 
 
 

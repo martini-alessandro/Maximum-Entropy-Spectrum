@@ -546,9 +546,9 @@ On the other hand, CAT shows a different behaviour. The selected AR order $p$ is
 Of course, CAT does not perform a good job in reconstructing the AR process. However, for high order AR processes, the error introduced by CAT is more tolerable than the error introduced by FPE and OBD. This is a good reason to prefer CAT in these situations (see also Sec.~\ref{sec:temp_timeseries} for another example of this effect).
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
-\sschmidt{Do we want to make a comparison with BayesLine? I think so... \\ Do we want to introduce this method in the introduction? Makes sense}
-In this section we perform a qualitative comparison between the performance of the MESA and of the standard Welch algorithm.
-Although similar studies can be drawn from any other PSD, for definiteness, we focus on the analytical PSD computed for LIGO Handford interferometer, released together with the GWCT-1 catalog~\citep{GWTC1, PSD_release}, and computed with BayesLine package \citep{Cornish_2015, Littenberg_2015, Cornish_2020, Chatziioannou_2019}.
+We perform a {\it qualitative} comparison between the performance of the MESA and of the standard Welch algorithm.
+In this, we cannot avoid to be only qualitative. Indeed, as the results of the comparison are problem dependent, it is very hard to quantify this in a single metric. Although similar studies can be drawn from any other PSD, in this section we focus on a single PSD and we try to generalize some observations that we make.
+We decide to use the analytical PSD computed for LIGO Handford interferometer, released together with the GWCT-1 catalog~\citep{GWTC1, PSD_release}, and computed with BayesLine package \citep{Cornish_2015, Littenberg_2015, Cornish_2020, Chatziioannou_2019}.
 
 We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD used for the analysis of the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
 We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
