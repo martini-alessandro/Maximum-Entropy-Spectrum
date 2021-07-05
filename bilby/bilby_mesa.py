@@ -24,8 +24,12 @@ class MESAGravitationalWaveTransient(GravitationalWaveTransient):
         return self.log_likelihood() - self.noise_log_likelihood()
 
     def log_likelihood(self):
-        for det in self.interferometers:
-            response = det.get_detector_response(
+        deltas = []
+        for ifo in self.interferometers:
+            psd_array = ifo.power_spectral_density._cache["psd_array"]
+            frequency_mask = ifo.frequency_mask
+
+            response = ifo.get_detector_response(
                 self.waveform_generator.frequency_domain_strain(),
                 self.parameters
             )
@@ -33,13 +37,29 @@ class MESAGravitationalWaveTransient(GravitationalWaveTransient):
                 response,
                 self.waveform_generator.sampling_frequency
             )
-            delta = det.time_domain_strain - signal_projected
-            _ = self.m.solve(delta)
-            psd = self.m.spectrum(dt=1 / det.sampling_frequency,
-                                  frequencies=det.power_spectral_density.frequency_array)
-            det.power_spectral_density.power_spectral_density_array = psd
+            delta = ifo.time_domain_strain - signal_projected
+            _ = self.m.solve(delta, m=5)
+            _, psd = self.m.spectrum(
+                dt=1 / ifo.sampling_frequency,
+                onesided=True,
+            )
+            psd = np.concatenate([psd, [psd_array[-1]]])
+            ifo.power_spectral_density._cache["psd_array"][frequency_mask] = psd[frequency_mask]
 
-        return GravitationalWaveTransient.log_likelihood_ratio(self)
+            deltas.append(-np.sum(np.log(2 * np.pi * ifo.power_spectral_density_array[
+                ifo.frequency_mask]))
+            )
+            deltas.append(-2. / self.waveform_generator.duration * np.sum(
+                abs(ifo.frequency_domain_strain[ifo.frequency_mask]) ** 2 /
+                ifo.power_spectral_density_array[ifo.frequency_mask])
+            )
+
+        logl = GravitationalWaveTransient.log_likelihood_ratio(self) + np.sum(deltas)
+
+        if np.isnan(logl):
+            return -np.nan_to_num(np.inf)
+        else:
+            return logl
 
     def noise_log_likelihood(self):
         if np.isnan(self._nll):
@@ -68,7 +88,8 @@ injection_parameters = dict(
 waveform_arguments = dict(
     waveform_approximant='TaylorF2',
     reference_frequency=20.,
-    minimum_frequency=20.
+    minimum_frequency=20.,
+    catch_waveform_errors=True,
 )
 waveform_generator = bilby.gw.WaveformGenerator(
     duration=duration, sampling_frequency=sampling_frequency,
@@ -89,13 +110,13 @@ priors['geocent_time'] = bilby.core.prior.Uniform(
     maximum=injection_parameters['geocent_time'] + 0.1,
     name='geocent_time', latex_label='$t_c$', unit='$s$')
 priors['chirp_mass'] = bilby.core.prior.Uniform(
-    minimum=30, maximum=45, name="chirp_mass"
+    minimum=35, maximum=37, name="chirp_mass"
 )
 
 for key in bilby.gw.source.spin:
     if key in injection_parameters:
         priors[key] = injection_parameters[key]
-for key in ['psi', 'ra', 'dec', 'geocent_time', 'phase', 'theta_jn', 'mass_ratio']:
+for key in ['psi', 'ra', 'dec', 'geocent_time', 'phase', 'theta_jn', 'mass_ratio', 'luminosity_distance']:
     priors[key] = injection_parameters[key]
 
 if "standard" in sys.argv:
@@ -103,14 +124,18 @@ if "standard" in sys.argv:
         interferometers=ifos, waveform_generator=waveform_generator)
 
     result = bilby.run_sampler(
-        likelihood=standard_likelihood, priors=priors, sampler='pymultinest', npoints=1000,
+        likelihood=standard_likelihood, priors=priors, sampler='bilby_mcmc', nsamples=20000,
+        check_point_delta_t=300, ntemps=1, thin_by_nact=0.2,
+        use_ratio=False,
         injection_parameters=injection_parameters, outdir=outdir, label="standard")
 else:
     mesa_likelihood = MESAGravitationalWaveTransient(
         interferometers=ifos, waveform_generator=waveform_generator)
 
     result = bilby.run_sampler(
-        likelihood=mesa_likelihood, priors=priors, sampler='pymultinest', npoints=1000,
+        likelihood=mesa_likelihood, priors=priors, sampler='bilby_mcmc', nsamples=5000,
+        check_point_delta_t=300, ntemps=1, thin_by_nact=0.2,
+        use_ratio=False,
         injection_parameters=injection_parameters, outdir=outdir, label='mesa')
 
 result.plot_corner()
