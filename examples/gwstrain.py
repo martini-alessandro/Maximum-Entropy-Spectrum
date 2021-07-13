@@ -13,12 +13,12 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from scipy.signal import decimate
     
-    srate = 4096.
+    srate = 2048.
     dt = 1./srate
     bandpassing = 0
     f_min_bp = 20.0
     f_max_bp = (srate-20)/2.0
-    T  = 4
+    T  = 10
     datafile = "data/V-V1_GWOSC_4KHZ_R1-1186741846-32.txt"
     data = np.loadtxt(datafile)[:int(T*4096)]
     if srate != 4096.:
@@ -46,10 +46,13 @@ if __name__ == "__main__":
 
     fig = plt.figure(1)
     ax  = fig.add_subplot(111)
-    ax.loglog(f[:N//2], M.spectrum(dt,f)[:N//2],'-k')
+    ax.loglog(f[:N//2], M.spectrum(dt,f)[:N//2],'-k', label = 'm = {}'.format(len(ak)))
+    M.solve(data,method = "Fast", optimisation_method = "FPE", m =100)
+    ax.loglog(f[:N//2], M.spectrum(dt,f)[:N//2],'-r', label = 'm = 100')
     ax.set_xlim(1,srate/2.)
     ax.set_xlabel("frequency (Hz)")
     ax.set_ylabel("PSD (Hz$^{-1}$)")
+    ax.legend()
     
     M = MESA()
     P, ak, _ = M.solve(data[:int(0.75*N)],method = "Fast", optimisation_method = "FPE", m = int(2*N/(2*np.log(N))))
