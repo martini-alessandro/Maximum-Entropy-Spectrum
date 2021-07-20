@@ -1,50 +1,128 @@
 #!/usr/bin/env python
-import sys
+"""
+A script to run bilby with a PSD calculated by MESA on the residual
+
+Usage
+-----
+To run the script, first ensure both bilby and pymultinest are installed
+
+    $ conda install -c conda-forge bilby pymultinest
+
+Then to run using the MESA likelihood:
+
+    $ python bilby_mesa.py --model mesa --plot-psd
+
+Other options can be found from
+
+    $ python bilby_mesa.py --help
+
+"""
+
+import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
 import bilby
 from bilby.gw.likelihood import Likelihood
 import memspectrum
+from scipy.signal.windows import tukey
+
+
+parser = argparse.ArgumentParser(__doc__)
+parser.add_argument("-s", "--seed", default=42, type=int)
+parser.add_argument("-m", "--model", default="mesa")
+parser.add_argument("--nlive", default=1000)
+parser.add_argument("--plot-psd", action="store_true")
+parser.add_argument("--mesa-m", default=None, type=int)
+parser.add_argument("--mesa-optimisation-method", default="FPE")
+parser.add_argument("--mesa-method", default="Fast")
+args, _ = parser.parse_known_args()
 
 
 class MESAGravitationalWaveTransient(Likelihood):
-    def __init__(self, interferometers, waveform_generator):
+    def __init__(
+        self,
+        interferometers,
+        waveform_generator,
+        mesa_m,
+        mesa_method,
+        mesa_optimisation_method,
+    ):
         super(MESAGravitationalWaveTransient, self).__init__(dict())
 
         self.interferometers = interferometers
         self.waveform_generator = waveform_generator
         self._nll = np.nan
-        self.m = memspectrum.MESA()
+        self.mesa = memspectrum.MESA()
+        self.mesa_m = mesa_m
+        self.mesa_method = mesa_method
+        self.mesa_optimisation_method = mesa_optimisation_method
 
-    def log_likelihood(self):
-        log_l = 0
-        waveform_polarizations =\
-            self.waveform_generator.frequency_domain_strain(
-                self.parameters.copy())
-        if waveform_polarizations is None:
-            return np.nan_to_num(-np.inf)
-        for interferometer in self.interferometers:
-            log_l += self.log_likelihood_interferometer(
-                waveform_polarizations, interferometer)
-        return log_l.real
+    def update_ifo_psd(self, interferometer, htilde=None):
+        """ Use MESA to update the PSD for the given interferometer
 
-    def update_ifo_psd(self, interferometer, signal_ifo):
-        signal_projected = bilby.core.utils.infft(
-            signal_ifo,
-            self.waveform_generator.sampling_frequency
+        Parameters
+        ----------
+        interferometer: bilby.gw.interferometer.Interferometer
+            The bilby interferometer object which stores its own PSD.
+        htilde: np.array
+            The complex frequency-domain detector response to the signal.
+            If this is None, no signal is subtracted from the time-domain
+            data before calculated the PSD.
+
+        """
+        if htilde is not None:
+            h_timedomain = bilby.core.utils.infft(
+                htilde, self.waveform_generator.sampling_frequency
+            )
+        else:
+            h_timedomain = 0
+
+        delta = interferometer.time_domain_strain - h_timedomain
+
+        N = len(delta)
+        roll_off = 0.2  # Rise time of window in seconds
+        alpha = 2 * roll_off / duration
+        window = tukey(N, alpha=alpha)
+        delta*= window
+
+        _ = self.mesa.solve(
+            delta,
+            m=self.mesa_m,
+            method=self.mesa_method,
+            optimisation_method=self.mesa_optimisation_method,
         )
-
-        delta = interferometer.time_domain_strain - signal_projected
-        _ = self.m.solve(delta, m=100)
-        _, psd = self.m.spectrum(
+        _, psd = self.mesa.spectrum(
             dt=1 / interferometer.sampling_frequency,
             onesided=True,
         )
 
-        psd = np.concatenate([psd, [np.inf]])
+        cached_psd = interferometer.power_spectral_density._cache["psd_array"]
+        psd = np.concatenate([psd, [cached_psd[-1]]])
+        psd[~interferometer.frequency_mask] = np.inf
         interferometer.power_spectral_density._cache["psd_array"] = psd
         return interferometer
+
+    def log_likelihood(self):
+        # Calculate the waveform_polarizations dictionary
+        waveform_polarizations = self.waveform_generator.frequency_domain_strain(
+            self.parameters.copy()
+        )
+
+        # If the waveform_polarizations dict is None, calculation failed
+        # so return -inf likelihood (failure usualy means we outstepped the
+        # bounds of the waveform model.
+        if waveform_polarizations is None:
+            return np.nan_to_num(-np.inf)
+
+        # Sum up the log_likelihood per detector
+        log_l = 0
+        for interferometer in self.interferometers:
+            log_l += self.log_likelihood_interferometer(
+                waveform_polarizations, interferometer
+            )
+
+        return log_l.real
 
     def log_likelihood_interferometer(self, waveform_polarizations, interferometer):
         """
@@ -62,39 +140,85 @@ class MESAGravitationalWaveTransient(Likelihood):
 
         """
         # Get a dictionary of the + and x response
+        htilde = interferometer.get_detector_response(
+            waveform_polarizations, self.parameters
+        )
 
-        signal_ifo = interferometer.get_detector_response(
-            waveform_polarizations, self.parameters)
+        # Update the interferometer PSD using MESA
+        interferometer = self.update_ifo_psd(interferometer, htilde)
 
-        interferometer = self.update_ifo_psd(interferometer, signal_ifo)
+        # Extract the PSD and frequency_domain_strain data
+        psd = interferometer.power_spectral_density_array
+        data = interferometer.frequency_domain_strain
 
-        log_l = - 2. / self.waveform_generator.duration * np.vdot(
-            interferometer.frequency_domain_strain - signal_ifo,
-            (interferometer.frequency_domain_strain - signal_ifo) /
-            interferometer.power_spectral_density_array)
+        # Apply the frequency mask (cutting data outdir minimum_frequency-maximum_frequency)
+        htilde = htilde[interferometer.frequency_mask]
+        psd = psd[interferometer.frequency_mask]
+        data = data[interferometer.frequency_mask]
 
-        log_l += 2. / self.waveform_generator.duration * np.sum(
-            abs(interferometer.frequency_domain_strain) ** 2 /
-            interferometer.power_spectral_density_array)
+        # Calculate the first term in Eq (10) of Veitch (2015)
+        termA = (
+            -2.0
+            * np.vdot(data - htilde, (data - htilde) / psd)
+            / self.waveform_generator.duration
+        )
 
+        # Calculate the second term in Eq (10) of Veitch (2015)
+        termB = -0.5 * np.sum(np.log(0.5 * np.pi * duration * psd))
+
+        log_l = termA + termB
+        return log_l.real
+
+    def noise_log_likelihood(self):
+        log_l = 0
+        for interferometer in self.interferometers:
+            log_l += self.noise_log_likelihood_interferometer(interferometer)
+        return log_l.real
+
+    def noise_log_likelihood_interferometer(self, interferometer):
+        # Update the interferometer PSD using MESA
+        interferometer = self.update_ifo_psd(interferometer)
+
+        # Extract the PSD and frequency_domain_strain data
+        psd = interferometer.power_spectral_density_array
+        data = interferometer.frequency_domain_strain
+
+        # Apply the frequency mask (cutting data outdir minimum_frequency-maximum_frequency)
+        psd = psd[interferometer.frequency_mask]
+        data = data[interferometer.frequency_mask]
+
+        # Calculate the first term in Eq (8) of Veitch (2015)
+        termA = (
+            -2.0
+            * np.sum(abs(data) ** 2 / psd)
+            / self.waveform_generator.duration
+        )
+
+        # Calculate the second term in Eq (8) of Veitch (2015)
+        termB = -0.5 * np.sum(np.log(0.5 * np.pi * duration * psd))
+
+        log_l = termA + termB
         return log_l.real
 
 
+# Set up of the simulation
 duration = 4.0
-sampling_frequency = 512.0
+sampling_frequency = 1024.0
+maximum_frequency = sampling_frequency / 2
+minimum_frequency = 20
+minimum_frequency_simulation = 10
 outdir = "outdir"
-np.random.seed(150914)
+np.random.seed(args.seed)
 
-injection_parameters = dict(
-    chirp_mass=36.0,
-    mass_ratio=0.9,
+# Hold these parameters fixed for the simulation
+fixed_parameters = dict(
     a_1=0.0,
     a_2=0.0,
     tilt_1=0.0,
     tilt_2=0.0,
     phi_12=0.0,
     phi_jl=0.0,
-    luminosity_distance=4000.0,
+    luminosity_distance=2000.0,
     theta_jn=0.4,
     psi=2.659,
     phase=1.3,
@@ -103,10 +227,26 @@ injection_parameters = dict(
     dec=-1.2108,
 )
 
+priors = bilby.gw.prior.BBHPriorDict()
+priors["geocent_time"] = bilby.core.prior.Uniform(
+    minimum=fixed_parameters["geocent_time"] - 0.1,
+    maximum=fixed_parameters["geocent_time"] + 0.1,
+    name="geocent_time",
+    latex_label="$t_c$",
+    unit="$s$",
+)
+priors["chirp_mass"] = bilby.core.prior.Uniform(
+    minimum=35, maximum=40, name="chirp_mass"
+)
+for key, val in fixed_parameters.items():
+    priors[key] = bilby.core.prior.DeltaFunction(val)
+
+injection_parameters = priors.sample()
+
 waveform_arguments = dict(
     waveform_approximant="TaylorF2",
-    reference_frequency=20.0,
-    minimum_frequency=20.0,
+    reference_frequency=minimum_frequency,
+    minimum_frequency=minimum_frequency,
     catch_waveform_errors=True,
 )
 waveform_generator = bilby.gw.WaveformGenerator(
@@ -118,47 +258,30 @@ waveform_generator = bilby.gw.WaveformGenerator(
 )
 
 ifos = bilby.gw.detector.InterferometerList(["H1"])
+for ifo in ifos:
+    ifo.minimum_frequency = minimum_frequency_simulation
+    ifo.maximum_frequency = maximum_frequency
 ifos.set_strain_data_from_power_spectral_densities(
     sampling_frequency=sampling_frequency,
     duration=duration,
-    start_time=injection_parameters["geocent_time"] - 3,
+    start_time=fixed_parameters["geocent_time"] + 2 - duration,
 )
 ifos.inject_signal(
     waveform_generator=waveform_generator, parameters=injection_parameters
 )
 
-priors = bilby.gw.prior.BBHPriorDict()
-priors["geocent_time"] = bilby.core.prior.Uniform(
-    minimum=injection_parameters["geocent_time"] - 0.1,
-    maximum=injection_parameters["geocent_time"] + 0.1,
-    name="geocent_time",
-    latex_label="$t_c$",
-    unit="$s$",
-)
-priors["chirp_mass"] = bilby.core.prior.Uniform(
-    minimum=35, maximum=37, name="chirp_mass"
-)
-
-for key in bilby.gw.source.spin:
-    if key in injection_parameters:
-        priors[key] = injection_parameters[key]
-for key in [
-    "psi",
-    "ra",
-    "dec",
-    "geocent_time",
-    "phase",
-    "theta_jn",
-    "luminosity_distance",
-]:
-    priors[key] = injection_parameters[key]
-
-
+# Store the simulation PSDs for plotting later on
 true_psds = [ifo.power_spectral_density_array for ifo in ifos]
 
-skwargs = dict(sampler="pymultinest", nlive=1000, dlogz=0.5)
+# Set of arguments for the sampler
+skwargs = dict(sampler="pymultinest", nlive=int(args.nlive), dlogz=0.5)
 
-if "standard" in sys.argv:
+# A label to store the results by
+label = f"{args.model}_seed{args.seed}"
+if args.model == "mesa":
+    label += f"_m{args.mesa_m}_{args.mesa_method}_{args.mesa_optimisation_method}"
+
+if args.model == "standard":
     standard_likelihood = bilby.gw.likelihood.GravitationalWaveTransient(
         interferometers=ifos, waveform_generator=waveform_generator
     )
@@ -168,13 +291,17 @@ if "standard" in sys.argv:
         priors=priors,
         injection_parameters=injection_parameters,
         outdir=outdir,
-        label="standard",
+        label=label,
         use_ratio=True,
-        **skwargs
+        **skwargs,
     )
 else:
     mesa_likelihood = MESAGravitationalWaveTransient(
-        interferometers=ifos, waveform_generator=waveform_generator
+        interferometers=ifos,
+        waveform_generator=waveform_generator,
+        mesa_m=args.mesa_m,
+        mesa_method=args.mesa_method,
+        mesa_optimisation_method=args.mesa_optimisation_method,
     )
 
     result = bilby.run_sampler(
@@ -182,26 +309,41 @@ else:
         priors=priors,
         injection_parameters=injection_parameters,
         outdir=outdir,
-        label="mesa",
-        use_ratio=False,
-        **skwargs
+        label=label,
+        use_ratio=True,
+        **skwargs,
     )
 
-    for i, ifo in enumerate(ifos):
-        fig, ax = plt.subplots()
+    if args.plot_psd:
         print("Generating PSD plot")
-        for _ in range(1000):
-            sample = dict(result.posterior.sample().iloc[0])
-            mesa_likelihood.parameters.update(sample)
-            waveform_polarizations =\
-                waveform_generator.frequency_domain_strain(sample)
-            signal_ifo = ifo.get_detector_response(
-                waveform_polarizations, sample)
-            ifo = mesa_likelihood.update_ifo_psd(ifo, signal_ifo)
-            ax.loglog(ifo.frequency_array, ifo.power_spectral_density_array, color='k', lw=0.5)
-        ax.loglog(ifo.frequency_array, true_psds[i], ls='--')
-        ax.set_xlim(15, 256)
-        ax.set_xlabel("Frequency [Hz]")
-        fig.savefig(f"{ifo.name}_psd.png", dpi=500)
+        for i, ifo in enumerate(ifos):
+            fig, ax = plt.subplots()
+            ax.loglog(
+                ifo.frequency_array, np.abs(ifo.frequency_domain_strain)**2,
+                color="C0", label="Data"
+            )
+            for _ in range(500):
+                sample = dict(result.posterior.sample().iloc[0])
+                waveform_polarizations = waveform_generator.frequency_domain_strain(
+                    sample
+                )
+                htilde = ifo.get_detector_response(waveform_polarizations, sample)
+                mesa_likelihood.parameters.update(sample)
+                ifo = mesa_likelihood.update_ifo_psd(ifo, htilde)
+                ax.loglog(
+                    ifo.frequency_array,
+                    ifo.power_spectral_density_array,
+                    color="tab:red",
+                    zorder=100,
+                    alpha=0.8,
+                )
+            ax.loglog(ifo.frequency_array, true_psds[i], color="C1", alpha=0.8, label="True PSD")
+            ax.set_xlim(minimum_frequency - 10, maximum_frequency + 100)
+            ax.axvspan(minimum_frequency, maximum_frequency, color="k", alpha=0.1)
+            ax.set_xlabel("Frequency [Hz]")
+            ax.set_ylabel("PSD [1/Hz]")
+            ax.legend()
+            fig.savefig(f"outdir/{label}_{ifo.name}_psd.png", dpi=500)
+            fig.clf()
 
 result.plot_corner()
