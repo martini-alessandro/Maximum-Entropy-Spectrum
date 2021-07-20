@@ -70,6 +70,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         self.mesa_m = mesa_m
         self.mesa_method = mesa_method
         self.mesa_optimisation_method = mesa_optimisation_method
+        self._cached_noise_log_likelihood_dict = {}
 
     def update_ifo_psd(self, interferometer, htilde=None):
         """Use MESA to update the PSD for the given interferometer
@@ -119,7 +120,11 @@ class MESAGravitationalWaveTransient(Likelihood):
     def log_likelihood(self):
 
         # Update m
-        self.mesa_m = int(self.parameters["mesa_m"] + 1)
+        self.mesa_m = int(self.parameters["mesa_m"])
+
+        # Effective prior cut on m=0
+        if self.mesa_m == 0:
+            return -np.nan_to_num(np.inf)
 
         # Calculate the waveform_polarizations dictionary
         waveform_polarizations = self.waveform_generator.frequency_domain_strain(
@@ -187,10 +192,20 @@ class MESAGravitationalWaveTransient(Likelihood):
         return log_l.real
 
     def noise_log_likelihood(self):
+        self.mesa_m = int(self.parameters["mesa_m"])
+
+        # Effective prior cut on m=0
+        if self.mesa_m == 0:
+            return -np.nan_to_num(np.inf)
+
+        if self.mesa_m in self._cached_noise_log_likelihood_dict:
+            return self._cached_noise_log_likelihood_dict[self.mesa_m]
         log_l = 0
         for interferometer in self.interferometers:
             log_l += self.noise_log_likelihood_interferometer(interferometer)
-        return log_l.real
+        noise_log_likelihood = log_l.real
+        self._cached_noise_log_likelihood_dict[self.mesa_m] = noise_log_likelihood
+        return noise_log_likelihood
 
     def noise_log_likelihood_interferometer(self, interferometer):
         # Update the interferometer PSD using MESA
