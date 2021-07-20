@@ -33,6 +33,7 @@ parser.add_argument("-s", "--seed", default=42, type=int)
 parser.add_argument("-m", "--model", default="mesa")
 parser.add_argument("--nlive", default=1000)
 parser.add_argument("--plot-psd", action="store_true")
+parser.add_argument("--categorical-m", action="store_true")
 parser.add_argument("--mesa-m", default=None, type=int)
 parser.add_argument("--mesa-optimisation-method", default="FPE")
 parser.add_argument("--mesa-method", default="Fast")
@@ -104,6 +105,10 @@ class MESAGravitationalWaveTransient(Likelihood):
         return interferometer
 
     def log_likelihood(self):
+
+        # Update m
+        self.mesa_m = int(self.parameters["mesa_m"] + 1)
+
         # Calculate the waveform_polarizations dictionary
         waveform_polarizations = self.waveform_generator.frequency_domain_strain(
             self.parameters.copy()
@@ -238,6 +243,9 @@ priors["geocent_time"] = bilby.core.prior.Uniform(
 priors["chirp_mass"] = bilby.core.prior.Uniform(
     minimum=35, maximum=40, name="chirp_mass"
 )
+if args.categorical_m:
+    priors["mesa_m"] = bilby.core.prior.Categorical(args.mesa_m)
+
 for key, val in fixed_parameters.items():
     priors[key] = bilby.core.prior.DeltaFunction(val)
 
@@ -280,6 +288,8 @@ skwargs = dict(sampler="pymultinest", nlive=int(args.nlive), dlogz=0.5)
 label = f"{args.model}_seed{args.seed}"
 if args.model == "mesa":
     label += f"_m{args.mesa_m}_{args.mesa_method}_{args.mesa_optimisation_method}"
+if args.categorical_m:
+    label += "_categoricalm"
 
 if args.model == "standard":
     standard_likelihood = bilby.gw.likelihood.GravitationalWaveTransient(
