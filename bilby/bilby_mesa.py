@@ -30,11 +30,23 @@ from scipy.signal.windows import tukey
 
 parser = argparse.ArgumentParser(__doc__)
 parser.add_argument("-s", "--seed", default=42, type=int)
-parser.add_argument("-m", "--model", default="mesa")
+parser.add_argument("-m", "--model", default="mesa", choices=["mesa", "standard"])
 parser.add_argument("--nlive", default=1000)
-parser.add_argument("--plot-psd", action="store_true")
-parser.add_argument("--categorical-m", action="store_true")
-parser.add_argument("--mesa-m", default=None, type=int)
+parser.add_argument(
+    "--plot-psd", action="store_true", help="Create plot of the PSD for mesa runs"
+)
+parser.add_argument(
+    "--categorical-m", action="store_true", help="Use the categorical prior on m"
+)
+parser.add_argument(
+    "--mesa-m",
+    default=None,
+    type=int,
+    help=(
+        "Value of m passed to mesa.solve(). If categorical-prior is True, "
+        "the maximum value of the prior"
+    ),
+)
 parser.add_argument("--mesa-optimisation-method", default="FPE")
 parser.add_argument("--mesa-method", default="Fast")
 args, _ = parser.parse_known_args()
@@ -60,7 +72,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         self.mesa_optimisation_method = mesa_optimisation_method
 
     def update_ifo_psd(self, interferometer, htilde=None):
-        """ Use MESA to update the PSD for the given interferometer
+        """Use MESA to update the PSD for the given interferometer
 
         Parameters
         ----------
@@ -85,7 +97,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         roll_off = 0.2  # Rise time of window in seconds
         alpha = 2 * roll_off / duration
         window = tukey(N, alpha=alpha)
-        delta*= window
+        delta *= window
 
         _ = self.mesa.solve(
             delta,
@@ -193,11 +205,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         data = data[interferometer.frequency_mask]
 
         # Calculate the first term in Eq (8) of Veitch (2015)
-        termA = (
-            -2.0
-            * np.sum(abs(data) ** 2 / psd)
-            / self.waveform_generator.duration
-        )
+        termA = -2.0 * np.sum(abs(data) ** 2 / psd) / self.waveform_generator.duration
 
         # Calculate the second term in Eq (8) of Veitch (2015)
         termB = -0.5 * np.sum(np.log(0.5 * np.pi * duration * psd))
@@ -329,8 +337,10 @@ else:
         for i, ifo in enumerate(ifos):
             fig, ax = plt.subplots()
             ax.loglog(
-                ifo.frequency_array, np.abs(ifo.frequency_domain_strain)**2,
-                color="C0", label="Data"
+                ifo.frequency_array,
+                np.abs(ifo.frequency_domain_strain) ** 2,
+                color="C0",
+                label="Data",
             )
             for _ in range(500):
                 sample = dict(result.posterior.sample().iloc[0])
@@ -347,7 +357,13 @@ else:
                     zorder=100,
                     alpha=0.8,
                 )
-            ax.loglog(ifo.frequency_array, true_psds[i], color="C1", alpha=0.8, label="True PSD")
+            ax.loglog(
+                ifo.frequency_array,
+                true_psds[i],
+                color="C1",
+                alpha=0.8,
+                label="True PSD",
+            )
             ax.set_xlim(minimum_frequency - 10, maximum_frequency + 100)
             ax.axvspan(minimum_frequency, maximum_frequency, color="k", alpha=0.1)
             ax.set_xlabel("Frequency [Hz]")
