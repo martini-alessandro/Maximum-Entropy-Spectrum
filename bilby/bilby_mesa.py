@@ -27,31 +27,6 @@ from bilby.gw.likelihood import Likelihood
 import memspectrum
 from scipy.signal.windows import tukey
 
-
-parser = argparse.ArgumentParser(__doc__)
-parser.add_argument("-s", "--seed", default=42, type=int)
-parser.add_argument("-m", "--model", default="mesa", choices=["mesa", "standard"])
-parser.add_argument("--nlive", default=1000)
-parser.add_argument(
-    "--plot-psd", action="store_true", help="Create plot of the PSD for mesa runs"
-)
-parser.add_argument(
-    "--categorical-m", action="store_true", help="Use the categorical prior on m"
-)
-parser.add_argument(
-    "--mesa-m",
-    default=None,
-    type=int,
-    help=(
-        "Value of m passed to mesa.solve(). If categorical-prior is True, "
-        "the maximum value of the prior"
-    ),
-)
-parser.add_argument("--mesa-optimisation-method", default="FPE")
-parser.add_argument("--mesa-method", default="Fast")
-args, _ = parser.parse_known_args()
-
-
 class MESAGravitationalWaveTransient(Likelihood):
     def __init__(
         self,
@@ -228,163 +203,190 @@ class MESAGravitationalWaveTransient(Likelihood):
         log_l = termA + termB
         return log_l.real
 
+if __name__ == '__main__':
 
-# Set up of the simulation
-duration = 4.0
-sampling_frequency = 1024.0
-maximum_frequency = sampling_frequency / 2
-minimum_frequency = 20
-minimum_frequency_simulation = 10
-outdir = "outdir"
-np.random.seed(args.seed)
+	#parser
+	parser = argparse.ArgumentParser(__doc__)
+	parser.add_argument("-s", "--seed", default=42, type=int)
+	parser.add_argument("-m", "--model", default="mesa", choices=["mesa", "standard"])
+	parser.add_argument("--nlive", default=1000)
+	parser.add_argument(
+		"--plot-psd", action="store_true", help="Create plot of the PSD for mesa runs"
+	)
+	parser.add_argument(
+		"--categorical-m", action="store_true", help="Use the categorical prior on m"
+	)
+	parser.add_argument(
+		"--mesa-m",
+		default=None,
+		type=int,
+		help=(
+		    "Value of m passed to mesa.solve(). If categorical-prior is True, "
+		    "the maximum value of the prior"
+		),
+	)
+	parser.add_argument("--mesa-optimisation-method", default="FPE")
+	parser.add_argument("--mesa-method", default="Fast")
+	args, _ = parser.parse_known_args()
 
-# Hold these parameters fixed for the simulation
-fixed_parameters = dict(
-    a_1=0.0,
-    a_2=0.0,
-    tilt_1=0.0,
-    tilt_2=0.0,
-    phi_12=0.0,
-    phi_jl=0.0,
-    luminosity_distance=2000.0,
-    theta_jn=0.4,
-    psi=2.659,
-    phase=1.3,
-    geocent_time=1126259642.413,
-    ra=1.375,
-    dec=-1.2108,
-)
 
-priors = bilby.gw.prior.BBHPriorDict()
-priors["geocent_time"] = bilby.core.prior.Uniform(
-    minimum=fixed_parameters["geocent_time"] - 0.1,
-    maximum=fixed_parameters["geocent_time"] + 0.1,
-    name="geocent_time",
-    latex_label="$t_c$",
-    unit="$s$",
-)
-priors["chirp_mass"] = bilby.core.prior.Uniform(
-    minimum=35, maximum=40, name="chirp_mass"
-)
-if args.categorical_m:
-    priors["mesa_m"] = bilby.core.prior.Categorical(args.mesa_m)
 
-for key, val in fixed_parameters.items():
-    priors[key] = bilby.core.prior.DeltaFunction(val)
+	# Set up of the simulation
+	duration = 4.0
+	sampling_frequency = 1024.0
+	maximum_frequency = sampling_frequency / 2
+	minimum_frequency = 20
+	minimum_frequency_simulation = 10
+	outdir = "outdir"
+	np.random.seed(args.seed)
 
-injection_parameters = priors.sample()
+	# Hold these parameters fixed for the simulation
+	fixed_parameters = dict(
+		a_1=0.0,
+		a_2=0.0,
+		tilt_1=0.0,
+		tilt_2=0.0,
+		phi_12=0.0,
+		phi_jl=0.0,
+		luminosity_distance=2000.0,
+		theta_jn=0.4,
+		psi=2.659,
+		phase=1.3,
+		geocent_time=1126259642.413,
+		ra=1.375,
+		dec=-1.2108,
+	)
 
-waveform_arguments = dict(
-    waveform_approximant="TaylorF2",
-    reference_frequency=minimum_frequency,
-    minimum_frequency=minimum_frequency,
-    catch_waveform_errors=True,
-)
-waveform_generator = bilby.gw.WaveformGenerator(
-    duration=duration,
-    sampling_frequency=sampling_frequency,
-    frequency_domain_source_model=bilby.gw.source.lal_binary_black_hole,
-    parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters,
-    waveform_arguments=waveform_arguments,
-)
+	priors = bilby.gw.prior.BBHPriorDict()
+	priors["geocent_time"] = bilby.core.prior.Uniform(
+		minimum=fixed_parameters["geocent_time"] - 0.1,
+		maximum=fixed_parameters["geocent_time"] + 0.1,
+		name="geocent_time",
+		latex_label="$t_c$",
+		unit="$s$",
+	)
+	priors["chirp_mass"] = bilby.core.prior.Uniform(
+		minimum=35, maximum=40, name="chirp_mass"
+	)
+	if args.categorical_m:
+		priors["mesa_m"] = bilby.core.prior.Categorical(args.mesa_m)
 
-ifos = bilby.gw.detector.InterferometerList(["H1"])
-for ifo in ifos:
-    ifo.minimum_frequency = minimum_frequency_simulation
-    ifo.maximum_frequency = maximum_frequency
-ifos.set_strain_data_from_power_spectral_densities(
-    sampling_frequency=sampling_frequency,
-    duration=duration,
-    start_time=fixed_parameters["geocent_time"] + 2 - duration,
-)
-ifos.inject_signal(
-    waveform_generator=waveform_generator, parameters=injection_parameters
-)
+	for key, val in fixed_parameters.items():
+		priors[key] = bilby.core.prior.DeltaFunction(val)
 
-# Store the simulation PSDs for plotting later on
-true_psds = [ifo.power_spectral_density_array for ifo in ifos]
+	injection_parameters = priors.sample()
 
-# Set of arguments for the sampler
-skwargs = dict(sampler="pymultinest", nlive=int(args.nlive), dlogz=0.5)
+	waveform_arguments = dict(
+		waveform_approximant="TaylorF2",
+		reference_frequency=minimum_frequency,
+		minimum_frequency=minimum_frequency,
+		catch_waveform_errors=True,
+	)
+	waveform_generator = bilby.gw.WaveformGenerator(
+		duration=duration,
+		sampling_frequency=sampling_frequency,
+		frequency_domain_source_model=bilby.gw.source.lal_binary_black_hole,
+		parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters,
+		waveform_arguments=waveform_arguments,
+	)
 
-# A label to store the results by
-label = f"{args.model}_seed{args.seed}"
-if args.model == "mesa":
-    label += f"_m{args.mesa_m}_{args.mesa_method}_{args.mesa_optimisation_method}"
-if args.categorical_m:
-    label += "_categoricalm"
+	ifos = bilby.gw.detector.InterferometerList(["H1"])
+	for ifo in ifos:
+		ifo.minimum_frequency = minimum_frequency_simulation
+		ifo.maximum_frequency = maximum_frequency
+	ifos.set_strain_data_from_power_spectral_densities(
+		sampling_frequency=sampling_frequency,
+		duration=duration,
+		start_time=fixed_parameters["geocent_time"] + 2 - duration,
+	)
+	ifos.inject_signal(
+		waveform_generator=waveform_generator, parameters=injection_parameters
+	)
 
-if args.model == "standard":
-    standard_likelihood = bilby.gw.likelihood.GravitationalWaveTransient(
-        interferometers=ifos, waveform_generator=waveform_generator
-    )
+	# Store the simulation PSDs for plotting later on
+	true_psds = [ifo.power_spectral_density_array for ifo in ifos]
 
-    result = bilby.run_sampler(
-        likelihood=standard_likelihood,
-        priors=priors,
-        injection_parameters=injection_parameters,
-        outdir=outdir,
-        label=label,
-        use_ratio=True,
-        **skwargs,
-    )
-else:
-    mesa_likelihood = MESAGravitationalWaveTransient(
-        interferometers=ifos,
-        waveform_generator=waveform_generator,
-        mesa_m=args.mesa_m,
-        mesa_method=args.mesa_method,
-        mesa_optimisation_method=args.mesa_optimisation_method,
-    )
+	# Set of arguments for the sampler
+	skwargs = dict(sampler="pymultinest", nlive=int(args.nlive), dlogz=0.5)
 
-    result = bilby.run_sampler(
-        likelihood=mesa_likelihood,
-        priors=priors,
-        injection_parameters=injection_parameters,
-        outdir=outdir,
-        label=label,
-        use_ratio=True,
-        **skwargs,
-    )
+	# A label to store the results by
+	label = f"{args.model}_seed{args.seed}"
+	if args.model == "mesa":
+		label += f"_m{args.mesa_m}_{args.mesa_method}_{args.mesa_optimisation_method}"
+	if args.categorical_m:
+		label += "_categoricalm"
 
-    if args.plot_psd:
-        print("Generating PSD plot")
-        for i, ifo in enumerate(ifos):
-            fig, ax = plt.subplots()
-            ax.loglog(
-                ifo.frequency_array,
-                np.abs(ifo.frequency_domain_strain) ** 2,
-                color="C0",
-                label="Data",
-            )
-            for _ in range(500):
-                sample = dict(result.posterior.sample().iloc[0])
-                waveform_polarizations = waveform_generator.frequency_domain_strain(
-                    sample
-                )
-                htilde = ifo.get_detector_response(waveform_polarizations, sample)
-                mesa_likelihood.parameters.update(sample)
-                ifo = mesa_likelihood.update_ifo_psd(ifo, htilde)
-                ax.loglog(
-                    ifo.frequency_array,
-                    ifo.power_spectral_density_array,
-                    color="tab:red",
-                    zorder=100,
-                    alpha=0.8,
-                )
-            ax.loglog(
-                ifo.frequency_array,
-                true_psds[i],
-                color="C1",
-                alpha=0.8,
-                label="True PSD",
-            )
-            ax.set_xlim(minimum_frequency - 10, maximum_frequency + 100)
-            ax.axvspan(minimum_frequency, maximum_frequency, color="k", alpha=0.1)
-            ax.set_xlabel("Frequency [Hz]")
-            ax.set_ylabel("PSD [1/Hz]")
-            ax.legend()
-            fig.savefig(f"outdir/{label}_{ifo.name}_psd.png", dpi=500)
-            fig.clf()
+	if args.model == "standard":
+		standard_likelihood = bilby.gw.likelihood.GravitationalWaveTransient(
+		    interferometers=ifos, waveform_generator=waveform_generator
+		)
 
-result.plot_corner()
+		result = bilby.run_sampler(
+		    likelihood=standard_likelihood,
+		    priors=priors,
+		    injection_parameters=injection_parameters,
+		    outdir=outdir,
+		    label=label,
+		    use_ratio=True,
+		    **skwargs,
+		)
+	else:
+		mesa_likelihood = MESAGravitationalWaveTransient(
+		    interferometers=ifos,
+		    waveform_generator=waveform_generator,
+		    mesa_m=args.mesa_m,
+		    mesa_method=args.mesa_method,
+		    mesa_optimisation_method=args.mesa_optimisation_method,
+		)
+
+		result = bilby.run_sampler(
+		    likelihood=mesa_likelihood,
+		    priors=priors,
+		    injection_parameters=injection_parameters,
+		    outdir=outdir,
+		    label=label,
+		    use_ratio=True,
+		    **skwargs,
+		)
+
+		if args.plot_psd:
+		    print("Generating PSD plot")
+		    for i, ifo in enumerate(ifos):
+		        fig, ax = plt.subplots()
+		        ax.loglog(
+		            ifo.frequency_array,
+		            np.abs(ifo.frequency_domain_strain) ** 2,
+		            color="C0",
+		            label="Data",
+		        )
+		        for _ in range(500):
+		            sample = dict(result.posterior.sample().iloc[0])
+		            waveform_polarizations = waveform_generator.frequency_domain_strain(
+		                sample
+		            )
+		            htilde = ifo.get_detector_response(waveform_polarizations, sample)
+		            mesa_likelihood.parameters.update(sample)
+		            ifo = mesa_likelihood.update_ifo_psd(ifo, htilde)
+		            ax.loglog(
+		                ifo.frequency_array,
+		                ifo.power_spectral_density_array,
+		                color="tab:red",
+		                zorder=100,
+		                alpha=0.8,
+		            )
+		        ax.loglog(
+		            ifo.frequency_array,
+		            true_psds[i],
+		            color="C1",
+		            alpha=0.8,
+		            label="True PSD",
+		        )
+		        ax.set_xlim(minimum_frequency - 10, maximum_frequency + 100)
+		        ax.axvspan(minimum_frequency, maximum_frequency, color="k", alpha=0.1)
+		        ax.set_xlabel("Frequency [Hz]")
+		        ax.set_ylabel("PSD [1/Hz]")
+		        ax.legend()
+		        fig.savefig(f"outdir/{label}_{ifo.name}_psd.png", dpi=500)
+		        fig.clf()
+
+	result.plot_corner()
