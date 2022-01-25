@@ -71,7 +71,7 @@ class MESAGravitationalWaveTransient(Likelihood):
 
         N = len(delta)
         roll_off = 0.2  # Rise time of window in seconds
-        alpha = 2 * roll_off / duration
+        alpha = 2 * roll_off / self.waveform_generator.duration
         window = tukey(N, alpha=alpha)
         delta *= window
 
@@ -161,7 +161,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         )
 
         # Calculate the second term in Eq (10) of Veitch (2015)
-        termB = -0.5 * np.sum(np.log(0.5 * np.pi * duration * psd))
+        termB = -0.5 * np.sum(np.log(0.5 * np.pi * self.waveform_generator.duration * psd))
 
         log_l = termA + termB
         return log_l.real
@@ -198,7 +198,7 @@ class MESAGravitationalWaveTransient(Likelihood):
         termA = -2.0 * np.sum(abs(data) ** 2 / psd) / self.waveform_generator.duration
 
         # Calculate the second term in Eq (8) of Veitch (2015)
-        termB = -0.5 * np.sum(np.log(0.5 * np.pi * duration * psd))
+        termB = -0.5 * np.sum(np.log(0.5 * np.pi * self.waveform_generator.duration * psd))
 
         log_l = termA + termB
         return log_l.real
