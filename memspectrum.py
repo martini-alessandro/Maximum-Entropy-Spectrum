@@ -839,9 +839,9 @@ class MESA(object):
         if P is None: P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
-        
+
         data = np.array(data)
-        data = np.squeeze(data)
+        if data.ndim > 1: data = np.squeeze(data)
         
         if isinstance(data.flatten()[0],np.number):
             assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
