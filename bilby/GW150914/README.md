@@ -7,7 +7,7 @@
 ## To run on a cluster under HTCondor
 
 $ bilby_pipe dynesty_config_mesa.ini
-$ condor_sub_dag outdir_mesa_A/submit/dag_GW150914_mesa.submit
+$ condor_submit_dag outdir_mesa_A/submit/dag_GW150914_mesa.submit
 
 ## To run directly
 $ bilby_pipe dynesty_config_mesa.ini
