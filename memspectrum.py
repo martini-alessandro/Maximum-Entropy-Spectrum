@@ -64,7 +64,7 @@ class loss_function:
         elif self.method == 'CAT':
             return self._CAT(args[0], args[2], args[3])
         elif self.method == 'OBD':
-            return self._OBD(*args)
+            return self._OBD(args[0], args[1], args[2], args[3])
         elif self.method =='AIC':
             return self._AIC(args[0], args[2], args[3])
         elif self.method =='LL':
