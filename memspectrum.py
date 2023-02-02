@@ -5,7 +5,7 @@ memspectrum
 Package that uses maximum entropy spectral Analysis to compute the spectrum 
 of a given time-series. Main object is MESA, that is meant to implement Burg
 Algorithm for the computation of the power spectral density. 
-
+###Comment to check branch
 """
 
 import sys
