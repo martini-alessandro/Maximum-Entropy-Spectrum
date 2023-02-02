@@ -5,7 +5,6 @@ memspectrum
 Package that uses maximum entropy spectral Analysis to compute the spectrum 
 of a given time-series. Main object is MESA, that is meant to implement Burg
 Algorithm for the computation of the power spectral density. 
-###Comment to check branch
 """
 
 import sys
@@ -63,12 +62,16 @@ class loss_function:
             return self._FPE(args[0], args[2], args[3])
         elif self.method == 'CAT':
             return self._CAT(args[0], args[2], args[3])
+        elif self.method == 'CAT2':
+            return self._CAT2(args[0], args[2], args[3])
         elif self.method == 'OBD':
             return self._OBD(args[0], args[1], args[2], args[3])
         elif self.method =='AIC':
             return self._AIC(args[0], args[2], args[3])
         elif self.method =='LL':
             return self._LL(args[3], args[4])
+        elif self.method == 'MDL': ###NEW METHOD! 
+            return self._MDL(args[0], args[2], args[3]) ###ARGS have to be P, N, M
         elif self.method == 'Fixed':
             return self._Fixed(args[3])
         else:
@@ -87,7 +90,6 @@ class loss_function:
         self.data_autocorr = np.multiply(data_tilde, np.conj(data_tilde)).real #(N,)
         return
         
-    
     def _FPE(self, P, N, m):
         """
         Implements Akaike Final prediction Error to estimate the recursive 
@@ -193,6 +195,34 @@ class loss_function:
         PW_k = N / (N - k) * P
         return 1 / (N * PW_k.sum())- (1 / PW_k[-1])
     
+    
+    def _CAT2(self, P, N, m):
+        """
+        Implements Parzen's criterion on autoregressive transfer function
+        to estimate the recursive order 
+        
+        Parameters
+        ----------
+        P : 'np.float'
+            The estimate of the variance for the white noise component.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
+
+        Returns
+        -------
+        'np.float'
+            The value of CAT loss function.
+
+        """
+        if m == 0:
+            return np.inf
+        P = np.array(P[1:])
+        k = np.linspace(1, m, m)
+        PW_k = (N - k) / (N  * P)
+        return PW_k.sum() / N -  PW_k[-1]
+    
     def _OBD(self, P, a_k, N, m):
         """
         Implement Rao's Optimum Bayes Decision rule to estimate the recursive
@@ -220,6 +250,30 @@ class loss_function:
         P = np.array(P[:-1])
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
     
+    def _MDL(self, P, N, m): 
+        """
+        Implements Minimum description length criterion to estimate the 
+        recursive order 
+        
+        Parameters
+        ----------
+        P : 'np.float'
+            The estimate of the variance for the white noise component.
+        N : 'np.int'
+            The length of the dataset.
+        m : 'np.int'
+            The recursive order.
+
+        Returns
+        -------
+        'np.float'
+            The value of MDL loss function.
+
+        """
+        MDL = N * np.log(P[-1]) + m * np.log(N)
+        return MDL
+        
+        
     def _Fixed(self, m):
         """
         Returns a fixed recursive order m. Is implemented via a monotonically
