@@ -311,6 +311,7 @@ class MESA(object):
         self.P = None
         self.a_k = None #If a_k and P are None, the model is not already fitted
         self.N = None
+        self.reflection_coefficients = None
         self.mu = None
         self.optimization = None
         if isinstance(filename,str):
@@ -577,7 +578,9 @@ class MESA(object):
         optimization: 'np.ndarray'    
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
-
+        
+        reflection_coefficients: 'np.ndarray'
+            The reflection coefficients obtained with the recursion 
         """
         data = np.array(data)
         data = np.squeeze(data)
@@ -613,9 +616,9 @@ class MESA(object):
             exit(-1)
         
         self._loss_function = loss_function(optimisation_method)
-        self.P, self.a_k, self.optimization = self._method()
+        self.P, self.a_k, self.optimization, self.reflection_coefficients, self.Ps = self._method()
         del self.data
-        return self.P, self.a_k, self.optimization
+        return self.P, self.a_k, self.optimization, self.reflection_coefficients, self.Ps
 
     #@do_profile(follow=[])
     def _FastBurg(self):
@@ -645,7 +648,8 @@ class MESA(object):
         c[0] *= self.regularisation
         #Initialize variables
         a = [np.array([1])]
-        P = [c[0] / self.N]
+        P = [c[0] / self.N] 
+        reflection_coefficients = []
         r = 2 * c[1]
         g = np.array([2 * c[0] - self.data[0] * self.data[0].conj() - self.data[-1] * self.data[-1].conj(), r])
         #Initialize lists to save arrays
@@ -666,6 +670,7 @@ class MESA(object):
             #Append values to respective lists
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
+            reflection_coefficients.append(k)
             #Compute loss function value for chosen method
             if spec is not None: spec = self._spectrum(1.,len(self.data), P[-1], a[-1])[0] #_LL
             optimization.append(self._loss_function(P, a[-1], self.N, i + 1, spec ))
@@ -690,7 +695,7 @@ class MESA(object):
 
         if self.verbose: sys.stderr.write('\n')
 
-        return P[idx], a[idx], np.array(optimization)
+        return P[idx], a[idx], np.array(optimization), np.array(reflection_coefficients), np.array(P)
    
     def _updateCoefficients(self, a, g):
         """
@@ -766,6 +771,10 @@ class MESA(object):
         optimization: 'np.ndarray'    
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
+        
+        reflection_coefficients: np.ndarray'
+            The Reflection coefficients obtained in the Levinson recursion 
+            (Shape (N,))
         """
             #setting data for the loss function, if required
         spec = None
@@ -781,6 +790,7 @@ class MESA(object):
         _f = np.array(self.data)
         _b = np.array(self.data)
         optimization = []
+        reflection_coefficients = [] 
         early_stop_step = 100
         idx = None
         old_idx = 0
@@ -795,6 +805,7 @@ class MESA(object):
             
             a_k.append(self._updatePredictionCoefficient(a_k[i], k))
             P.append(P[i] * (1 - k * k.conj()))
+            reflection_coefficients.append(k)
             _f = f + k * b
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
@@ -814,7 +825,7 @@ class MESA(object):
         
         if self.verbose: sys.stderr.write('\n')
         
-        return P[idx], a_k[idx], optimization
+        return P[idx], a_k[idx], np.array(optimization), np.array(reflection_coefficients)
     
     def _updatePredictionCoefficient(self, x, reflectionCoefficient):
         """
@@ -955,7 +966,6 @@ class MESA(object):
         psd = self.spectrum(1/sampling_rate, frequencies)
 
         sigma = np.sqrt(psd /  df * .5) #(D,)
-        phi = np.random.uniform(0, 2 * np.pi, len(sigma))
         frequency_series = np.einsum('ij,j -> ij',np.random.normal(0, 1, (N_series,len(sigma))) + 1j * np.random.normal(0, 1, (N_series,len(sigma)) ), sigma) #(N_series,D)
           
         # inverse FFT to return the TD strain
