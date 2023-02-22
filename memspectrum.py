@@ -63,6 +63,8 @@ class loss_function:
             return self._FPE(args[0], args[2], args[3])
         elif self.method == 'CAT':
             return self._CAT(args[0], args[2], args[3])
+        elif self.method == 'CAT_OLD':
+            return self._CAT_OLD(args[0], args[2], args[3])
         elif self.method == 'OBD':
             return self._OBD(args[0], args[1], args[2], args[3])
         elif self.method =='AIC':
@@ -167,7 +169,35 @@ class loss_function:
         
     
     def _CAT(self, P, N, m):
+     """
+     Implements Parzen's criterion on autoregressive transfer function
+     to estimate the recursive order 
+     
+     Parameters
+     ----------
+     P : 'np.float'
+         The estimate of the variance for the white noise component.
+     N : 'np.int'
+         The length of the dataset.
+     m : 'np.int'
+         The recursive order.
+
+     Returns
+     -------
+     'np.float'
+         The value of CAT loss function.
+
+     """
+     if m == 0:
+         return np.inf
+     P = np.array(P[1:])
+     k = np.linspace(1, m, m)
+     PW_k = (N - k) / (N * P)
+     return PW_k.sum() / N - PW_k[-1]
+    
+    def _CAT_OLD(self, P, N, m):
         """
+        OUTDATED FOR ERRORS
         Implements Parzen's criterion on autoregressive transfer function
         to estimate the recursive order 
         
