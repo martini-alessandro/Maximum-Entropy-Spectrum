@@ -57,8 +57,8 @@ def generate_data(f,
     if fmin == None: fmin = 0
     if fmax == None: fmax = (N / 2) / T
     # filter out the bad bits
-    kmin = np.int(fmin/df)
-    kmax = np.int(fmax/df) + 1
+    kmin = int(fmin/df)
+    kmax = int(fmax/df) + 1
     
 
     # generate the FD noise
