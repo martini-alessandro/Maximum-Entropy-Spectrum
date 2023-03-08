@@ -250,6 +250,7 @@ class loss_function:
         P = np.array(P[:-1])
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
     
+    
     def _Fixed(self, m):
         """
         Returns a fixed recursive order m. Is implemented via a monotonically
