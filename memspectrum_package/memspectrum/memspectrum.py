@@ -40,7 +40,7 @@ except:
 
 #################
 
-class optimizer:
+class loss_function:
 
     def __init__(self, method):
         """
@@ -51,25 +51,44 @@ class optimizer:
         ----------
         method : 'str'
             Selects the method to be used to estimate the best order between "FPE",
-            "OBD", "CAT", "AIC", "Fixed"
+            "OBD", "CAT", "AIC", "LL", "Fixed"
 
 
         """
         self.method = method
+        self.data_autocorr = None
 
     def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
         if self.method == 'FPE':
             return self._FPE(args[0], args[2], args[3])
         elif self.method == 'CAT':
             return self._CAT(args[0], args[2], args[3])
+        elif self.method == 'CAT_OLD':
+            return self._CAT_OLD(args[0], args[2], args[3])
         elif self.method == 'OBD':
             return self._OBD(args[0], args[1], args[2], args[3])
         elif self.method =='AIC':
             return self._AIC(args[0], args[2], args[3])
+        elif self.method =='LL':
+            return self._LL(args[3], args[4])
         elif self.method == 'Fixed':
             return self._Fixed(args[3])
         else:
             raise ValueError("{} is not a an available method! Valid choices are 'FPE', 'AIC', 'CAT', 'OBD' and 'Fixed'.".format(self.method))
+    
+    def _set_data(self, data):
+        """
+        Computes the data auto-correlation in frequency domain and stores it. It is only useful for LL loss function
+        
+        Parameters
+        ----------
+        data : 'np.ndarray'
+            The data to estimate the autocorrelation from
+        """
+        data_tilde = np.fft.fft(data)
+        self.data_autocorr = np.multiply(data_tilde, np.conj(data_tilde)).real #(N,)
+        return
+        
     
     def _FPE(self, P, N, m):
         """
@@ -88,7 +107,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of FPE optimizer.
+            The value of FPE loss function.
 
         """
         return P[-1] * (N + m + 1) / (N - m - 1)
@@ -110,13 +129,75 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of AIC optimizer.
+            The value of AIC loss function.
 
         """
         return np.log(P[-1]) + (2 * m) / N
     
-    def _CAT(self, P, N, m):
+    def _LL(self, m, spectrum):
         """
+        Implements data log-likelihood as a loss function
+        Log-likelihood is composed of two terms A = 0.5*|x_f|**2/S(f) and B = 0.5*N*log(S(f))
+        A wants to be large to agree with data; |B| wants to be small to keep the model simple
+        The loss function to minimize is the balance of the two: L =  -A - B
+        
+        #WARNING: Untested: the performance of this loss function are not studied
+        
+        Parameters
+        ----------
+        spectrum : 'np.ndarray'
+            The spectrum (PSD) for computing the log-likelihood (also with negative frequencies)
+        data_tilde : 'np.ndarray'
+            Fourier transform of the data
+
+        Returns
+        -------
+        'np.float'
+            The value of the log-likelihood loss function
+
+        """
+        if self.data_autocorr is None:
+            raise ValueError("Autocorrelation of data shall be set, before computing the LL loss function")
+        assert spectrum.shape == self.data_autocorr.shape, "Log-likelihood calculation: shape of the spectrum and of data do not match"
+        T = len(spectrum)*4096
+        autocorr = 0.5* np.sum(np.divide(self.data_autocorr, spectrum))
+        det_S = 0.5*len(spectrum)*np.sum(np.log(spectrum))
+        LL =  - autocorr/T - det_S
+        #LL -= m*np.log(2)+np.log(m)
+        #print(autocorr, det_S, m*np.log(2)+np.log(m), LL) #DEBUG
+        return -LL #this is a loss function, we want to minimize it (maybe)
+        
+    
+    def _CAT(self, P, N, m):
+     """
+     Implements Parzen's criterion on autoregressive transfer function
+     to estimate the recursive order 
+     
+     Parameters
+     ----------
+     P : 'np.float'
+         The estimate of the variance for the white noise component.
+     N : 'np.int'
+         The length of the dataset.
+     m : 'np.int'
+         The recursive order.
+
+     Returns
+     -------
+     'np.float'
+         The value of CAT loss function.
+
+     """
+     if m == 0:
+         return np.inf
+     P = np.array(P[1:])
+     k = np.linspace(1, m, m)
+     PW_k = (N - k) / (N * P)
+     return PW_k.sum() / N - PW_k[-1]
+    
+    def _CAT_OLD(self, P, N, m):
+        """
+        OUTDATED FOR ERRORS
         Implements Parzen's criterion on autoregressive transfer function
         to estimate the recursive order 
         
@@ -132,7 +213,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of CAT optimizer.
+            The value of CAT loss function.
 
         """
         if m == 0:
@@ -162,7 +243,7 @@ class optimizer:
         Returns
         -------
         'np.float'
-            The value of OBD optimizer.
+            The value of OBD loss function.
 
         """
         P_m = P[-1]
@@ -185,7 +266,7 @@ class optimizer:
             The value of the loss functiona at order m
 
         """
-        return 1./m
+        return 1./(m+1)
 
 class MESA(object):
     """
@@ -291,7 +372,7 @@ class MESA(object):
         return
         
         
-    def _spectrum(self, dt, N):
+    def _spectrum(self, dt, N, P, a_k):
         """
         Method that compted the spectrum of the time series on sampling 
         frequencies 
@@ -303,6 +384,12 @@ class MESA(object):
             
         N: `np.float`       
             Length of the frequency grid
+        
+        P: `np.float`
+            P parameter of the analytical formula (i.e. variance of the white noise)
+
+        a_k: `np.ndarray`
+            a_ks of the analytical formula (i.e. autoregressive coefficients)
 
         Returns
         -------
@@ -312,15 +399,14 @@ class MESA(object):
         freq: `np.ndarray`       
             Frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq) (shape (N,))
         """
-       
-        den = np.fft.fft(self.a_k, n=N)
-        spectrum = dt * self.P / (np.abs(den) ** 2)
+        den = np.fft.fft(a_k, n=N)
+        spectrum = dt * P / (np.abs(den) ** 2)
         
         return spectrum, np.fft.fftfreq(N,dt)
 
 
 
-    def spectrum(self, dt, frequencies = None, onesided = False): 
+    def spectrum(self, dt = 1., frequencies = None, onesided = False): 
         """
         Computes the power spectral density of the model. Default returns power 
         spectral density and frequency array automatically computed by sampling theory. 
@@ -343,10 +429,10 @@ class MESA(object):
         Returns: 
         ----------
         if no frequency array is given 
-            spectrum: 'np.ndarray'           
-                Two sided power spectral density (shape = (N,))
             frequencies: 'np.ndarray'      
                 Frequencies at which power spectral density is evaluated (shape = (N,))
+            spectrum: 'np.ndarray'           
+                Two sided power spectral density (shape = (N,))
             
         if frequency array is given:
             spectrum: 'np.ndarray'           
@@ -361,13 +447,13 @@ class MESA(object):
         if self.a_k is None:
             raise RuntimeError("Model is not initialized: unable to compute spectrum. Call MESA.solve() or load a model from file to initialize the model")
         f_ny = .5 / dt 
-        spec, f_spec = self._spectrum(dt, self.N)
+        spec, f_spec = self._spectrum(dt, self.N, self.P, self.a_k)
         
         if frequencies is None:
             if onesided:
-                return spec[:self.N//2] * np.sqrt(2), f_spec[:self.N//2]
+                return f_spec[:self.N//2], spec[:self.N//2] * np.sqrt(2)
             else:
-                return spec, f_spec
+                return f_spec, spec
         
         elif isinstance(frequencies, np.ndarray):
             if np.max(frequencies) > f_ny * 1.01: 
@@ -451,7 +537,7 @@ class MESA(object):
             Default is True. Breaks the iteration if there is no new global 
             maximum after 100 iterations. 
             Recommended for every optimisation method but CAT.
-            Has no effect with "Fixed" optimizer.
+            Has no effect with "Fixed" loss function.
         
         verbose: 'boolean'
             Whether to print the status of the mesa solution
@@ -490,6 +576,9 @@ class MESA(object):
         
         if optimisation_method == 'Fixed':
             self.early_stop = False
+        
+        if optimisation_method == 'LL':
+        	warnings.warn('The performance of the \'LL\' loss function are not studied. There is no guarantee of stable and meaningful results')
            
         if method.lower() == "fast":
             self._method = self._FastBurg
@@ -499,7 +588,7 @@ class MESA(object):
             print("Method {0} unknown! Valid choices are 'Fast' and 'Standard'".format(method))
             exit(-1)
         
-        self._optimizer = optimizer(optimisation_method)
+        self._loss_function = loss_function(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
         del self.data
         return self.P, self.a_k, self.optimization
@@ -522,6 +611,12 @@ class MESA(object):
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
         """
+            #setting data for the loss function, if required
+        spec = None
+        if self._loss_function.method == 'LL': #computing data autocorrelation
+            self._loss_function._set_data(self.data- np.mean(self.data)) #FIXME: make sure that here you need to compute the covariance!!
+            spec = np.zeros(self.data.shape)+1e-200
+        
         c = correlate(self.data, self.data)[self.N-1:self.N+self.mmax+1] #(M,) #very fast scipy correlation!!
         c[0] *= self.regularisation
         #Initialize variables
@@ -547,8 +642,9 @@ class MESA(object):
             #Append values to respective lists
             a.append(new_a)
             P.append(P[-1] * (1 - k * k.conj()))
-            #Compute optimizer value for chosen method
-            optimization.append( self._optimizer(P, a[-1], self.N, i + 1))
+            #Compute loss function value for chosen method
+            if spec is not None: spec = self._spectrum(1.,len(self.data), P[-1], a[-1])[0] #_LL
+            optimization.append(self._loss_function(P, a[-1], self.N, i + 1, spec ))
             
             is_nan = np.isnan(new_a).any() #checking for nans
             if np.abs(k)>1 or is_nan:
@@ -647,7 +743,12 @@ class MESA(object):
             The values of the chosen optimisation_method at every iteration 
             (Shape (N,))   
         """
-        
+            #setting data for the loss function, if required
+        spec = None
+        if self._loss_function.method == 'LL': #computing data autocorrelation
+            self._loss_function._set_data(self.data- np.mean(self.data))
+            spec = np.zeros(self.data.shape)
+
         #initialization of variables
         P_0 = np.var(self.data)#(self.data ** 2).mean()
         P = [P_0]
@@ -673,7 +774,8 @@ class MESA(object):
             _f = f + k * b
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
-            optimization.append(self._optimizer(P, a_k[-1], self.N, i + 1))
+            if spec is not None: spec = self.spectrum()[1]
+            optimization.append(self._loss_function(P, a_k[-1], self.N, i + 1, spec ))
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) #+ 1
@@ -761,21 +863,24 @@ class MESA(object):
             process (Shape (number_of_simulations, length))
 
         """
+        #FIXME: this function does not work when len(a.k) ==1. Fix this problem
         if self.P is None or self.a_k is None:
             raise RuntimeError("PSD analysis is not performed yet: unable to forecast the data. You should call solve() before forecasting")
         if P is None: P = self.P 
         p = self.a_k.size - 1 
         predictions = np.zeros((number_of_simulations, p + length))
-        
+
         data = np.array(data)
-        data = np.squeeze(data)
+        if data.ndim > 1: data = np.squeeze(data)
         
         if isinstance(data.flatten()[0],np.number):
             assert data.ndim == 1, ValueError("Wrong number of dimension for data: 1 dim expcted but got {} dims".format(data.ndim))
-            if len(data) >= p:
+            if len(data) >= p > 0:
                 predictions[:,:p] = data[-p:]
-            else:
+            elif p!=0:
                 raise ValueError("Data are not long enough for forecasting")
+            else:
+            	pass
         else:
             raise ValueError("Type of data should np.ndarray: given {} instead. ".format(type(data)))
         if isinstance(seed, int):
@@ -833,3 +938,22 @@ class MESA(object):
         time_series = np.fft.irfft(frequency_series) * df * N ##(N_series, N )
         return times, np.squeeze(time_series), frequencies, np.squeeze(frequency_series), psd
 
+    def entropy_rate(self, dt):
+        """
+        Compute the entropy gain for a given power spectrum
+        Eq (84) in Papoulis  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1163713
+        or Eq (10) in Martini et al https://arxiv.org/pdf/2106.09499.pdf
+        """
+        f, psd = self.spectrum(dt = dt)
+        df = np.diff(f)[0]
+        
+        return np.sum(np.log(psd))*df/(4*f.max())+0.5*np.log(2.0*np.pi*np.e)
+        
+    def logL(self, data, dt):
+        """
+        Compute the log likelihood given the current spectrum
+        """
+        f, psd = self.spectrum(dt = dt)
+        df = np.diff(f)[0]
+        d  = np.fft.fft(data)
+        return np.sum(np.log(psd) + 2*dt*d**2/((data.shape[0]*psd)))

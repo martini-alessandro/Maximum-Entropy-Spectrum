@@ -48,7 +48,7 @@ def generate_data(f,
         The frequencies interpolated power spectral density (Shape (N,))
     """
     # f, psd = np.loadtxt(psd_file, unpack=True)
-    if asd is True : psd *= psd
+    if asd is True : psd = np.square(psd)
     # generate an interpolant for the PSD
     psd_int = interp1d(f, psd, bounds_error=False, fill_value='extrapolate')
     df      = 1 / T

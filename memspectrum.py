@@ -266,7 +266,7 @@ class loss_function:
             The value of the loss functiona at order m
 
         """
-        return 1./m
+        return 1./(m+1)
 
 class MESA(object):
     """
@@ -938,3 +938,28 @@ class MESA(object):
         time_series = np.fft.irfft(frequency_series) * df * N ##(N_series, N )
         return times, np.squeeze(time_series), frequencies, np.squeeze(frequency_series), psd
 
+    def entropy_rate(self, dt):
+        """
+        Compute the entropy gain for a given power spectrum
+        Eq (84) in Papoulis  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1163713
+        or Eq (10) in Martini et al https://arxiv.org/pdf/2106.09499.pdf
+        """
+        f, psd = self.spectrum(dt = dt)
+        df = np.diff(f)[0]
+        
+        return np.sum(np.log(psd))*df/(4*f.max())+0.5*np.log(2.0*np.pi*np.e)
+        
+    def logL(self, data, dt):
+        """
+        Compute the log likelihood given the current spectrum
+        """
+        f, psd = self.spectrum(dt = dt)
+        df = np.diff(f)[0]
+        d  = np.fft.fft(data)
+        return np.sum(np.log(psd) + 2*dt*d**2/((data.shape[0]*psd)))
+
+    def whiten(self, data):
+        """
+        Whiten the data by convolving with the a_k
+        """
+        return convolve(data, self.a_k, mode = 'same')
