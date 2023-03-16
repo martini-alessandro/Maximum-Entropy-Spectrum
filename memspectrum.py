@@ -962,4 +962,4 @@ class MESA(object):
         """
         Whiten the data by convolving with the a_k
         """
-        return convolve(data, self.a_k, mode = 'same')
+        return convolve(data, self.a_k, mode = 'same')/np.sqrt(self.get_p())
