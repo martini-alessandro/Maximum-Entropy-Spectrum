@@ -1,0 +1,4 @@
+sphinx
+myst-parser
+readthedocs-sphinx-search>=0.1.1
+sphinx-rtd-theme>=0.5.1
