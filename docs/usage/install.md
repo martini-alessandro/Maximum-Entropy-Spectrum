@@ -14,10 +14,20 @@ pip install memspectrum
 
 This will install the package and its dependencies in your current working python environment.
 
+## From the repo
+
+You can get the latest changes (not yet released with pip) with:
+
+```Bash
+pip install git+https://github.com/martini-alessandro/Maximum-Entropy-Spectrum
+```
+
+This will install the package as is after the latest commit on the repo.
+
 ## From source
 
-If you want to get the latest developments, you can install the package from source.
-To do this you need to clone the git [repository](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum) and to build and install the code manually. A handy makefile will help you to do that.
+If you want to do some developments, you may want to install the package from source after cloning the git [repository](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum).
+A handy makefile will help you to install the code.
 
 These are the steps:
 
