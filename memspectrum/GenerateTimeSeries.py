@@ -49,6 +49,7 @@ def generate_data(f,
         The output series in frequency domain (Shape (N,))
     psd: 'np.ndarray'
         The frequencies interpolated power spectral density (Shape (N,))
+
     """
     # f, psd = np.loadtxt(psd_file, unpack=True)
     if asd is True : psd = np.square(psd)

@@ -900,19 +900,29 @@ class MESA(object):
             
         Parameters
         ----------
-                T: `float`                  Length (in seconds) of the signal to generate
-                sampling_rate: `np.float`   Sampling rate for the time series to generate
-                fmin: `float`               Minimum frequency in the signal (if None, is equal to zero)
-                fmax: `float`               Maximum frequency in the signal (if None, Nyquist frequency is used: f_Ny = 0.5*sampling_rate)
-                N_series `float`            Number of time series to generate
+		T: float
+			Length (in seconds) of the signal to generate
+		sampling_rate: float
+			Sampling rate for the time series to generate
+		fmin: float
+			Minimum frequency in the signal (if None, is equal to zero)
+		fmax: float
+			Maximum frequency in the signal (if None, Nyquist frequency is used: f_Ny = 0.5*sampling_rate)
+		N_series float
+			Number of time series to generate
             
-            Returns
-            -------
-                times: `np.ndarray`                  time grid at which the noise time series is evaluated at
-                times_series: `np.ndarray`           time series (shape (N_series, sampling_rate*T) )
-                frequencies: `np.ndarray`            frequency grid at which the noise frequency series is evaluated at
-                frequency_series: `np.ndarray`       frequency series from which the times_series is computed (shape (N_series, sampling_rate*T) )
-                psd: `np.ndarray`                    PSD of the model, including both positive and negative frequencies
+		Returns
+		-------
+		times: np.ndarray
+			Time grid at which the noise time series is evaluated at
+		times_series: np.ndarray
+			Time series (shape (N_series, sampling_rate*T) )
+		frequencies: np.ndarray
+			Frequency grid at which the noise frequency series is evaluated at
+		frequency_series: np.ndarray
+			Frequency series from which the times_series is computed (shape (N_series, sampling_rate*T) )
+		psd: np.ndarray
+			PSD of the model, including both positive and negative frequencies
         """
         df      = 1 / T
         N       = int(sampling_rate * T)
