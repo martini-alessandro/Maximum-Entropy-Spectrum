@@ -54,6 +54,8 @@ class loss_function:
         """
         self.method = method
         self.data_autocorr = None
+        self._forward_error = None
+        self._backward_error = None
 
     def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
         if self.method == 'FPE':
@@ -68,6 +70,8 @@ class loss_function:
             return self._AIC(args[0], args[2], args[3])
         elif self.method =='LL':
             return self._LL(args[3], args[4])
+        elif self.method == 'VM':
+            return self._VM(args[2], args[3], args[5])
         elif self.method == 'Fixed':
             return self._Fixed(args[3])
         else:
@@ -247,7 +251,32 @@ class loss_function:
         P = np.array(P[:-1])
         return (N - m - 2)*np.log(P_m) + m*np.log(N) + np.log(P).sum() + (a_k**2).sum()
     
-    
+    def _VM(self, N, m, k):
+        """
+        Implement Variance Minimum (VM) method to estimate the recursive
+        order
+
+        Parameters
+        ----------
+        N : 'np.int'
+             The length of the dataset.
+        m : 'np.int'
+            The recursive order.
+        k : 'np.float'
+            The m-th order reflection coefficient
+
+        Returns
+        -------
+        'np.float'
+            The value of VM loss function.
+
+        """
+        forward_error = self._forward_error[1:] + k * self._backward_error[:-1]
+        backward_error = self._backward_error[:-1] + k * self._forward_error[1:]
+        VM = np.sum(forward_error ** 2) / (N - 2 * m)
+        self._forward_error, self._backward_error = forward_error, backward_error
+        return VM
+        
     def _Fixed(self, m):
         """
         Returns a fixed recursive order m. Is implemented via a monotonically
@@ -613,7 +642,9 @@ class MESA(object):
         if self._loss_function.method == 'LL': #computing data autocorrelation
             self._loss_function._set_data(self.data- np.mean(self.data)) #FIXME: make sure that here you need to compute the covariance!!
             spec = np.zeros(self.data.shape)+1e-200
-        
+        if self._loss_function.method == 'VM': #Initialise loss function data attribute
+            self._loss_function._forward_error, self._loss_function._backward_error\
+                = self.data, self.data #initialise forward and backward errors for computation of VM 
         c = correlate(self.data, self.data)[self.N-1:self.N+self.mmax+1] #(M,) #very fast scipy correlation!!
         c[0] *= self.regularisation
         #Initialize variables
@@ -641,7 +672,7 @@ class MESA(object):
             P.append(P[-1] * (1 - k * k.conj()))
             #Compute loss function value for chosen method
             if spec is not None: spec = self._spectrum(1.,len(self.data), P[-1], a[-1])[0] #_LL
-            optimization.append(self._loss_function(P, a[-1], self.N, i + 1, spec ))
+            optimization.append(self._loss_function(P, a[-1], self.N, i + 1, spec, k))
             
             is_nan = np.isnan(new_a).any() #checking for nans
             if np.abs(k)>1 or is_nan:
@@ -745,6 +776,9 @@ class MESA(object):
         if self._loss_function.method == 'LL': #computing data autocorrelation
             self._loss_function._set_data(self.data- np.mean(self.data))
             spec = np.zeros(self.data.shape)
+        if self._loss_function.method == 'VM': #Initialise loss function data attribute
+            self._loss_function._forward_error, self._loss_function._backward_error\
+                = self.data, self.data #initialise forward and backward errors for computation of VM 
 
         #initialization of variables
         P_0 = np.var(self.data)#(self.data ** 2).mean()
@@ -772,7 +806,7 @@ class MESA(object):
             _b = b + k * f
             #print('P: ', P, '\nak: ', a_k[-1])
             if spec is not None: spec = self.spectrum()[1]
-            optimization.append(self._loss_function(P, a_k[-1], self.N, i + 1, spec ))
+            optimization.append(self._loss_function(P, a_k[-1], self.N, i + 1, spec, k))
                 #checking if there is a minimum (every some iterations) if early_stop option is on
             if ((i % early_stop_step == 0 and i !=0) or (i >= self.mmax-1)) and self.early_stop:
                 idx = np.argmin(optimization) #+ 1
