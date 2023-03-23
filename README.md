@@ -1,5 +1,4 @@
-memspectrum
-===========
+## memspectrum
 
 **Authors** Alessandro Martini, Stefano Schmidt, Walter del Pozzo
 
@@ -11,8 +10,7 @@ memspectrum
 
 **Version** 1.3.0
 
-MAXIMUM ENTROPY SPECTRAL ANALYSIS FOR ACCURATE PSD COMPUTATION
-=================================================================
+# MAXIMUM ENTROPY SPECTRAL ANALYSIS FOR ACCURATE PSD COMPUTATION
 
 `memspectrum` is a package for the computation of power spectral densitiy (PSD) of time series. 
 It implements a fast numpy verion of the Burg method for Maximum Entropy Spectral Analysis.
@@ -33,8 +31,8 @@ their computation via the former method is equivalent to a least square fitting 
 process of order p (AR(p)). They are computed with an algorithm called Levinson recursion, which also return a "P" coefficient that is equivalent to the variance of the white noise component for the process. The description is stationary by construction. 
 Once the link with an AR(p) process is established, high quality forecast for the time series is straightforward.
 
-Installation & documentation
-=======================
+## Installation & documentation
+
 To install the package:
 
 ```Bash
@@ -59,8 +57,7 @@ help(memspectrum)
 help(memspectrum.<function_name>)
 ```
 
-Usage of `memspectrum`
-====================
+## Usage of `memspectrum`
 
 To compute the PSD, the following steps are required
 
@@ -86,8 +83,8 @@ spec, frequencies = m.spectrum(dt)
 predicted_data = m.forecast(data, N)
 ```
 
-Sinusoid example 
-================
+## Example 
+
 To compute (and plot) the spectrum of a (noisy) sinusoidal signal:
 ```Python
 from memspectrum import MESA 
@@ -127,9 +124,10 @@ user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired frequency 
 The two spectra look like
 
 ![spectra](docs/img/Spectrum.jpeg)
+  
+### Forecasting
    
-   
-It can also be used to perform forecasting. For example, we consider the first 900 points 
+MESA can also be used to perform forecasting the future observation of a time series. For example, we consider the first 900 points 
 of the data and try to infer the upcoming signal. 1000 simulations of 100 points are performed.
 Real observed data are compared with median estimate and 90% Credibility regions 
 
@@ -150,9 +148,18 @@ The forecast result is:
 
 ![forecast](docs/img/Forecast.jpeg)
 
+### Whitening
 
-Generating data from PSD
-========================
+The autoregressive coefficients come very handy to whiten the data: it's just a convolution between the data and the coefficient. This is implemented in function `MESA.whiten`:
+
+```Python
+white_data = M.whiten(data, trim = None)
+```
+
+You can tune how to remove the edge effects by setting the trim option.
+
+
+## Generating data from PSD
 
 The module ``memspectrum.GenerateTimeSeries`` provides a function that construct a time-series with a user-given power spectral density. It can be called as 
 
@@ -166,8 +173,16 @@ psd = generate_data(f, psd, T, sampling_rate)
 where T represents the time length of the observation and the sampling rate is equivalent to the inverse of the sampling interval
  
 
-About
-=====
+## References
+
+Original description of Burg's algorithm: [J.P. Burg - Maximum Entropy Spectral Analysis](http://sepwww.stanford.edu/data/media/public/oldreports/sep06/)
+
+Fast implementation of Burg's algorithm:  [V. Fastubrg - A Fast Implementation of Burg Method](
+https://svn.xiph.org/websites/opus-codec.org/docs/vos_fastburg.pdf)
+
+Paper describing this work: [Maximum Entropy Spectral Analysis: a case study](https://arxiv.org/abs/2106.09499)
+
+## About
 
 This project is a master thesis of Alessandro Martini at the University of Pisa. A paper is published on [ArXiv](https://arxiv.org/abs/2106.09499) and it is currently under peer review.
 

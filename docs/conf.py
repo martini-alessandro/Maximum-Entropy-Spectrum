@@ -71,5 +71,5 @@ master_doc = "index"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "numpy": ("http://docs.scipy.org/doc/numpy/", None),
-    "scipy": ("http://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
 }

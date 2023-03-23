@@ -530,16 +530,15 @@ class MESA(object):
               early_stop          = True,
               verbose = False):
         """
-        Computes the power spectral density of the attribute data for the class
-        using standard Burg method recursive and a Faster (but less stable) version. 
-        Default is Fast.
+        Computes the power spectral density of the given data data by solving the Levinson recursion for the autoregressive coefficients a_k and the noise variance P. It uses the standard Burg method recursive and a Faster (but less stable) version.
+        Default is 'Fast'.
 
         Parameters
         ----------
-        data: 'np.ndarray'(N,)
-              data for the spectrum calculation
+        data: :class:`~numpy:numpy.ndarray`
+              One dimensional array with the time series data for the spectrum calculation
               
-        m : 'np.int'                   
+        m : int
             Maximum number of recursions for the computation of the  power spectral density.
             Maximum autoregressive order is p = m-1
             Default is None, that means m = 2N / log(2N)
@@ -612,7 +611,7 @@ class MESA(object):
             self._method = self._Burg
         else:
             print("Method {0} unknown! Valid choices are 'Fast' and 'Standard'".format(method))
-            exit(-1)
+            return
         
         self._loss_function = loss_function(optimisation_method)
         self.P, self.a_k, self.optimization = self._method()
@@ -865,7 +864,7 @@ class MESA(object):
         Parameters
         ----------
         
-        data: 'np.ndarray'(N,)
+        data: :class:`~numpy:numpy.ndarray`
               data for the spectrum calculation
         
         length : 'np.int'
@@ -999,8 +998,25 @@ class MESA(object):
         d  = np.fft.fft(data)
         return np.sum(np.log(psd) + 2*dt*d**2/((data.shape[0]*psd)))
 
-    def whiten(self, data):
+    def whiten(self, data, trim = None):
         """
         Whiten the data by convolving with the a_k
+
+        Parameters
+        ----------
+		data: :class:`~numpy:numpy.ndarray`
+			Stretch of data to whiten
+		
+		trim: int
+			Number of points to remove at the begining and at the end of the stretch of data to remove edge effects. If `None`, trim is set to be equal to the autoregressive order.
+		
+		Returns
+		-------
+		white_data: :class:`~numpy:numpy.ndarray`
+			Stretch of (trimmed) whitened data 
+        
         """
-        return convolve(data, self.a_k, mode = 'same')/np.sqrt(self.get_p())
+        white_data = convolve(data, self.a_k, mode = 'same')/np.sqrt(self.P)
+        if trim is None: trim = self.get_p()
+        if trim: white_data = white_data[trim:-trim]
+        return white_data
