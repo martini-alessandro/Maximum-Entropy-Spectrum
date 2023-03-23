@@ -160,7 +160,7 @@ plt.plot(time[M.get_p():-M.get_p()], white_data, color = 'k')
 You can tune how to remove the edge effects by setting the trim option (it you set `None`, you will remove p points from the timeseries).
 Here's how the white data look like:
 
-![white_data](docs/img/WhiteData.jpeg)
+![white_data](docs/img/WhiteData.png)
 
 
 ## Generating data from PSD
