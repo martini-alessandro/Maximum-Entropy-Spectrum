@@ -269,7 +269,6 @@ class loss_function:
         -------
         'np.float'
             The value of VM loss function.
-
         """
         forward_error = self._forward_error[1:] + k * self._backward_error[:-1]
         backward_error = self._backward_error[:-1] + k * self._forward_error[1:]
