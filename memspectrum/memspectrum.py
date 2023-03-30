@@ -991,11 +991,14 @@ class MESA(object):
     def logL(self, data, dt):
         """
         Compute the log likelihood given the current spectrum
+        data smust be in the time domain
         """
-        f, psd = self.spectrum(dt = dt)
-        df = np.diff(f)[0]
-        d  = np.fft.fft(data)
-        return np.sum(np.log(psd) + 2*dt*d**2/((data.shape[0]*psd)))
+        f, psd = self.spectrum(dt = dt, onesided=True)
+        N = len(data)
+        d  = np.fft.fft(data)*dt
+        TwoDeltaTOverN = 2*dt/N
+        
+        return -TwoDeltaTOverN*np.vdot(d, d/(psd*dt**2)).real-0.5*np.sum(np.log(0.5*np.pi*N*dt*psd))
 
     def whiten(self, data, trim = None):
         """
