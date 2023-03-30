@@ -993,9 +993,10 @@ class MESA(object):
         Compute the log likelihood given the current spectrum
         data smust be in the time domain
         """
-        f, psd = self.spectrum(dt = dt, onesided=True)
         N = len(data)
-        d  = np.fft.fft(data)*dt
+        f = np.fft.rfftfreq(N)
+        psd = self.spectrum(frequencies = f, dt = dt, onesided=True)
+        d  = np.fft.rfft(data)*dt
         TwoDeltaTOverN = 2*dt/N
         
         return -TwoDeltaTOverN*np.vdot(d, d/(psd*dt**2)).real-0.5*np.sum(np.log(0.5*np.pi*N*dt*psd))
