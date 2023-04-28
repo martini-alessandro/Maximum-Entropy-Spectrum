@@ -24,34 +24,34 @@ def generate_data(f,
 
 	Parameters
 	----------
-	f : 'np.ndarray'
+	f : :class:`~numpy:numpy.ndarray`
 		The frequencies over which the power spectral density is evaluated. (Shape (N,))
-	psd : 'np.ndarray'
+	psd : :class:`~numpy:numpy.ndarray`
 		The power spectral density (Shape (N,))
-	T : 'np.float'
+	T : float
 		The total time of the observation 
-	sampling_rate : 'np.float', optional
+	sampling_rate : float
 		The sampling rate of the output series. The default is 1..
-	fmin : 'np.float', optional
+	fmin : float
 		The minimum frequency available. The default is None.
-	fmax : 'np.float', optional
+	fmax : float
 		Tha maximum frequency available. The default is None.
-	asd : 'boolean', optional
-		If True, takes the square of the input power spectral density. The default is False.
-	seed: 'int', optional
+	asd : bool
+		If True, takes the square of the input power spectral density. The default is False
+	seed: int
 		If given, it sets a seed for the ranodom noise generation for reproducibility.
 
 	Returns
 	-------
-	times: 'np.ndarray' 
+	times: :class:`~numpy:numpy.ndarray` 
 		The sampling time vector. (Shape (N,))
-	time_series: 'np.ndarray'
+	time_series: :class:`~numpy:numpy.ndarray`
 		The output time series  (Shape (N,))
-	frequencies: 'np.ndarray'
+	frequencies: :class:`~numpy:numpy.ndarray`
 		The sampling frequencies (Shape (N,))
-	frequency_series: 'np.ndarray'
+	frequency_series: :class:`~numpy:numpy.ndarray`
 		The output series in frequency domain (Shape (N,))
-	psd: 'np.ndarray'
+	psd: :class:`~numpy:numpy.ndarray`
 		The frequencies interpolated power spectral density (Shape (N,))
 
 	"""

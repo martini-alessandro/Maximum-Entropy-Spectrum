@@ -438,7 +438,7 @@ class MESA(object):
 		Parameters
 		----------
 		dt: float				   
-			Sampling rate for the time series 
+			Sampling interval
 			
 		frequencies: :class:`~numpy:numpy.ndarray`		
 			(positive) frequencies to evaluate the spectrum at (shape (N,))
@@ -497,7 +497,7 @@ class MESA(object):
 		Parameters 
 		----------
 		dt: float				   
-			Sampling rate for the time series 
+			Sampling interval
 			
 		normalize: 'bool'		
 			Whether the autocovariance should be normalized s.t. it is 1 at t =0
@@ -937,7 +937,7 @@ class MESA(object):
 		T: float
 			Length (in seconds) of the signal to generate
 		sampling_rate: float
-			Sampling rate for the time series to generate
+			Sampling rate
 		fmin: float
 			Minimum frequency in the signal (if None, is equal to zero)
 		fmax: float
@@ -982,9 +982,25 @@ class MESA(object):
 
 	def entropy_rate(self, dt):
 		"""
-		Compute the entropy gain for a given power spectrum
-		Eq (84) in Papoulis  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1163713
-		or Eq (10) in Martini et al https://arxiv.org/pdf/2106.09499.pdf
+		Compute the entropy gain :math:`\Delta H` for a given power spectrum:
+		
+		.. math::
+		
+			\Delta H = \int_{- Ny}^{Ny}\log S(f) df
+		
+		It is described in Eq (84) in `Papoulis <https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1163713>`_
+		or Eq (10) in `Martini et al. <https://arxiv.org/pdf/2106.09499.pdf>`_
+
+		Parameters
+		----------
+		dt: float
+			Sampling interval
+		
+		Returns
+		-------
+		rate: float
+			Entropy rate
+		
 		"""
 		f, psd = self.spectrum(dt = dt)
 		df = np.diff(f)[0]
@@ -993,8 +1009,20 @@ class MESA(object):
 		
 	def logL(self, data, dt):
 		"""
-		Compute the log likelihood given the current spectrum
-		data smust be in the time domain
+		Compute the log likelihood given the current spectrum data smust be in the time domain.
+		
+		Parameters
+		----------
+		data: :class:`~numpy:numpy.ndarray`
+			Stretch of data to compute the likelihood of
+		
+		dt: float
+			Sampling interval
+		
+		Returns
+		-------
+		white_data: :class:`~numpy:numpy.ndarray`
+			Stretch of (trimmed) whitened data 
 		"""
 		N = len(data)
 		f = np.fft.rfftfreq(N)
