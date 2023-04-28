@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-memspectrum.GenerateTimeSeries
-==============================
-
-Module that generates a random time series with a given power spectral density
-"""
+#"""
+#Module that generates a random time series with a given power spectral density
+#"""
 
 import numpy as np
 from scipy.interpolate import interp1d
@@ -16,9 +13,14 @@ def generate_data(f,
                   sampling_rate = 1.,
                   fmin = None,
                   fmax = None,
-                  asd = False):
+                  asd = False,
+                  seed = None):
     """
-    Generate a time series with a given power spectral density 
+    Generate a time series with a given power spectral density.
+    
+    .. code::
+
+        from memspectrum.GenerateTimeSeries import generate_data
 
     Parameters
     ----------
@@ -36,6 +38,8 @@ def generate_data(f,
         Tha maximum frequency available. The default is None.
     asd : 'boolean', optional
         If True, takes the square of the input power spectral density. The default is False.
+    seed: 'int', optional
+        If given, it sets a seed for the ranodom noise generation for reproducibility.
 
     Returns
     -------
@@ -51,6 +55,7 @@ def generate_data(f,
         The frequencies interpolated power spectral density (Shape (N,))
 
     """
+    if isinstance(seed, int): np.random.seed(seed)
     # f, psd = np.loadtxt(psd_file, unpack=True)
     if asd is True : psd = np.square(psd)
     # generate an interpolant for the PSD

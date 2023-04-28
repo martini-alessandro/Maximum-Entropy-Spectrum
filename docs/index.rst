@@ -13,7 +13,7 @@ Welcome to ``memspectrum``'s documentation!
 
    usage/install.md
    usage/overview.md
-   usage/ar_order.md
+   usage/theory.md
 
 .. toctree::
    :maxdepth: 2

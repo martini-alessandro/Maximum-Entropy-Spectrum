@@ -1,8 +1,5 @@
 """
-mememspectrum.memspectrum
-=========================
-
-Core module of `memspectrum`. Implements class `MESA`, which computes the spectrum of a given time-series using the Burg algorithm.
+Core module of `memspectrum`. Implements class :class:`MESA`, which computes the spectrum of a given time-series using the Burg algorithm, plus some helpers.
 """
 
 import sys
@@ -852,6 +849,10 @@ class MESA(object):
             Order of the autoregressive process that define the PSD
         """
         return self.a_k.size - 1 
+    
+    @property
+    def p(self):
+    	return self.a_k.size - 1 
     
     def forecast(self, data, length, number_of_simulations = 1, P = None, include_data = False, seed = None, verbose = False):
         """
