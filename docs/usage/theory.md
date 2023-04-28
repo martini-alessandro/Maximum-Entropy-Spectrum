@@ -1,4 +1,4 @@
-# More details on Maximum Entropy Spectral Analysis
+# More details on MESA
 
 ## Some theory
 

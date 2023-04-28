@@ -1,7 +1,7 @@
 Installation
 ============
 
-You have several options to install `memspectrum`!
+You have several options to install `memspectrum`.
 
 ## From the latest distributed version
 

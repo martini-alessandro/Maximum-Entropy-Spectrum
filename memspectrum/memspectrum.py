@@ -416,10 +416,10 @@ class MESA(object):
 		Returns
 		-------
 		spectrum: :class:`~numpy:numpy.ndarray`   
-			PSD of the model, including both positive and negative frequencies (shape (N,))
+			PSD of the model, including both positive and negative frequencies 
 			
 		freq: :class:`~numpy:numpy.ndarray`	   
-			Frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq) (shape (N,))
+			Frequencies at which spectrum is evaluated (as provided by np.fft.fftfreq) 
 		"""
 		den = np.fft.fft(a_k, n=N)
 		spectrum = dt * P / (np.abs(den) ** 2)
@@ -441,30 +441,19 @@ class MESA(object):
 			Sampling interval
 			
 		frequencies: :class:`~numpy:numpy.ndarray`		
-			(positive) frequencies to evaluate the spectrum at (shape (N,))
+			(positive) frequencies to evaluate the spectrum at 
 			If None, a equally spaced frequency grid is used (and returned)
 		   
-		onesided: 'bool'
+		onesided: bool
 			Whether the one sided PSD (only positive frequencies) shall be returned.
 			It has effect only if a frequency array is not given
 
 		Returns
 		-------
-		if no frequency array is given 
-			frequencies: :class:`~numpy:numpy.ndarray`	  
-				Frequencies at which power spectral density is evaluated (shape = (N,))
-			spectrum: :class:`~numpy:numpy.ndarray`		   
-				Two sided power spectral density (shape = (N,))
-			
-		if frequency array is given:
-			spectrum: :class:`~numpy:numpy.ndarray`		   
-				Power spectral density interpolated on desidered frequencies (shape = (N,))
-	
-			
-		Raises 
-		------
-			ValueError if frequencies greater then Nyquist frequencies are given 
-			
+		frequencies: :class:`~numpy:numpy.ndarray`	  
+			Frequencies at which power spectral density is evaluated (**only returned** if ``frequencies = None``)
+		spectrum: :class:`~numpy:numpy.ndarray`		   
+			Power spectral density			
 		"""
 		if self.a_k is None:
 			raise RuntimeError("Model is not initialized: unable to compute spectrum. Call MESA.solve() or load a model from file to initialize the model")
@@ -491,16 +480,23 @@ class MESA(object):
 	
 	def compute_autocovariance(self, dt, normalize = False):
 		"""
-		Compute the autocovariance of the data based on the autoregressive coefficients.
-		The autocovariance is defined as: C(tau) = E_t[(x_t -mu)(x_t+tau -mu)]
+		Compute the autocovariance :math:`C(\\tau)` of the data based on the autoregressive coefficients.
+		The autocovariance is defined as:
+		
+		.. math::
+		
+			C(\\tau) = E_t[(x_t - \mu)(x_{t+\\tau} -\mu)]
+		
+		where :math:`\mu` is the mean value of the timeseries.
+		It amounts to the inverse Fourier transform of the PSD.
 		
 		Parameters 
 		----------
 		dt: float				   
 			Sampling interval
 			
-		normalize: 'bool'		
-			Whether the autocovariance should be normalized s.t. it is 1 at t =0
+		normalize: bool		
+			Whether the autocovariance should be normalized s.t. :math:`C(\\tau = 0) = 1`
 
 		Returns
 		-------
@@ -569,11 +565,11 @@ class MESA(object):
 			Variance of white noise for the associated autoregressive process 
 									   
 		a_k: :class:`~numpy:numpy.ndarray`			 
-			The coefficient used to compute the power spectral density (Shape (N,)) 
+			The coefficient used to compute the power spectral density  
 			
 		optimization: :class:`~numpy:numpy.ndarray`	
 			The values of the chosen optimisation_method at every iteration 
-			(Shape (N,))   
+			   
 
 		"""
 		data = np.array(data)
@@ -626,11 +622,11 @@ class MESA(object):
 			Variance of white noise for the associated autoregressive process
 									   
 		a_k: :class:`~numpy:numpy.ndarray`			 
-			The coefficient used to compute the power spectral density (Shape (N,)) 
+			The coefficient used to compute the power spectral density  
 			
 		optimization: :class:`~numpy:numpy.ndarray`	
 			The values of the chosen optimisation_method at every iteration 
-			(Shape (N,))   
+			   
 		"""
 			#setting data for the loss function, if required
 		spec = None
@@ -760,11 +756,11 @@ class MESA(object):
 			Variance of white noise for the associated autoregressive process
 									   
 		a_k: :class:`~numpy:numpy.ndarray`			 
-			The coefficient used to compute the power spectral density (Shape (N,)) 
+			The coefficient used to compute the power spectral density  
 			
 		optimization: :class:`~numpy:numpy.ndarray`	
 			The values of the chosen optimisation_method at every iteration 
-			(Shape (N,))   
+			   
 		"""
 			#setting data for the loss function, if required
 		spec = None

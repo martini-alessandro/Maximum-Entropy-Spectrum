@@ -8,7 +8,7 @@ Welcome to ``memspectrum``'s documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Usage
+   :caption: Usage guide
    :name: usage
 
    usage/install.md

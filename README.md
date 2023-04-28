@@ -41,7 +41,7 @@ pip install memspectrum
 
 It requires `numpy`.
 
-You full documentation is available [here](link/to/docs).
+You full documentation is available [here](https://maximum-entropy-spectrum.readthedocs.io/en/latest/).
 
 On the GitHub repository, a number of examples are available to the interested user:
 
@@ -49,7 +49,7 @@ On the GitHub repository, a number of examples are available to the interested u
 * `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses memspectrum to find an autoregressive process which describes them and forecast
 * `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
 
-For more advanced use or for more information, please refer to the code documentation:
+For more advanced use or for more information, please refer to the code [documentation](https://maximum-entropy-spectrum.readthedocs.io/en/latest/):
 
 ```Python
 import memspectrum

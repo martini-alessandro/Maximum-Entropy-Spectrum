@@ -6,12 +6,17 @@ Package that uses maximum entropy spectral Analysis to compute the spectrum
 of a given time-series. The main object is MESA, that is meant to implement Burg
 Algorithm for the computation of the power spectral density.
 
-For more information, visit: https://github.com/martini-alessandro/Maximum-Entropy-Spectrum
-or https://pypi.org/project/memspectrum/
+For more information, take a look at:
 
-Basic usage:
+	- `repository <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum>`_
+	- `pypy distribution <https://pypi.org/project/memspectrum/>`_
+	- `documentation <https://maximum-entropy-spectrum.readthedocs.io/en/latest/>`_
+	- `paper <https://arxiv.org/abs/2106.09499>`_
+
+Basic usage (to compute the spectrum of a given time series):
 
 ::
+
 	import memspectrum
 
 	M = memspectrum.MESA()
