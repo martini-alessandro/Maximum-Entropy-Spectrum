@@ -3,8 +3,9 @@ Script to generate LIGO noise similar to the design psd at a fixed autoregressiv
 
 To generate 32 s of data @ 4096 Hz with AR order 300 run
 
-131073
+	python generate_white_noise.py --p 300 --t 32 --srate 4096 --savefile fixed_p_noise.dat
 
+This will save the noise in the file fixed_p_noise.dat
 
 """
 import numpy as np
@@ -74,7 +75,7 @@ if args.savefile:
 plt.figure()
 plt.loglog(f_input, psd_input, ls = '--', label = 'true PSD')
 plt.loglog(f_mesa, psd_mesa, label = 'estimated PSD')
-plt.loglog(f_check, psd_check, label = 'fake data PSD')
+plt.loglog(f_check, psd_check, label = 'generated noise PSD')
 plt.xlabel('f (Hz)')
 plt.ylabel('PSD (1/Hz)')
 plt.legend()
