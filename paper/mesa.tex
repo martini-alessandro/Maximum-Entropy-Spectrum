@@ -629,53 +629,65 @@ However, we want to stress that this fact does not invalidate our discussion but
 %\end{figure}
 
 \subsection{Marginalising over the noise PSD in GW parameter estimation: the case for GW150914}
-As an application of MESA, and its implementation in \texttt{memspectrum}, we analyse GW150914\cite{} using a Bayesian framework that allows for the marginalisation of the order  $p$ of the AR($p$) process representing the noise data stream. The inference algorithm proceeds as usual, see \cite{}[veitch and vecchio, ashton et al, etc etc], with a modification to the likelihood calculation. The likelihood function we employ is given in Eq.~\eqref{eq:Whittle} and its calculation proceeds as follows: for all proposed Monte Carlo moves $\theta\equiv\theta_{GW}\cup p$\footnote{We indicate the set of all GW parameters (component masses, spins, luminosity distance, etc.) with $\theta_{GW}$.}, for each detector included in the analysis, we compute the detector response to the template $h(t;\theta_{GW})$ in the time-domain, subtract it from the data $d(t)$ to get the time domain residuals $r(t;\theta_{GW})$. Under the MESA assumption, we describe the PSD of the residuals as in Eq.~\eqref{eq:MESApsd}, where the order $p$ is fixed by the Monte Carlo sampler. Having computed the PSD, we Fourier transform the residuals and compute the likelihood. Our sampler is a nested sampling algorithm\cite{}[raynest] and the specific inference model is implemented as part of \texttt{granite}\cite{}[in preparation], a dedicated inference model for ground based interferometric detectors. Needless to say, despite the implementation of the fast Burg algorithm in \texttt{memspectrum}, the inference with noise marginalisation is vastly more computational expensive than the standard analysis. As our analysis template, we adopt the machine learning based MLGW model\cite{}[MLGW], an aligned spin model trained on TEOBResumS\cite{}, that has been shown to perform well on LVK detected events\cite{}[MLGW]. 
-\begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/intrinsic.pdf}
-\end{figure}
-\begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/extrinsic.pdf}
-\end{figure}
-\begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/waveforms.pdf}
-\end{figure}
-\begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/posterior_order_H1.pdf}
-\end{figure}
+Since the order of the AR process is not yet determined by the theory, up to this point, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance and better accuracy than Welch algorithm.
+The use of MESA is particularly useful for short time series samples, where Welch's method is outperformed in both precision and confidence.
+ 
+This observation suggests a promising avenue to pursue in future developments of gravitational waves data analysis: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD. Hence MESA could be employed for {\it online} PSD estimation during a Bayesian parameter estimation exercise.
+%a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalizing over the detector noise PSD.
+%\sschmidt{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
+This is possible whenever the log-likelihood of the model for a time series takes the form
+\begin{equation}
+	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{|\tilde{d}(f)- \tilde{x}(f;\theta)|^2}{S(f)} - \frac{1}{2}\log\left[\int  df\,S(f)\right]
+\end{equation}
+where $\tilde{\hphantom{a}}$ denotes the Fourier transform and the signal model $x(t;\theta)$, dependent on some parameter $\theta$, is a prediction for a deterministic signal buried in the observed time series $d(t)$.
+In GW data analysis, a typical approach is to estimate the PSD offline on a large batch of data and off-source: this scheme assumes {\it stationary data} on a long timescale (longer than the data under study) and it might not reflect the structure of the noise in the analyzed time slice.
+Some alternatives exist for dropping this assumption and modifying the likelihood accordingly \citep{R_ver_2010, R_ver_2011, Edwards_2020, Chatziioannou_2021}.
+MESA can add to those an elegant way out: at each evaluation of the likelihood, a new spectral analysis is performed by computing the PSD on the residual $d_t-x_t$.
+In this way, the PSD would depend also on $\theta$ and would effectively model the residuals. For this method, we would only need to assume the stationariety of the residual on the batch to analyse\footnote{
+Unlike several works in GW data analysis \citep{Biscoveanu_2020, talbot2020gravitationalwave}, this approach does not address the issue of including the PSD uncertainties in the posterior. Instead, it focuses on making minimal assumption about the nature of the data under study.
+}, making a lighter assumption on the nature of the data. Furthermore, this method would get, as a bonus, a posterior distribution for the PSD of the analyzed data.
+Preliminary studies suggest that this is possible~\citep{martini_thesis}. Other studies have been done in this direction, mostly using a parametric model for the PSD \citep{Littenberg_2013, Edwards_2015, lalinference}.
+
+Hence, as an application of MESA, and its implementation in \texttt{memspectrum}, we analyse GW150914\cite{} using a Bayesian framework that allows for the marginalisation of the order  $p$ of the AR($p$) process representing the noise data stream. The inference algorithm proceeds as usual, see \cite{}[veitch and vecchio, ashton et al, etc etc], with a modification to the likelihood calculation. The likelihood function we employ is given in Eq.~\eqref{eq:Whittle} and its calculation proceeds as follows: for all proposed Monte Carlo moves $\theta\equiv\theta_{GW}\cup p$\footnote{We indicate the set of all GW parameters (component masses, spins, luminosity distance, etc.) with $\theta_{GW}$.}, for each detector included in the analysis, we compute the detector response to the template $h(t;\theta_{GW})$ in the time-domain, subtract it from the data $d(t)$ to get the time domain residuals $r(t;\theta_{GW})$. Under the MESA assumption, we describe the PSD of the residuals as in Eq.~\eqref{eq:MESApsd}, where the order $p$ is fixed by the Monte Carlo sampler. Having computed the PSD, we Fourier transform the residuals and compute the likelihood. Our sampler is a nested sampling algorithm\cite{}[raynest] and the specific inference model is implemented as part of \texttt{granite}\cite{}[in preparation], a dedicated inference model for ground based interferometric detectors. Needless to say, despite the implementation of the fast Burg algorithm in \texttt{memspectrum}, the inference with noise marginalisation is vastly more computational expensive than the standard analysis. As our analysis template, we adopt the machine learning based MLGW model\cite{}[MLGW], an aligned spin model trained on TEOBResumS\cite{}, that has been shown to perform well on LVK detected events\cite{}[MLGW]. 
 
 \begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
+	\caption{Posterior distributions for $\mathcal{M}$, $q$ and spin parameters $\chi_1$ and $\chi_2$. The recovered posteriors are very similar to the LVK released ones.}
 	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/posterior_order_L1.pdf}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/intrinsic.pdf}
 \end{figure}
+\begin{figure}
+	\caption{Posterior distributions for the sky position, (log) luminosity distance, inclination angle, polarisation angle $\psi$, reference phase $\phi_{ref}$ and geocentric coalescence time. Also for the extrinsic parameters, we see broad consistency with the LVK released ones. However, we notice that the posterior on the declination angle $\delta$ is mirrored compared to the released sky map. Nonetheless, there is substantial overlap. Similarly, the PSD marginalised posterior for the inclination angle shows a slight preference for a face-on configuration, rather than a face-off.}
+	\label{fig:gw150914_extrinsic}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/extrinsic.pdf}
+\end{figure}
+\begin{figure}
+	\caption{Whitened reconstructed waveforms from our analysis for the Hanford detector (top panel) and the Livingston detector (bottom panel). The shaded turquoise area indicates the 90\% credible region.}
+	\label{fig:gw150914_waveforms}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/waveforms.pdf}
+\end{figure}
+%\begin{figure}
+%	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
+%	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
+%	}
+%	\label{fig:gw150914_intrinsic}
+%	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/posterior_order_H1.pdf}
+%\end{figure}
+%
+%\begin{figure}
+%	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
+%	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
+%	}
+%	\label{fig:gw150914_intrinsic}
+%	\includegraphics{Images/gw150914/posterior_order_L1.pdf}
+%\end{figure}
 
 \begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics{Images/gw150914/noise_curves.pdf}
+	\caption{Posterior PSDs for the Hanford (orange line) and Livingstone (blue line) as inferred by our analysis.}
+	\label{fig:gw150914_psd}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/noise_curves.pdf}
 \end{figure}
 
-In Figs.~\ref{fig:gw150914_intrinsic}, ~\ref{fig:gw150914_extrinsic} and \ref{fig:gw150914_wf} we show the posteriors for the set of intrinsic parameters, extrinsic parameters and reconstructed waveform from our analysis. In addition, Fig.~ \ref{fig:gw150914_orders} shows the posterior distribution on the orders $p_{H}$ and $p_{L}$ for the AR processes describing the residuals in the LIGO-Hanford and LIGO-Livingston detectors. The inferred PSDs are instead shown in Fig.~\ref{fig:gw150914_psds}. 
+In Figs.~\ref{fig:gw150914_intrinsic}, ~\ref{fig:gw150914_extrinsic} and \ref{fig:gw150914_waveforms} we show the posteriors for the set of intrinsic parameters, extrinsic parameters and reconstructed waveform from our analysis. The inferred PSDs are instead shown in Fig.~\ref{fig:gw150914_psds}. %In addition, Fig.~ \ref{fig:gw150914_orders} shows the posterior distribution on the orders $p_{H}$ and $p_{L}$ for the AR processes describing the residuals in the LIGO-Hanford and LIGO-Livingston detectors. 
 
 \subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
 As a last example of an application of MESA, we return to the study of the strain produced by the LIGO-Virgo interferometers 
