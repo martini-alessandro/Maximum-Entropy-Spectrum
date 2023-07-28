@@ -31,7 +31,26 @@ We address here the problem of how to set the autoregressive order.
 We begin by noting that there is not a general rule to estimate the "right" AR order: several strategies will work in different situations and whether a method is suitable or not depends on the desidered application.
 Here we just show how the different strategies implemented in ``memspectrum`` can lead to different results. Once you are aware of all the subtleties, you (as a user of the package) are the best person to decide which strategy works best.
 
-**WRITEME....**
+To set the AR order, we solve the recursion for the {math}`a_k` for many different value or AR order {math}`p`. For each AR order, we evaluate a loss function, which can depend on the data and on the {math}`a_k`. We then select the AR order that minimises the chosen loss functions.
+
+Two losses are implemented:
+- **FPE**: implements the Akaike Final prediction Error. In practice, {math}`FPE = P_N \frac{N + p + 1}{N - p - 1}`, where {math}`N` is the length of the timeseries.
+- **VM**: at each step it computes the variance of the prediction error associated to forecasting. 
+
+In the following plot, you can see the performance of the two losses at recovering the true AR order of a timeseries:
+
+![True vs Measured AR order](../img/ar_order.png)
+
+From the plot you can see that:
+- For low AR orders (i.e. for a timeseries with a short autocorrelation), FPE is more accurate and VM tends to overestimate the true AR order
+- For high AR orders (i.e. for a timeseries with long autocorrelation length), VM provides an accurate estimation while FPE underestimates the true AR
+
+Executive summary:
+
+- Use FPE if you want a simple PSD (not many details) or you are analysing a simple timeseries
+- Use VM to capture many details of the PSD (sometimes at the cost of overfitting)
+
+
 
 
 

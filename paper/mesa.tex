@@ -308,7 +308,24 @@ The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follow
 Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation methods.
 
 \subsection{Whitening} \label{sec:whitening}
-\todo{Write here about our whitening procedure with the convolution}
+\todo{Do we need this paragraph?}
+
+The theory of the AR processes can be also applied to the problem of whitening a time series.
+Given a time series, $x_t$, the whitening operation produces another timeseries $x^W_t$ such that:
+%
+\begin{equation}\label{eq:whitening_definition}
+	x^W_t = \mathcal{F}^{-1}\left[ \frac{\tilde{x}(f)}{\sqrt{S(f)}} \right]
+\end{equation}
+%
+where $\mathcal{F}^{-1}$ denotes the inverse Fourier transform of a frequency series.
+If $x_t$ is a realization of gaussian noise (see Eq.~\eqref{eq:Whittle}) with PSD $S(F)$, the whitened timeseries $x^W_t$ is just white noise (i.e. uncorrelated samples from a normal gaussian).
+
+From Eq.~\eqref{eq:AR_p}, remembering that $b_i = - a_i$, it's straightforward to derive an expression for the whitened timeseries $x^W_t$:
+\begin{equation}
+	x^W_t = \frac{1}{\sqrt{P_N}} \sum_{i=0}^p a_i x_{t-i}
+\end{equation}
+This amounts to a convolution of the timeseries  $x_t$ with the kernel $(1, a_1, \hdots, a_p)$, plus a variance rescaling.
+Performing a convolution is an appealing alternative to evaluating Eq.~\eqref{eq:whitening_definition} directly.
 
 \section{Validation of the model}\label{sec:validation}
 It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is equivalent to the maximum order of the autocorrelation $\bar{r}_m$ considered. In an ideal scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $m$, as the estimation for  $\bar{r}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
