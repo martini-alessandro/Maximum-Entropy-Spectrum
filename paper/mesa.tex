@@ -41,9 +41,10 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 
 % comments command
-\newcommand{\wdp}[1]{{\textcolor{magenta}{\texttt{WDP: #1}} }}
-\newcommand{\amartini}[1]{{\textcolor{blue}{\texttt{AM: #1}} }}
-\newcommand{\sschmidt}[1]{{\textcolor{red}{\texttt{SS: #1}} }}
+\newcommand{\wdp}[1]{{\textcolor{magenta}{\texttt{walter: #1}} }}
+\newcommand{\amartini}[1]{{\textcolor{blue}{\texttt{alessandro: #1}} }}
+\newcommand{\sschmidt}[1]{{\textcolor{purple}{\texttt{stefano: #1}} }}
+\newcommand{\todo}[1]{{\textcolor{red}{\texttt{TODO: #1}} }}
 
 \begin{document}
 
@@ -73,7 +74,7 @@ We conclude our investigation by utilising MESA, and its particularly easy param
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY  
 
 \section{Introduction}
-
+\todo{Check again intro \& abstract}
 The study of the properties of stochastic processes is a crucial task in many fields of physics, astronomy, quantitative biology, as well as engineering and finance. Among those, a special place is occupied by the so-called \textit{wide-sense} stationary processes. These are stochastic processes that display an invariance of their statistical properties, such as their two-point autocovariance function, with respect to time translation. If $x(t)$ is a wide-sense stationary process, it is completely determined by the knowledge of the autocorrelation function 
 \begin{equation}
 	C(\tau) = \mathbf{E}[x_t \cdot x_{t+\tau}]
@@ -124,8 +125,8 @@ Our paper is organized as follows: we begin by briefly reviewing the theoretical
 \section{Theoretical foundations}\label{sec:foundations}
 The Maximum Entropy principle (MAXENT) is among the most important results in probability theory. It provides a way to uniquely assign probabilities to a phenomenon in a way that best represent our state of knowledge, while being non committal with unavailable information. Its domain of application turned out to be wider than expected. In fact, thanks to~\citet{burg1975maximum}, this method has also been applied to perform high quality computation of power spectral densities of time series.
 
-After a short introduction to Jaynes' MAXENT (sec.~\ref{sec:MAXENT}), we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form (sec.~\ref{sec:MESA}).
-Next, we will discuss an interesting link between Burg's method and autoregressive processes (sec.~\ref{sec:autoregr}) and in sec.~\ref{sec:forecasting} we will use such link for straightforwardly forecasting a time series.
+After a short introduction to Jaynes' MAXENT (Sec.~\ref{sec:MAXENT}), we will develop in detail Burg's technique of Maximum Entropy Spectral Analysis (MESA) and show that the estimate can be expressed in an analytical closed form (Sec.~\ref{sec:MESA}).
+Next, we will discuss an interesting link between Burg's method and autoregressive processes (Sec.~\ref{sec:autoregr}) and in Sec.~\ref{sec:forecasting} we will use such link for straightforwardly forecasting a time series.
 
 \subsection{Maximum Entropy Principle} \label{sec:MAXENT}
 
@@ -306,21 +307,40 @@ Indeed, for an AR($p$) process the conditional probability $p(x_t|x_{t-1}, \ldot
 The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follows a Gaussian distribution with a fixed variance and a mean value $m_t = \sum_{i = 1}^p b_i x_{t-i}$ computed from past observations.
 Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation methods.
 
+\subsection{Whitening} \label{sec:whitening}
+\todo{Do we need this paragraph?}
+
+The theory of the AR processes can be also applied to the problem of whitening a time series.
+Given a time series, $x_t$, the whitening operation produces another timeseries $x^W_t$ such that:
+%
+\begin{equation}\label{eq:whitening_definition}
+	x^W_t = \mathcal{F}^{-1}\left[ \frac{\tilde{x}(f)}{\sqrt{S(f)}} \right]
+\end{equation}
+%
+where $\mathcal{F}^{-1}$ denotes the inverse Fourier transform of a frequency series.
+If $x_t$ is a realization of gaussian noise (see Eq.~\eqref{eq:Whittle}) with PSD $S(F)$, the whitened timeseries $x^W_t$ is just white noise (i.e. uncorrelated samples from a normal gaussian).
+
+From Eq.~\eqref{eq:AR_p}, remembering that $b_i = - a_i$, it's straightforward to derive an expression for the whitened timeseries $x^W_t$:
+\begin{equation}
+	x^W_t = \frac{1}{\sqrt{P_N}} \sum_{i=0}^p a_i x_{t-i}
+\end{equation}
+This amounts to a convolution of the timeseries  $x_t$ with the kernel $(1, a_1, \hdots, a_p)$, plus a variance rescaling.
+Performing a convolution is an appealing alternative to evaluating Eq.~\eqref{eq:whitening_definition} directly.
+
 \section{Validation of the model}\label{sec:validation}
-It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is
-equivalent to the maximum order of the autocorrelation $\bar{r}_m$ considered. In an ideal scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $m$, as the estimation for  $\bar{r}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
+It is now clear that MESA provides a recursive formula for computing the coefficients $a_k$ in Eq.~(\ref{eq:MESApsd}). The number $M$ of such coefficients is equivalent to the maximum order of the autocorrelation $\bar{r}_m$ considered. In an ideal scenario, this would be equal to the number of points the autocorrelation is computed at (equivalent to the length of data considered). However, the computation of high order coefficients of the autocorrelation is unstable and for high enough $m$, as the estimation for  $\bar{r}_m$ shows a very high variance, broadly scaling as $\sim \left(\sqrt{M - m}\right)^{-1}$.
 
 It is then clear that the choice of the number of samples of the discrete autocorrelation to consider is important: 
 on the one hand it is advisable to include as much knowledge of the autocorrelation as possible, leading to include all the known $\bar{r}_m$; on the other hand, including values of the autocorrelation that are not reliably estimated, can be counterproductive.
 The order $M$ of the autocorrelation to be considered (or, equivalently, the order $M$ of the underlying autoregressive process) is the only tuning parameter of MESA and a careful balance between these two necessities must be made when applying the algorithm.
 
 The remainder of this section is devoted to an extensive study on how to make such choice.
-In Section~\ref{sec:optimizers}, we are going to define three different \textit{loss functions} to measure how well the 
+In Section~\ref{sec:optimizers}, we are going to define two different \textit{loss functions} to measure how well the 
 algorithm is able to reproduce a known PSD.
 The basic idea is to validate, as the autoregressive order considered increases, the performance of the algorithm results 
 by measuring the loss function and pick, among the orders the one that yields better results.
-Second, the performance of different loss functions will be assessed by performing the spectral analysis on time series with an analytical Gaussian PSD, sec.~\ref{sec:arp_validation}.
-In a last subsection~\ref{sec:LIGO_validation}, the same analysis is performed on synthetic data generated from the analytical spectrum released by the LIGO-Virgo collaboration.
+The performance of the different losses will be assessed by answering to two questions: (i) how well the AR order is recovered and (ii) how well the measured PSD is able to whiten the input time series.
+This will be discussed Sec.~\ref{sec:arp_validation} and Sec.~\ref{sec:whitening_validation}.
 
 \subsection{Choice of the autoregressive order}\label{sec:optimizers} 
 
@@ -331,7 +351,6 @@ M_{max} = 2N / \ln{(2N)}\,,
 where $N$ is the number of observed points in the time-series.
 However, this is just a plausible upper limit on the order of the AR process $m$ and the optimal algorithm could employ fewer points.
 We then need a more sophisticated method for computing the right value for $m$.
-Various loss functions to assess the algorithm performance have been proposed in literature.
 We summarise them below:
 
 \begin{itemize}
@@ -349,28 +368,8 @@ Minimizing FPE is equivalent to minimizing the quantity:
 with $P_m$ being the estimated noise variance at order $m$, see Eq.~\eqref{eq:errorFilter1}. In the $N \to \infty$ limit, 
 remembering $m_{max} \sim 2N / \log(2N)$, Akaike's loss function is equivalent to the minimization of the variance $P_m$ of the white noise of the underlying $AR(p)$ model. 
 
-\item \textbf{Criterion Autoregressive Transfer function (CAT)}
-This second loss function has been proposed by Parzen and studied in detail by~\citet{bhansali1986}. 
-It is based on the assumption that the observed process is an infinite order autoregressive process 
-\begin{equation} 
-x_t = \sum_{i = 1}^{\infty}a_{i}x_{t-i} + \nu_t
-\end{equation} 
-and tries to select the order $m$ as the best finite-order approximation for the observed process. Being N the number of samples it has the property that $m \to \infty$ as $N \to \infty$. Since any real-valued stochastic process can be written as a ARMA(p,q) process (Wold theorem) i.e. an $AR(\infty)$ process, this is a physically significant property. 
-The loss function has the functional form: 
-\begin{equation}
-    \mathcal{L}_{\rm CAT}(m) = \frac{1}{N}\sum_{k = 1}^m \frac{N - k}{N P_k} - \frac{N - m}{N P_m},
-\end{equation}
-and the so-chosen order is found to be asymptotically unbiased for $P_N$. 
-
-\item \textbf{Optimum Bayes Decision rule} 
-The last criterion we will consider is the Optimum Bayes Decision rule (OBD)\citep{doi:10.1029/WR018i004p01097}. Let $x(t)$ be the observed 
-time series for the process that has to be described as an $AR(m)$ process, with $m$ to be determined. The OBD is obtained choosing between M different hypothesis $H_i, i = 1, \dots, M$ maximizing their posterior distribution $P(H_i\vert x(t))$. Each
-hypothesis is uniquely determined from both the length and the values of the filter under study. Choosing a Likelihood of the form Eq.~\eqref{eq:p_forecast} and uniform priors for both the coefficients and the hypotheses, Rao has shown that choosing the minimum for $-log(P(H_i \vert x(t))$, i.e. maximizing the posterior for $H_i$, is asymptotically equivalent to the minimization of:
-
-   \begin{align}
-        \mathcal{L}_{\rm OBD}&(m) = (N - m - 2) \log(P_m) \nonumber\\
-        &+ m \log(N) + \sum_{k = 0}^{m-1} \log(P_k) + \sum_{k = 1}^{m} a_k^2\,.
-    \end{align}
+\item \textbf{Variance Maximum (VM)}
+\todo{WRITEME}
 \end{itemize}
 
 Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson recursion~\citep{doi:10.1002/sapm1946251261} until $M_{max}$, as given in Eq.~\eqref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the specified loss function.
@@ -380,150 +379,8 @@ In practice, we can apply an \textit{early stop} procedure: every few iterations
 
 The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
 
-\subsection{Choice of the loss function: Gaussian PSD} \label{sec:arp_validation}
-We test the performance of the three loss functions on a random time series generated with a known power spectral density.
-In this first experiment, we take the PSD to be a Gaussian distribution with mean $\mu = 2.5$ and standard deviation $\sigma = 0.5$, where the units are arbitrary.
-The time series are generated by sampling a frequency vector from ${p(\tilde{n}(f_i)) \propto \exp{\left\{-\frac{1}{2}\sum_i\frac{n_i ^2}{S(f_i)}\right\}}}$ and performing an inverse Fast Fourier Transform on the frequency series. 
-For this investigation, we generate a dataset of $N=1000$ time series of $3000$ points each.
-
-We then apply Burg's method choosing in turn each of the loss functions on the ensemble of simulated time series, 
-thus obtaining an ensemble of PSD estimates. Through these ensembles, we characterize statistically the performance of each loss function.
-The disagreement between the PSD $S_i(f)$ estimated from the $i$-th simulated time series and the target PSD $S(f)$ is measured via 
-the \textit{frequency-averaged relative error} $r_i$:
-\begin{equation}\label{eq:freq_error}
-	r_i = \frac{1}{N_f}\sum_{f_j=\{0, \hdots , Ny\}} \frac{|S_i(f_j) - S(f_j)|}{S(f_j)}
-\end{equation}
-where $Ny$ is the Nyquist frequency of the time series and $N_f$ is the number of the discrete frequencies the PSD is evaluated at.
-
-For each loss function, we compute the ensemble-averaged PSD (as well as the $90\%$ confidence level) and 
-the \textit{ensemble-averaged relative error}:
-\begin{equation}\label{eq:ensemble_averaged_error}
-	r(f) = \frac{1}{N} \sum_i \frac{|S_i(f) - S(f)|}{S(f)} \;.
-\end{equation}
-For each loss function, Figs.~\ref{fig:FPEmean} \ref{fig:OBDmean} and \ref{fig:CATmean} show the averaged PSD, 
-as well as the ensemble-averaged relative error from Eq.~\eqref{eq:ensemble_averaged_error}.
-Furthermore, Fig.~\ref{fig:optcomparison} displays the relation between $r_i$ and the autoregressive 
-order $m_i$ chosen for each independently drawn time series.
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/FPE_spectrum_estim.pdf}
-	\caption{In the top panel, we show the average spectrum for $\mathcal{L}_{\rm FPE}(m)$ with 90\% confidence regions (purple shaded region), together with the median estimation (red line) and the target PSD (black dashed line). In the bottom panel, we display the ensemble-averaged relative error eq.~\eqref{eq:ensemble_averaged_error}.
-	The average is computed with $1000$ realization of a $3000$ points long time series.}
-	\label{fig:FPEmean}
-\end{figure}
-\begin{figure}[t]
-	\centering
-	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/OBD_spectrum_estim.pdf}
-	\caption{In the top panel, we show the average spectrum for $\mathcal{L}_{\rm OBD}(m)$ with 90\% confidence regions (purple shaded region), together with the median estimation (red line) and the target PSD (black dashed line). In the bottom panel, we display the ensemble-averaged relative error eq.~\eqref{eq:ensemble_averaged_error}. The average is computed with $1000$ realization of a $3000$ points long time series.}
-	\label{fig:OBDmean}
-\end{figure}
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/CAT_spectrum_estim.pdf}
-	\caption{In the top panel, we show the average spectrum for $\mathcal{L}_{\rm CAT}(m)$ with 90\% confidence regions (purple shaded region), together with the median estimation (red line) and the target PSD (black dashed line). In the bottom panel, we display the ensemble-averaged relative error eq.~\eqref{eq:ensemble_averaged_error}. The average is computed with $1000$ realization of a $3000$ points long time series.}
-	\label{fig:CATmean}
-\end{figure} 
-
-\begin{figure}
-	\centering
-	\includegraphics[width = \linewidth]{Images/optimisers_comparison/normal/error_length_contour.pdf}
-	\caption{Frequency-averaged relative error $r$ eq.~\eqref{eq:freq_error} vs the length $m$ of autoregressive process, for each of the $1000$ independent realizations of the synthetic time series with a gaussian PSD. Different colours refers to different choices for the loss function: in red $\mathcal{L}_{\rm FPE}(m)$, in green $\mathcal{L}_{\rm OBD}(m)$ and in black $\mathcal{L}_{\rm CAT}(m)$. The top and right histograms show the marginal distributions.}
-	\label{fig:optcomparison}
-\end{figure}
-
-\paragraph{Final Prediction Error (FPE)}
-The results of our investigation on the performance of FPE are shown in Fig.~\ref{fig:FPEmean}.
-Qualitatively, there is a good agreement between the reconstructed spectrum and the true spectrum; 
-however, we note that the reconstruction is not very accurate in the low frequency region. 
-Furthermore, the $90\%$ credible region is very small: this means that if we randomly take two of the reconstructed spectra, we expect their differences to be statistically small. These facts are evidence for FPE to be a reliable loss function.
-
-By looking at Fig.~\ref{fig:optcomparison} (red series), we note that the AR orders obtained with 
-FPE are clustered in a very small region. This is also a desirable property: FPE, in fact, provides a stable 
-estimation of the AR order, which does not affect much the reconstruction error.
-We conclude that the FPE shows good quality reconstruction for the spectrum and very desirable stability properties, its estimate for filter's length $m$ is clustered in a region where there is no dependence of error on $m$. 
-\paragraph{Optimum Bayes Decision Rule (OBD)}
-The second loss function we consider is OBD and the results are summarized in Fig.~\ref{fig:OBDmean}. As for the FPE case, they show a good agreement between the average over the reconstructions and the true spectrum.
-Qualitatively the same behaviour of FPE is observed: a good quality reconstruction at the intermediate and high frequencies with a narrow $90\%$ confidence level as well as a degrading performance at low frequencies.
-However, when looking at the error, the disagreement of this method is found to be larger compared to FPE: 
-in the worst case, the error can be as large as a factor of $2$ compared to FPE. 
-
-The error as a function of the AR length (green series in Fig.~\ref{fig:optcomparison}) clusters in a small region, indicating the stability of the reconstructed process order $m$. We note that on average, OBD tends to choose smaller values of $m$ with respect to FPE.
-
-\paragraph{Criterion Autoregressive Transfer function (CAT)}
-The performance of CAT is shown in Fig.~\ref{fig:CATmean}. At a first glance, CAT differs substantially from the other two loss functions considered.
-The ensemble-average PSD matches very well the underlying ``true" PSD. This is also true even in the low frequency region, 
-where both OBD and FPE showed poor performance.
-However, the variance of the reconstructed spectrum is quite large (much larger than for FPE and OBD), and the relative error is quite high, $\sim 10\%$ and it is approximately constant over all the frequencies.
-
-The reason for this behaviour becomes clear from Fig.~\ref{fig:optcomparison} (black series): CAT does not converge 
-to any specific value for the order of the AR process. The estimated $m$ spans a large range of values, hence the large variance observed.
-Fig.~\ref{fig:optcomparison} also shows a strong dependence of the error on the estimated length of the filter. The good quality of the reconstruction from the average spectrum can be explained as follows: long filters are able to capture features that short filters cannot see, like outliers in different realizations of the time-series, but this is also responsible for an increased variance in the estimate, by introducing spurious peaks in the reproduction.
-
-When averaging the different PSD estimates, the noise in each spectrum cancels, as expected from the Gaussian nature of the AR process. 
-This implies, in a sense, that each estimate of the spectrum is independent of any other, as suggested by the huge variance in the residuals. This lack of stability is not a good property for the estimation of the PSD from a single realization of the time-series, however, thanks to the averaging out of errors, this estimator seems optimal in the case of repeatable experiments and ensemble-averages.
-
-\paragraph{Final remarks on the choice of the loss function}
-
-In our analysis, the FPE and OBD loss functions are found to behave similarly while CAT shows fairly different properties.
-CAT provides an accurate average spectrum over all the frequencies at the price of a large variance; in turn OBD and FPE 
-provide a poorer average in the low frequency tails, however they also display a  smaller variance, with FPE showing the lowest.
-
-The poor low-frequency reconstruction from OBD and FPE might be due to the fact that the first tends to select shorter filters, whereas long filters are required to model low frequency correlation.
-This seems to be confirmed by looking at fig.~\ref{fig:optcomparison}. OBD, which select the shortest filters, can provide an error as large as $300 \%$ at the extrema, as compared with $85\%$ error of FPE. In turn, CAT is $5\%$ accurate in these regions.
-
-However, we also note that the when inferring PSDs from a single time-series realization, FPE provide the lowest averaged error over all frequencies, while CAT can reach errors $5$ times larger (see again Fig.~\ref{fig:optcomparison}).
-Hence, while CAT is the loss function that minimizes errors in the low-frequency end of the spectrum, FPE obtains the best overall accuracy. 
-
-The conclusion is clear: even if in some cases CAT is more accurate when taking the average over several realizations of the underlying process, 
-FPE guarantees that the single estimation is more faithful.
-As in any common situation we cannot perform such averaging over different realizations of the same time series, we must prefer FPE over CAT (let alone OBD, which even though qualitatively similar to FPE has worse performance).
-However, if we indeed can measure the PSD by averaging over different time series, using CAT as a loss function is the best choice. In this sense we retain CAT to provide the best, and most similar in spirit, alternative to the commonly employed Welch estimation method whenever ensemble-averages are needed and justified.
-
-\subsection{Choice of the loss function: LIGO Spectrum} \label{sec:LIGO_validation}
-We continue our characterization of the various loss functions considered in this work, by investigating the 
-reconstruction of a specific, known, power spectrum: that is the Advanced LIGO \citep{LIGO_2015, Virgo_2014, KAGRA_2012, KAGRA_2013} design sensitivity theoretical spectral curve \citep{LVK_future_2013, LIGO_PSDs}.
-For this analysis, we generate $N = 500$ time series of $40960$ points each, sampled with a sampling rate of $\SI{2048}{Hz}$, hence we fix the duration
-of the time-series to $\SI{20}{s}$. The chosen length is convenient to capture fairly accurately the low-frequency features of the LIGO PSD.
-We report our findings in Figs.~\ref{fig:ligospectrum}~and~\ref{fig:LigoOrderError}.
-
-\begin{figure}
-    \centering
-     \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/compare_estimates.pdf}
-      \caption{Average spectrum for the three different loss functions as compared with the ``true" PSD. The average is computed over $500$ realization of a $40960$ points long time series.}
-       \label{fig:ligospectrum}
-\end{figure}
-
-Fig.~\ref{fig:ligospectrum} shows the simulated spectrum (dashed line) and the ensemble-averaged reconstructed PSD adopting the FPE (green line), OBD (red line) and CAT (black line).
-In all cases, the spectrum is well reconstructed, but with a fairly distinct behaviour at low frequency, where CAT -- as in the Gaussian case -- better captures and resolves the distinct spectral feature at $\sim \SI{17}{Hz}$.
-In Fig.~\ref{fig:ligoPeaks}, we report the reconstructed spectra around the two peaks at $\sim \SI{17}{Hz}$ and $\sim \SI{438}{Hz}$ (left and right panel respectively).
-
-Fig.~\ref{fig:LigoOrderError} shows the distribution of recovered AR orders $m$ against the relative frequency-averaged error. The behaviour
-of the three loss functions is very similar to what found in the Gaussian PSD case (compare it with fig.~\ref{fig:optcomparison}): ODB infers the smallest orders and gives average errors around $20$\%, FPE consistently estimates orders of a few hundreds and shows the smallest errors $\sim 15$ \% while CAT does not show any preference towards any AR order and displays wildly varying errors. Yet again, when the PSD is averaged over multiple realization of the time, CAT is able to capture the spectrum very precisely. In fact, even in presence of very sharp spectral features, CAT reconstruction seems to be almost perfectly coincident with each of them.
-Hence, also the study of simulated LIGO data seems to indicate that whenever and wherever ensemble-averaged PSDs are necessary, CAT is the optimal choice of loss function. However, on a single time-series realization, FPE is the more robust choice.
-
-Let us summarize some key general conclusions:
-\begin{itemize}
-	\item there are no reasons to prefer OBD over CAT or FPE;
-	\item if we have one single realization for the process, we recommend the use of FPE, that would get the best resolution possible. In this situation, CAT would provide spurious and unreliable results, with large error;
-	\item in the case of several realizations of the same process, CAT ensemble-average properties provide very a precise spectral estimation.\end{itemize}
-
-Therefore, the choice of loss function, at least in between CAT and FPE, depends on the problem one is attempting to solve.
-\begin{figure}
-    \centering
-    \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/error_length_contour.pdf}
-    \caption{For each of the $500$ independent realization of the time series, we plot the relative error $r$ (as in eq.~\eqref{eq:freq_error}) against the length $m$ of autoregressive process. The time series are randomly drawn with a the analytical LIGO PSD in fig.`\ref{fig:ligospectrum}. Different colors refers to different choices for the loss function. Histograms for the distribution od the individual quantities are also represented.}
-    \label{fig:LigoOrderError}
-\end{figure}
-
-\begin{figure}[t]
-        \includegraphics[width = \linewidth]{Images/optimisers_comparison/ligo/compare_estimates_peaks.pdf}
-        \caption{Details of peaks of the spectrum and their reconstruction with every optimizer}
-        \label{fig:ligoPeaks}
-\end{figure}
-
-\subsection{How well is the AR order recovered?}
+\subsection{How well is the AR order recovered?}\label{sec:arp_validation}
+\todo{WRITEME}
 
 \begin{figure}
 	\centering
@@ -535,25 +392,19 @@ Therefore, the choice of loss function, at least in between CAT and FPE, depends
 \end{figure}
 
 We now address the issue of how well the AR order (i.e. the number of $a_k$ coefficients employed) is estimated by each loss function.
-This is useful to further characterize the properties of the different loss functions. Furthermore, as MESA is supposed to model data as an $AR(p)$ process, it is interesting to quantify its precision on some true autoregressive (and stationary) time series.
 
-We generate $100$ autoregressive processes $AR(p)$ with a random value of $p$, drawn such that $log(p) \sim\mathcal{U}_{[log(2), log(5000)]}$.
-Each coefficient $a_k$ is assigned according to a Dirichlet distribution $\mathrm{Dir}([1,\hdots, 1])$. The sign of $a_k$ is assigned randomly according to a binomial distribution. We report the result of this investigation in Fig.~\ref{fig:p_vs_ptrue}.
-
-It can be seen that OBD and FPE loss functions show very similar behaviour. They are {\it very} reliable in capturing the correct AR order up to a certain threshold ($p\sim 100$ for OBD and $p\sim 200$ for FPE). For any AR process of order higher than the threshold, the optimization underestimates badly the actual value of $p$.
-For this reason, FPE and OBD seem reliable only for relatively simple AR processes. For more complicated processes, they seem to ``underfit'' the problem (i.e. they output a model simpler that those required).
-
-On the other hand, CAT shows a different behaviour. The selected AR order $p$ is always close to the maximum possible value, regardless the actual value $p_{true}$ of the underlying process. This produces always a model that is more complex than those obtained with FPE and OBD and this can explain the origin of the high variance in the estimation observed in the experiments described in the previous sections.
-Of course, CAT does not perform a good job in reconstructing the AR process. However, for high order AR processes, the error introduced by CAT is more tolerable than the error introduced by FPE and OBD. This is a good reason to prefer CAT in these situations (see also Sec.~\ref{sec:temp_timeseries} for another example of this effect).
+\subsection{How well can MESA whiten the data?}\label{sec:whitening_validation}
+\todo{WRITEME}
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
+\todo{Check again the section}
 We perform a {\it qualitative} comparison between the performance of the MESA and of the standard Welch algorithm.
 In this, we cannot avoid to be only qualitative. Indeed, as the results of the comparison are problem dependent, it is very hard to quantify this in a single metric. Although similar studies can be drawn from any other PSD, in this section we focus on a single PSD and we try to generalize some observations that we make.
 We decide to use the analytical PSD computed for LIGO Handford interferometer, released together with the GWCT-1 catalog~\citep{GWTC1, PSD_release}, and computed with BayesLine package \citep{Cornish_2015, Littenberg_2015, Cornish_2020, Chatziioannou_2019}.
 
 We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD used for the analysis of the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
 We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
-For the MESA algorithm, we choose the FPE loss function. For the Welch algorithm, we employ a Tukey window with a parameter $\alpha$ 
+For the MESA algorithm, we choose the ???? loss function. For the Welch algorithm, we employ a Tukey window with a parameter $\alpha$ 
 equal to 0.4, an overlap fraction of $1/2$ for the segments and a length of 
 segments $L = 512, 1024, 2048, 8192, 32768$ points, depending on the observation time.
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
@@ -588,53 +439,14 @@ However, we want to stress that this fact does not invalidate our discussion but
 
 \end{figure*}
 
-\section{Applications} \label{sec:applications}
-%\subsection{Temperature Time Series} \label{sec:temp_timeseries}
-%As a further example of the breadth of applicability of MESA, we applied our implementation to atmospheric temperature time series. 
-%The reason for this choice is twofold: i) atmospheric temperature time series present a variety of overlapping periodicities most of which are 
-%known; ii) it provides a stress test for the time series forecast analysis.  As dataset, we  used the historical reanalysis data 
-%from the ``ERA5-Land hourly data from 1981 to present" dataset, downloaded from the Climate Data Store~\citep{ERA5_dataset}.
-%The data consist in temperatures taken at coordinates $\textrm{N}\;\ang{45;5;} \;\; \textrm{E}\;\ang{9;1;}}$, corresponding about to the city of Milan, Italy. The temperatures are given on an hourly cadence for almost 31 years from 31st December 1989 to 30th November 2020.
-%
-%Fig.~\ref{fig:temp_spectrum}, shows the MESA spectrum inferred from the data. As a comparison, we adopt both the FPE and the CAT loss functions.
-%In agreement with what we found in previous sections, the FPE PSD is more regular compared to the one from CAT. Both spectra show a
-%peak at the frequency $f_D = \SI{1}{day^{-1}}$ corresponding to one day, corresponding to the day-night cycle: this is expected.
-%Higher order harmonics (corresponding to integer multiples of $f_D$) are also visible up to the Nyquist frequency ($f_D = \SI{0.5}{hour^{-1}}$): they correspond to signals that preserve the 1 day period while, at the same time, capturing the complex variability of the daily temperature cycle throughout the year.
-%
-%Looking at low frequencies, FPE does not capture the yearly variability at $f_{yr} = \SI{1}{yr^{-1}}$. On the other hand, the peak is captured well by the CAT loss function. In analogy as what observed for the peak at $f_D$, in the CAT spectrum we observe a higher order harmonic at a frequency $2 \cdot f_{yr}$. As in the previous case, this is required to better model the temperature variation in the year.
-%
-%The failure of FPE in capturing the low frequency trend can be understood by looking at Fig.~\ref{fig:p_vs_ptrue}. It is shown that CAT systematically select very long filters (i.e. large $p_{CAT}$ values for the autoregressive orders), whereas FPE tends to select smaller values for the order $p_{FPE}$ of the autoregressive process, often underestimating the actual value.
-%In this example, we have $p_{CAT} \sim  36500 \sim  \SI{4}{yr}$, whereas $p_{FPE} \sim  1300 \sim  \SI{2}{months}$.
-%The autoregressive process selected by FPE, hence cannot produce a meaningful prediction on the timescale longer than a few weeks and for this reason it is unable to capture the low frequency peak at $f_{yr}$. In other words, the model is too simple to model \textit{both} the behaviour at high and low frequencies (separated by approximately 3 orders of magnitude).
-%On the other hand, the model chosen by CAT is much more complex and is able to model also the high frequency behaviour, at the expense of making a more noisy estimation.
-%The ``actual" length of the autoregressive process should be closer to the choice of CAT.
-%
-%We now assess the accuracy of the forecasting of new observations of the time series. 
-%Based on actual data, we try to predict future values as described in sec.~\ref{sec:forecasting} (of course the MESA is performed with CAT loss function). We produce $N =100$ independent predictions and we compute the median as well as the $90\%$ confidence interval. This is compared with the actual measured temperature values. The predictions span a two years range of time. We report our results in Fig.~\ref{fig:temp_spectrum}.
-%
-%We note the observed difference is always well included in the $90\%$ confidence interval: the forecasting predictions seem reliable.
-%On the other hand, the confidence interval is pretty large (almost as large as $\SI{15}{K}$), thus making ``easy" for the actual data to fit the predictions.
-%Indeed, the prediction model, while suitable for spectral estimation, is nothing more than a linear regression (plus noise term). Such a simple model hardly catches the complex trend in the variability of the temperature daily trend during a year. For more precise predictions, probably one should consider nonlinear regression model, tapping into the wealth of non linear predictors offered by the field of Deep Learning.
-%
-%\begin{figure}
-%	\caption{Spectrum for the historical temperature time series. The two lines refers to different loss functions (CAT and FPE); the inset shows the harmonics of the fundamental frequency of a day. Two vertical lines are drawn in correspondence to the frequency $f_D$ of a day and $f_{yr}$ of a year.}
-%	\label{fig:temp_spectrum}
-%	\includegraphics{Images/climate_plots/temp_spectrum.pdf}
-%\end{figure}
-%
-%\begin{figure}
-%	\caption{Difference between the historical temperature $T$ and the forecast temperature $T_{forecast}$ for two years of data. The red shadow denotes the $90\%$ confidence interval of the predictions. The model is trained with CAT loss function. The discrepancy between predicted and actual values is always everywhere included in the $90\%$ confidence interval.}
-%	\label{fig:temp_forecast}
-%	\includegraphics{Images/climate_plots/forecast_accuracy.pdf}
-%\end{figure}
-
-\subsection{Marginalising over the noise PSD in GW parameter estimation: the case for GW150914}
+\section{An application: marginalising over the noise PSD in GW parameter estimation} \label{sec:applications}
+%\subsection{Marginalising over the noise PSD in GW parameter estimation: the case for GW150914}
 Since the order of the AR process is not yet determined by the theory, up to this point, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance and better accuracy than Welch algorithm.
 The use of MESA is particularly useful for short time series samples, where Welch's method is outperformed in both precision and confidence.
  
 This observation suggests a promising avenue to pursue in future developments of gravitational waves data analysis: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD. Hence MESA could be employed for {\it online} PSD estimation during a Bayesian parameter estimation exercise.
 %a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalizing over the detector noise PSD.
-%\sschmidt{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
+%\todo{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
 This is possible whenever the log-likelihood of the model for a time series takes the form
 \begin{equation}
 	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{|\tilde{d}(f)- \tilde{x}(f;\theta)|^2}{S(f)} - \frac{1}{2}\log\left[\int  df\,S(f)\right]
@@ -689,38 +501,8 @@ Hence, as an application of MESA, and its implementation in \texttt{memspectrum}
 
 In Figs.~\ref{fig:gw150914_intrinsic}, ~\ref{fig:gw150914_extrinsic} and \ref{fig:gw150914_waveforms} we show the posteriors for the set of intrinsic parameters, extrinsic parameters and reconstructed waveform from our analysis. The inferred PSDs are instead shown in Fig.~\ref{fig:gw150914_psds}. %In addition, Fig.~ \ref{fig:gw150914_orders} shows the posterior distribution on the orders $p_{H}$ and $p_{L}$ for the AR processes describing the residuals in the LIGO-Hanford and LIGO-Livingston detectors. 
 
-\subsection{Forecasting the LIGO strain} \label{sec:LIGO_forecasting}
-As a last example of an application of MESA, we return to the study of the strain produced by the LIGO-Virgo interferometers 
-and we forecast the future observations.
-A seminal work on the application of autoregressive models to Virgo data is presented in \citet{Cuoco_2001}, where an $AR(p)$ model is trained on the data for the purpose of estimating the PSD and to create a whitener filter.
-
-We focus on the public data released by the LIGO/Virgo collaboration~\citep{Abbott_2021}.
-We reconstruct the PSD both assuming the CAT and FPE loss functions on $\SI{1000}{s}$ of data from the Livingston observatory
-starting from GPS time $1164603392$. The data are sampled at $\SI{4096}{Hz}$.
-We then forecast the following $\SI{100}{s}$ of observations with the model optimized with CAT\footnote{
-The reason for this choice is that CAT, despite showing higher variance and a worse PSD estimation accuracy, estimates sistematically high autoregressive orders. We believe that this feature provides a more reliable forecast, as more points are used for predictions. In practice, we found that CAT and FPE behave very similarly.}. The results are shown in fig.~\ref{fig:LIGO_forecast}.
-The prediction is always in the $90\%$ confidence interval. The confidence interval, however, is very broad and the prediction is not very accurate (being the same order of magnitude of the strain).
-By looking at the standard deviation $\sigma$ of the predictions (bottom panel in Fig.~\ref{fig:LIGO_forecast}), we note that it increases very quickly in the first $\SI{0.5}{s}$.
-The order of the autoregressive process selected is $p_{CAT} = 57766 \sim \SI{14}{s}$, which is much larger than the region in which $\sigma$ is small $\sim \SI{0.2}{s}$. The implication is that the series is very difficult to predict: the knowledge of past observations is not very helpful to predict future observations. Although FPE selects an autoregressive order $p_{FPE} = 29924 \sim \SI{7}{s}$ smaller than CAT,  the forecasted time series behaves very similarly.
-
-Despite poor predictions on long timescales, the AR process obtained with MESA still can be useful on short timescales. Indeed, a precise prediction of the strain time series can be beneficial in the detection of anomalies in the data and, eventually, their removal. Indeed loud anomalies in the data, called {\it glitches}, pose a major challenge to the ability of detecting signals and intensive work has been done to mitigate the disruption in sensitivity they cause \citep{Nuttall_2015, Noise_char_2016, Zevin_2017} and to develop effective subraction techniques \citep{Pankow_2018, zackay2019detecting}.
-The predictions can form an expected baseline for the strain; any anomaly (i.e. a glitch or even a transient of physical origin) can show up as a large departure from expected trend.
-Moreover, if a glitch is detected, its shape can be estimated (as well as the confidence level) by subtracting the expected signal with the actual signal.
-This can work: a typical glitch can last as long as $\SI{0.2}{s}$, close to the time scale over which the forecasting is reliable. Future works will explore this exicting opportunity.
-
-As noted above, for pushing further the prediction performance from our simple linear predictor, more sophisticated forecasting methods are available in the Machine Learning literature (see e.g. \citep{LSTM_article, oord2016wavenet, lea2016tcn}) and they can be trained for precision forecasting. However, a Maximum-Entropy trained AR process can be a simple baseline for comparing such more advanced methods and might suffice for many purposes.
-This opens a promising path in GW data analysis and other fields of physics might also take advantage from this.
-
-\begin{figure}
-	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-	}
-	\label{fig:LIGO_forecast}
-	\includegraphics{Images/forecast_LIGO/forecast_accuracy.pdf}
-\end{figure}
-
-
 \section{Final remarks and future prospects} \label{sec:conclusion}
+\todo{The conclusions will need to be rearrenged completely}
 We presented a case study of the application of Maximum Entropy principle to the realm of spectral estimation. Albeit the methodology hereby presented is grounded on solid theoretical foundations and its merits are widely recognised, Maximum Entropy methods have yet to be adopted routinely in the study of problems related to time series. The superior nature of maximum entropy methods, and in particular of Burg's method, is exemplified by the closed form estimate of the power spectral density and by the theoretical bridge between spectral analysis and AR processes. Moreover, the method presents, in our view, two main advantages when compared with more traditional ones; first there is no need to choose an arbitrary window function to correct the data and, second it provides as straightforward way to compute predictions given past observations. Accompanying this work, we provide a publicly available \texttt{Python} implementation, called \texttt{memspectrum}, that we used to perform the numerical studies presented in this work.. 
 
 Since the order of the AR process is not yet determined by the theory, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance and better accuracy than Welch algorithm.
@@ -728,7 +510,7 @@ The use of MESA is particularly useful for short time series samples, where Welc
  
 This observation suggests a promising avenue to pursue in future developments of gravitational waves data analysis: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD. Hence MESA could be employed for {\it online} PSD estimation during a Bayesian parameter estimation exercise.
 %a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalizing over the detector noise PSD.
-%\sschmidt{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
+%\todo{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
 This is possible whenever the log-likelihood of the model for a time series takes the form
 \begin{equation}
 	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{|\tilde{d}(f)- \tilde{x}(f;\theta)|^2}{S(f)} - \frac{1}{2}\log\left[\int  df\,S(f)\right]
@@ -743,7 +525,7 @@ Unlike several works in GW data analysis \citep{Biscoveanu_2020, talbot2020gravi
 Preliminary studies suggest that this is possible~\citep{martini_thesis}.
 Other studies have been done in this direction, mostly using a parametric model for the PSD \citep{Littenberg_2013, Edwards_2015, lalinference}.
 
-%Several approaches have been developed to try to study the validity of the assumption or even to drop it \cite{R_ver_2010, R_ver_2011, Littenberg_2013, Biscoveanu_2020, talbot2020gravitationalwave, Edwards_2020, Edwards_2015} \sschmidt{All these citations seems a bit too much for me...}.
+%Several approaches have been developed to try to study the validity of the assumption or even to drop it \cite{R_ver_2010, R_ver_2011, Littenberg_2013, Biscoveanu_2020, talbot2020gravitationalwave, Edwards_2020, Edwards_2015}.
 %Besides them, MESA can offer an elegant way out: at each evaluation of the likelihood, a new spectral analysis is performed by computing the PSD on $d_t-x_t$.
 %In this way, the PSD would depend also on $\theta$ and would effectively model the residuals. Preliminary studies suggest that this is possible~\cite{martini_thesis}.
 
