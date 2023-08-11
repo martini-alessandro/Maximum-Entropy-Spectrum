@@ -199,7 +199,6 @@ We remind the reader that a Toeplitz matrix is a matrix in the form:
 	a_{-n +1} & \ldots & \ldots & \ldots& a_{-1} & a_0    &a_{1}\\
 	a_{-n} & \ldots & \ldots & \ldots& a_{-2} & a_{-1} & a_0
 \end{pmatrix}
-
 }.
 Toeplitz matrices are asymptotically equivalent to circulant matrices and thus diagonalized by the discrete Fourier transform base~\citep{Gray}.
 %R. M. Gray, Foundations and Trends⃝R in Communications and Information Theory 2, 155 (2005), URL https://doi.org/10.1561/0100000006.
@@ -361,7 +360,7 @@ length that minimizes the error when the filter is used as a predictor, the \emp
     FPE(m) = \mathbb{E}\left[ \left((x_t - \hat x_t) ^ 2\right) \right]
 \end{equation}
 with $\hat{x}_t = \sum_{i = 1}^M a_i x_{t - i}$.
-Minimizing FPE is equivalent to minimizing the quantity: 
+Asymptoticall,y minimizing FPE is equivalent to minimizing the quantity: 
 \begin{equation}
     \mathcal{L}_{\rm FPE}(m) = P_{m} \frac{N + m + 1}{N - m - 1}
 \end{equation}
@@ -369,7 +368,15 @@ with $P_m$ being the estimated noise variance at order $m$, see Eq.~\eqref{eq:er
 remembering $m_{max} \sim 2N / \log(2N)$, Akaike's loss function is equivalent to the minimization of the variance $P_m$ of the white noise of the underlying $AR(p)$ model. 
 
 \item \textbf{Variance Maximum (VM)}
-\todo{WRITEME}
+\todo{WRITEME - Page250 book}
+This second criterion was introduced by \todo{[cite Jekins and Watts]} and is based on a similar assumptions to FPE. The quantity to be minimised is
+\begin{equation}
+VM(m) = \frac{1}{N - 2m}\sum_{t=m}^N\left(x_t - \sum_{i=1}^m a_i x_{t-i} \right)^{2}
+\end{equation}
+In this case, the normalising factor takes into account the k degrees of freedom necessary to estimate the forward prediction error filter $a_k$.\\
+The package implementation of VM loss function takes advantage of a recursive re-writing of the above formula, as in equation \todo{[EQ] of [CITE E. CUOCO]}  \\ \\
+
+Several other criteria are available in the literature \todo{[cite CAT, OBD etc?]} and some are implemented in the memspectrum package. We don't report them in this paper since they didn't show any additional merit with respect to the aforementioned loss functions \\
 \end{itemize}
 
 Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson recursion~\citep{doi:10.1002/sapm1946251261} until $M_{max}$, as given in Eq.~\eqref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the specified loss function.
@@ -377,21 +384,39 @@ Once a loss function is selected, the choice of the best recursion order is stra
 In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $m_{opt} << M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
 In practice, we can apply an \textit{early stop} procedure: every few iterations we look for the best order of $m_{opt}$; if this value does not change for a while, we assume that a good (local) minimum of the loss function is found and the computation is stopped.
 
-The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. 
-
-\subsection{How well is the AR order recovered?}\label{sec:arp_validation}
-\todo{WRITEME}
+The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. In the following paragraph, we will discuss three different comparison (one qualitative and two quantitative) of the two proposed loss functions, o 
+\subsection{How well the PSD is reconstructed?}\label{sec:psd_validation}
 
 \begin{figure}
 	\centering
-	\includegraphics[width = \linewidth]{Images/arp_errors/scatter_deltap_ptrue}
+	\includegraphics[width = \linewidth]{Images/Plots/comparison_loss}
+	\label{fig:psd_comparison}
+	\caption{Comparison of the ensemble average PSD estimate}
+\end{figure}
+In our initial qualitative comparison, depicted in Figure \ref{fig:psd_comparison}, we juxtapose the reconstruction of a known a-priori Power Spectral Density (PSD) with those obtained using the two distinct loss functions. The red line in the plot represents our chosen reference PSD, derived from the estimated PSD for the GW150914 event.\\ 
+To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \todoc{[insert citation]}. The sampling rate and observation time were fixed at $dt = 2048 Hz$ and $T = 5s$, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
+The FPE-derived estimate, represented by the dashed line, effectively identifies and reconstructs peaks across both high and low frequency ranges with commendable accuracy. However, as illustrated in the inset plots, FPE struggles when confronted with structured peaks—those containing subordinate modes. In such cases, FPE accurately captures the primary mode but overlooks the subsidiary peaks. \\ 
+On the other hand, the VM estimate, depicted as a dot-dashed line, excels in reconstructing both dominant and subordinate modes with remarkable precision. VM appears to prioritize comprehensive mode reconstruction, while FPE emphasize an accurate reconstruction of major modes while potentially neglecting more intricate sub-peaks.
+
+\subsection{How well is the AR order recovered?}\label{sec:arp_validation}
+
+\begin{figure}
+	\centering
+	\includegraphics[width = \linewidth]{Images/Plots/ar_order}
 	\caption{Reconstructed value for the autoregressive order plotted against the true value of the autoregressive order.
 	The reconstructed autoregressive orders are computed from a time series randomly drawn with an $AR(p)$ model, with the three different loss functions under investigation.
 	}
 	\label{fig:p_vs_ptrue}
 \end{figure}
 
-We now address the issue of how well the AR order (i.e. the number of $a_k$ coefficients employed) is estimated by each loss function.
+Moving to our second comparison, we now focus on another crucial aspect: how accurately each loss function estimates the Autoregressive (AR) order, which represents the number of employed $a_k$ coefficients. \\ 
+Here, the memspectrum package proves quite useful. It allows us to assign a specific order to the reconstructed autoregressive filter and use the resulting coefficients to forecast time series. With these tools in hand, we embarked on an extensive task: generating various time series, each with a different autoregressive order ranging from m = 0 to m = 4000.\\ 
+To ensure reliability, we created 30 distinct time series for each autoregressive order. This approach lets us compute both the mean and variance, giving us insights into the accuracy of each loss function's order estimation. This analysis provides valuable information about how well each method performs in estimating the Autoregressive order across a broad spectrum of scenarios. \\ 
+The results are reported in Figure \ref{fig:p_vs_ptrue}. The injected autoregressive order's true value is depicted by the red line. The estimations yielded by the two loss functions are illustrated alongside, accompanied by error bars indicating one standard deviation. \\ 
+The plot reveals two distinct regions: one with "short" autoregressive orders (m = 0 to around m = 1600) and another with "long" autoregressive orders (starting from m = 1600).\\ 
+In the first region, both loss functions provide comparable results that generally match the actual autoregressive order. FPE performs particularly well, offering estimates close to the injected order and with minimal error bars. VM performs slightly worse than FPE in this range, overestimating complexity and showing larger error bars.\\ 
+Moving into the second region (m > 1600), a shift in performance becomes apparent. FPE's estimates tend to stabilize at a certain autoregressive value. However, as the injected model becomes more complex beyond this point, FPE's accuracy in recovering the true order diminishes, and its variance increases. In contrast, VM performs better in this range, closely following the actual behavior and consistently recovering the true order within one standard deviation.
+To conclude, VM appears to prioritize complexity in its approach. In contrast, FPE seems to lean toward synthesis, emphasizing accurate reconstruction of not too complex models. 
 
 \subsection{How well can MESA whiten the data?}\label{sec:whitening_validation}
 \todo{WRITEME}
