@@ -307,7 +307,7 @@ The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follow
 Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation methods.
 
 \subsection{Whitening} \label{sec:whitening}
-\todo{Do we need this paragraph?}
+\todo{Do we need this paragraph? -> YES! (Ale)}
 
 The theory of the AR processes can be also applied to the problem of whitening a time series.
 Given a time series, $x_t$, the whitening operation produces another timeseries $x^W_t$ such that:
@@ -410,7 +410,7 @@ On the other hand, the VM estimate, depicted as a dot-dashed line, excels in rec
 \end{figure}
 
 Moving to our second comparison, we now focus on another crucial aspect: how accurately each loss function estimates the Autoregressive (AR) order, which represents the number of employed $a_k$ coefficients. \\ 
-Here, the memspectrum package proves quite useful. It allows us to assign a specific order to the reconstructed autoregressive filter and use the resulting coefficients to forecast time series. With these tools in hand, we embarked on an extensive task: generating various time series, each with a different autoregressive order ranging from m = 0 to m = 4000.\\ 
+Here, the memspectrum package proves quite useful. It allows us to assign a specific order to the reconstructed autoregressive filter and use the resulting coefficients to forecast time series. With these tools in hand, we generated various time series, each with a different autoregressive order ranging from m = 0 to m = 4000.\\ 
 To ensure reliability, we created 30 distinct time series for each autoregressive order. This approach lets us compute both the mean and variance, giving us insights into the accuracy of each loss function's order estimation. This analysis provides valuable information about how well each method performs in estimating the Autoregressive order across a broad spectrum of scenarios. \\ 
 The results are reported in Figure \ref{fig:p_vs_ptrue}. The injected autoregressive order's true value is depicted by the red line. The estimations yielded by the two loss functions are illustrated alongside, accompanied by error bars indicating one standard deviation. \\ 
 The plot reveals two distinct regions: one with "short" autoregressive orders (m = 0 to around m = 1600) and another with "long" autoregressive orders (starting from m = 1600).\\ 
@@ -420,6 +420,20 @@ To conclude, VM appears to prioritize complexity in its approach. In contrast, F
 
 \subsection{How well can MESA whiten the data?}\label{sec:whitening_validation}
 \todo{WRITEME}
+\begin{figure}
+	\includegraphics[width = \linewidth]{Images/Plots/P_values_comparison}
+	\caption{Histogram of the P-values obtained with a Kolmogorv Smirnov test on the whitened time series, against a univariate, 0 mean normal distirbuition}
+	\label{fig:whitening}
+\end{figure}
+In section \ref{sec:whitening}, we showed how autoregressive coefficients and noise variance estimate $P$ can jointly be used to create a whitening filter. To complete our investigation, we compare how well these whitening filters work when obtained from the two different loss functions we've been studying. \\ 
+For this test, we employed the same set of time-series data as described in paragraph \ref{sec:psd_validation}. Each time series underwent the whitening process using the autoregressive filter derived from its corresponding loss function. We then evaluated the resulting whitened time series against a zero-mean, univariate normal distribution using the Kolmogorov-Smirnov test. \\
+The results are reported as an histogram for the obtained p-values in Figure \ref{fig:whitening} together with the chosen critical region of $p < 0.1$, representing a $90\%$  confidence level. In this region, there is no statistical difference between the two. Infact, the total number of counts in this bin are respectively $c_{VM} = 47 \pm 7$ and $c_{FPE} = 42 \pm 6$, affirming the absence of a pronounced discrepancy between the two.
+In essence, this final examination underscores a shared proficiency in whitening between the two loss functions, showing that very long filters are not needed to obtain a comparlable result in whitening. Both methods showcase comparable results for whitening scopes.\\
+
+From our previous discussions, it's evident that both FPE and VM have their own strengths, and the choice between them greatly depends on the specific analysis requirements. In our analysis, VM tends to provide more accurate PSD estimates and often results in longer autoregressive filters. However, in cases where the underlying model is simple, there is a risk of VM overestimating complexity and generating patterns that don't truly reflect the data.\\ 
+On the other hand, FPE is a good option for reconstructing processes without introducing unnecessary complexity. However, it might underestimate the complexity of the data, particularly in scenarios involving secondary peaks or in the low-frequency region.\\ 
+
+Lastly, it's worth noting that FPE holds the advantage of lower numerical complexity due to its straightforward calculations involving simple arithmetic. In contrast, VM requires more complex computations, dealing with arrays that might be very long depending on the analysed data.
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
 \todo{Check again the section}
