@@ -582,10 +582,11 @@ class MESA(object):
 		
 		self.data = data
 		self.N  = len(data)
+		self.ref_coefficients = []        
 		self.mu = np.mean(data)
 		self.regularisation = regularisation
 		self.early_stop = early_stop
-		self.verbose = verbose
+		self.verbose = verbose   
 		if m is None:
 			self.mmax = int(2*self.N/np.log(2.*self.N))
 		else:
@@ -660,6 +661,7 @@ class MESA(object):
 			g = self._updateG(g, k, r, new_a, DrA)
 			#Append values to respective lists
 			a.append(new_a)
+			self.ref_coefficients.append(k)
 			P.append(P[-1] * (1 - k * k.conj()))
 			#Compute loss function value for chosen method
 			if spec is not None: spec = self._spectrum(1.,len(self.data), P[-1], a[-1])[0] #_LL
@@ -793,6 +795,7 @@ class MESA(object):
 			
 			a_k.append(self._updatePredictionCoefficient(a_k[i], k))
 			P.append(P[i] * (1 - k * k.conj()))
+			self.ref_coefficients.append(k)            
 			_f = f + k * b
 			_b = b + k * f
 			#print('P: ', P, '\nak: ', a_k[-1])
@@ -895,7 +898,6 @@ class MESA(object):
 		if P is None: P = self.P 
 		p = self.a_k.size - 1 
 		predictions = np.zeros((number_of_simulations, p + length))
-
 		data = np.array(data)
 		if data.ndim > 1: data = np.squeeze(data)
 		
@@ -1028,7 +1030,7 @@ class MESA(object):
 		
 		return -TwoDeltaTOverN*np.vdot(d, d/(psd*dt**2)).real-0.5*np.sum(np.log(0.5*np.pi*N*dt*psd))
 
-	def whiten(self, data, trim = None):
+	def whiten(self, data, trim = None, zero_phase = False):
 		"""
 		Whiten the data by convolving with the autoregressive coeffiecients ``a_k``
 
@@ -1046,7 +1048,13 @@ class MESA(object):
 			Stretch of (trimmed) whitened data 
 		
 		"""
-		white_data = convolve(data, self.a_k, mode = 'same')/np.sqrt(self.P)
+		if zero_phase is False:  
+			white_data = convolve(data, self.a_k, mode = 'same')/np.sqrt(self.P)
+		else:
+			c = np.correlate(self.a_k, self.a_k, 'full')
+			c /= c.max() 
+			white_data = np.convolve(c, data, 'same')
+            
 		if trim is None: trim = self.get_p()
 		if trim: white_data = white_data[trim:-trim]
 		return white_data
