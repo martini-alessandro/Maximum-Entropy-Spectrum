@@ -1053,7 +1053,7 @@ class MESA(object):
 		else:
 			c = np.correlate(self.a_k, self.a_k, 'full')
 			c /= c.max() 
-			white_data = np.convolve(c, data, 'same')
+			white_data = np.convolve(c, data, 'same')/np.sqrt(self.P)
             
 		if trim is None: trim = self.get_p()
 		if trim: white_data = white_data[trim:-trim]

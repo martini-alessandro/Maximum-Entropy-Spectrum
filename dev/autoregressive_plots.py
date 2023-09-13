@@ -6,10 +6,10 @@ import sys
 sys.path.insert(0,'..')
 import memspectrum
 
-
+m = memspectrum.MESA()
 N_process = 100 #10 simulated autoregressive processes
 N_data = 50000 #number of timesteps for each autoregressive process
-p_max = 5000
+p_max = 7000 #has to be < 2N_data / log(2N_data) (log is natural log)
 
 save_dir = 'arp_data_dirichlet/'
 plot_dir = '../paper/Images/arp_errors/'
@@ -21,17 +21,18 @@ plot = True
 true_arp_list = []
 rec_MESA_list = []
 data_list = []
-loss_functions = ['FPE', 'CAT', 'OBD']
+loss_functions = ['FPE', 'VM']
 
 for i in range(N_process):
 
 	if load:
 		true_arp_list.append(memspectrum.MESA(save_dir+'arp_model_{}'.format(i)))
 		#data_list.append(np.loadtxt(save_dir+'data_{}'.format(i)))
-		rec_MESA_list.append( (memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[0],i)), 
+        
+		rec_MESA_list.append( \
+           (memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[0],i)), 
 			memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[1],i)),
-			memspectrum.MESA(save_dir+'MESA_model_{}_{}'.format(loss_functions[2],i)) )
-			)
+            ))
 	else:
 		true_arp_list.append(memspectrum.MESA())
 			#getting p
@@ -79,14 +80,14 @@ for i in range(N_process):
 	#doing plots
 if plot:
 	N_p_plot = 1 #N of series to be shown in the err vs p plot
-	colors = {'FPE': 'r', 'CAT': 'k', 'OBD': 'green'}
+	colors = {'FPE': 'k', 'VM': 'dimgrey'}
 	fig_p = init_plotting()
 	ax_p = fig_p.gca()
-	
+
 	fig_scatter = init_plotting()
 	ax_scatter = fig_scatter.gca()
-	
-		#computing erorrs
+	markers = {'FPE': 'x', 'VM': 'o'}
+		#computing errors
 	p_rec = np.zeros((N_process,3))
 	p_true = np.zeros((N_process,))
 	diff_ak = np.zeros((N_process,N_data,3))
@@ -103,7 +104,7 @@ if plot:
 		#plotting
 	for i, l in enumerate(loss_functions):
 #		ax_scatter.scatter(p_rec[:,i], np.sqrt(np.mean(np.square(diff_ak[...,i]), axis = 1)), c = colors[l], label = l)
-		ax_scatter.scatter(p_rec[:,i], p_true, c = colors[l], label = l, s = 5)
+		ax_scatter.scatter(p_rec[:,i], p_true, marker = markers[l], c = colors[l], label = l, s = 10)
 		ax_p.plot(range(N_data), diff_ak[:N_p_plot,:,i].T, 'o', c = colors[l])
 		#ax_p.set_yscale('log')
 	ax_scatter.legend(loc = 'upper center')
