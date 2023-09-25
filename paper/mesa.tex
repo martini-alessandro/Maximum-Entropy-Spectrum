@@ -307,7 +307,6 @@ The interpretation of Eq.~(\ref{eq:p_forecast}) is straightforward: $x_t$ follow
 Eq.~(\ref{eq:p_forecast}) provides then a well defined probability framework for predicting future observations: this is a very useful feature of MESA, that does not have an equivalent in any other spectral analysis computation methods.
 
 \subsection{Whitening} \label{sec:whitening}
-\todo{Do we need this paragraph? -> YES! (Ale)}
 
 The theory of the AR processes can be also applied to the problem of whitening a time series.
 Given a time series, $x_t$, the whitening operation produces another timeseries $x^W_t$ such that:
@@ -368,15 +367,13 @@ with $P_m$ being the estimated noise variance at order $m$, see Eq.~\eqref{eq:er
 remembering $m_{max} \sim 2N / \log(2N)$, Akaike's loss function is equivalent to the minimization of the variance $P_m$ of the white noise of the underlying $AR(p)$ model. 
 
 \item \textbf{Variance Maximum (VM)}
-\todo{WRITEME - Page250 book}
-This second criterion was introduced by \todo{[cite Jekins and Watts]} and is based on a similar assumptions to FPE. The quantity to be minimised is
+This second criterion \cite{kay1988modern} is based on a similar assumptions to FPE. It minimises the actual value of the least squares (insted of relying to asymptotical behaviour). t the normalising factor takes into account the k degrees of freedom necessary to estimate the forward prediction error filter $a_k$.\\ The quantity to be minimised is
 \begin{equation}
 VM(m) = \frac{1}{N - 2m}\sum_{t=m}^N\left(x_t - \sum_{i=1}^m a_i x_{t-i} \right)^{2}
 \end{equation}
-In this case, the normalising factor takes into account the k degrees of freedom necessary to estimate the forward prediction error filter $a_k$.\\
-The package implementation of VM loss function takes advantage of a recursive re-writing of the above formula, as in equation \todo{[EQ] of [CITE E. CUOCO]}  \\ \\
+The package implementation of VM loss function takes advantage of a recursive re-writing of the above formula, as in equations (27) and (28) of \citet{Cuoco_2001}.  \\ \\
 
-Several other criteria are available in the literature \todo{[cite CAT, OBD etc?]} and some are implemented in the memspectrum package. We don't report them in this paper since they didn't show any additional merit with respect to the aforementioned loss functions \\
+Several other criteria are available in the literature \citet{doi:10.1029/WR018i004p01097} \citet{10.1214/aos/1176349858} and some are implemented in the memspectrum package. We don't report them in this paper since they didn't show any additional merit with respect to the aforementioned loss functions \\
 \end{itemize}
 
 Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson recursion~\citep{doi:10.1002/sapm1946251261} until $M_{max}$, as given in Eq.~\eqref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the specified loss function.
@@ -394,7 +391,7 @@ The following sections will be devoted to the study of the statistical propertie
 	\caption{Comparison of the ensemble average PSD estimate}
 \end{figure}
 In our initial qualitative comparison, depicted in Figure \ref{fig:psd_comparison}, we juxtapose the reconstruction of a known a-priori Power Spectral Density (PSD) with those obtained using the two distinct loss functions. The red line in the plot represents our chosen reference PSD, derived from the estimated PSD for the GW150914 event.\\ 
-To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \todoc{[insert citation]}. The sampling rate and observation time were fixed at $dt = 2048 Hz$ and $T = 5s$, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
+To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \citet{noiseGen}. The sampling rate and observation time were fixed at $dt = 2048 Hz$ and $T = 5s$, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
 The FPE-derived estimate, represented by the dashed line, effectively identifies and reconstructs peaks across both high and low frequency ranges with commendable accuracy. However, as illustrated in the inset plots, FPE struggles when confronted with structured peaks—those containing subordinate modes. In such cases, FPE accurately captures the primary mode but overlooks the subsidiary peaks. \\ 
 On the other hand, the VM estimate, depicted as a dot-dashed line, excels in reconstructing both dominant and subordinate modes with remarkable precision. VM appears to prioritize comprehensive mode reconstruction, while FPE emphasize an accurate reconstruction of major modes while potentially neglecting more intricate sub-peaks.
 
@@ -419,7 +416,6 @@ Moving into the second region (m > 1600), a shift in performance becomes apparen
 To conclude, VM appears to prioritize complexity in its approach. In contrast, FPE seems to lean toward synthesis, emphasizing accurate reconstruction of not too complex models. 
 
 \subsection{How well can MESA whiten the data?}\label{sec:whitening_validation}
-\todo{WRITEME}
 \begin{figure}
 	\includegraphics[width = \linewidth]{Images/Plots/P_values_comparison}
 	\caption{Histogram of the P-values obtained with a Kolmogorv Smirnov test on the whitened time series, against a univariate, 0 mean normal distirbuition}
@@ -443,7 +439,7 @@ We decide to use the analytical PSD computed for LIGO Handford interferometer, r
 
 We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD used for the analysis of the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
 We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
-For the MESA algorithm, we choose the ???? loss function. For the Welch algorithm, we employ a Tukey window with a parameter $\alpha$ 
+For the MESA algorithm, we choose the VM loss function. For the Welch algorithm, we employ a Tukey window with a parameter $\alpha$ 
 equal to 0.4, an overlap fraction of $1/2$ for the segments and a length of 
 segments $L = 512, 1024, 2048, 8192, 32768$ points, depending on the observation time.
 In all cases, the sampling rate is set to $\SI{4096}{Hz}$.
