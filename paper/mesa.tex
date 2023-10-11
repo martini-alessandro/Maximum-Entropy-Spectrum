@@ -259,7 +259,9 @@ The expression was first found by ~\citet{burg1975maximum}:
 \end{equation}
 where $\Delta t$ is the sampling interval of the time series, $z=\exp{(2\pi i f\Delta t)}$, $a_0$ = 1.
 The vector obtained as $(1, a_1, \dots, a_N)$ is also known as the \textit{prediction error filter}.
-The coefficients $a_s (s > 0)$, together with an overall multiplicative scale factor $P_N$, are to be determined by an iterative process (called Burg's algorithm). The number $N$ of such coefficients is a choice that shall be made by the user and indeed it is the only hyperparameter that needs to be tuned. The details of the derivation and the actual form for the coefficients $a_s$ can be found in appendix \ref{sec:appendix}.
+The coefficients $a_s (s > 0)$, together with an overall multiplicative scale factor $P_N$, are to be determined by an iterative process (called Burg's algorithm)\footnote{There are two implementations of Burg's algorithm available in the memspectrum package: 'Standard' and 'Fast.' 'Standard' is slower but more stable for solving Levinson recursion, while 'Fast' is quicker but less stable. On simulated stationary data, both versions typically yield similar results. However, when working with real gravitational waves data, we found that the 'Fast' implementation introduces noise into the PSD estimate without improving accuracy. Therefore, it's advisable to use the 'Standard' implementation whenever possible. Keep in mind that if instability arises, a message will appear, however, it doesn't guarantee identical results between the two configurations if the message is not displayed.}. \\
+
+The number $N$ of such coefficients is a choice that shall be made by the user and indeed it is the only hyperparameter that needs to be tuned. The details of the derivation and the actual form for the coefficients $a_s$ can be found in appendix \ref{sec:appendix}.
 
 \subsection{Autoregressive Process Analogy} \label{sec:autoregr}
 
