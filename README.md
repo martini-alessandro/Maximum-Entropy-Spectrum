@@ -174,7 +174,7 @@ time, time_series, frequency, frequency_series,
 psd = generate_data(f, psd, T, sampling_rate)
 ```
 	
-where T represents the time length of the observation and the sampling rate is equivalent to the inverse of the sampling interval
+where T represents the time length of the observation and the sampling rate is equivalent to the inverse of the sampling interval.
  
 
 ## References
