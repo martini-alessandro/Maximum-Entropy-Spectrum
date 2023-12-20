@@ -507,46 +507,37 @@ Hence, as an application of MESA, and its implementation in \texttt{memspectrum}
 \begin{align}
 h_j(t) =\sum_{p = +,\times}F_{j,p}(t+\Delta t_j)h_{p}(t+\Delta t_j;\theta_{GW})
 \end{align}
-that we use to compute the time-domain residuals $r_j(t) = d_j(t) - h_j(t)$. We apply \texttt{memspectrum} to $r_j(t)$ with the \emph{fixed} value of $k$ and calculate the detector likelihood for $\tilde{r}_j$ using Eq.~\eqref{eq:Whittle} and PSD as in Eq.~\eqref{eq:MESApsd}. The coherent likelihood is then given by the product of the individual likelihoods. As our analysis template, we adopt the fast machine learning based MLGW model\cite{}[MLGW], an aligned spin model trained on TEOBResumS\cite{}, that has been shown to perform well on LVK events detected during O1 and O2\cite{}[MLGW]. Our sampler is a nested sampling algorithm\cite{}[raynest] and the specific inference model is implemented as part of \texttt{granite}\cite{}[in preparation], a dedicated inference model for ground-based interferometric detectors. LVK samples from https://zenodo.org/records/6513631 
+that we use to compute the time-domain residuals $r_j(t) = d_j(t) - h_j(t)$. We apply \texttt{memspectrum} to $r_j(t)$ with the \emph{fixed} value of $k$ and calculate the detector likelihood for $\tilde{r}_j$ using Eq.~\eqref{eq:Whittle} and PSD as in Eq.~\eqref{eq:MESApsd}. The coherent likelihood is then given by the product of the individual likelihoods. As our analysis template, we adopt the fast machine learning based MLGW model\cite{MLGW}, an aligned spin model trained on TEOBResumS\cite{teobresums}, that has been shown to perform well on LVK events detected during O1 and O2\cite{MLGW}. Our sampler is a nested sampling algorithm\cite{cpnest} and the specific inference model is implemented as part of \texttt{granite}, a dedicated inference model for ground-based interferometric detectors. We compare our results with the combined posterior samples available from GWOSC\cite{GWOSC} and available at \texttt{https://zenodo.org/records/6513631}.
 
 \begin{figure}
-	\caption{Posterior distributions for $\mathcal{M}$, $q$ and spin parameters $\chi_1$ and $\chi_2$. The recovered posteriors are very similar to the LVK released ones.}
-	\label{fig:gw150914_intrinsic}
-	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/intrinsic.pdf}
+	\caption{Posterior samples for $\mathcal{M}$ and mass ratio $q$ from the LVK(blue) and using \texttt{memspectrum}(red). The samples are largely consistent among the two models, with the MESA model providing a more conservative estimate.}
+	\label{fig:gw150914_masses}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/masses.pdf}
 \end{figure}
 \begin{figure}
-	\caption{Posterior distributions for the sky position, (log) luminosity distance, inclination angle, polarisation angle $\psi$, reference phase $\phi_{ref}$ and geocentric coalescence time. Also for the extrinsic parameters, we see broad consistency with the LVK released ones. However, we notice that the posterior on the declination angle $\delta$ is mirrored compared to the released sky map. Nonetheless, there is substantial overlap. Similarly, the PSD marginalised posterior for the inclination angle shows a slight preference for a face-on configuration, rather than a face-off.}
-	\label{fig:gw150914_extrinsic}
-	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/extrinsic.pdf}
+	\caption{Posterior samples for the sky position angles from the LVK(blue) and using \texttt{memspectrum}(red). The samples are largely consistent among the two models, with the MESA model providing a more conservative estimate.}
+	\label{fig:gw150914_sky}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/sky_position.pdf}
 \end{figure}
 \begin{figure}
-	\caption{Whitened reconstructed waveforms from our analysis for the Hanford detector (top panel) and the Livingston detector (bottom panel). The shaded turquoise area indicates the 90\% credible region.}
+	\caption{Whitened reconstructed waveforms and data from our analysis for the Hanford detector (top panel) and the Livingston detector (bottom panel). The shaded turquoise area indicates the 90\% credible region.}
 	\label{fig:gw150914_waveforms}
 	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/waveforms.pdf}
 \end{figure}
-%\begin{figure}
-%	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-%	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-%	}
-%	\label{fig:gw150914_intrinsic}
-%	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/posterior_order_H1.pdf}
-%\end{figure}
-%
-%\begin{figure}
-%	\caption{In the top panel, we show the difference between the forecasted strain values (CAT model) and the actual values observed at Livingston interferometer (blue). The red shadow denotes the $90\%$ confidence interval subtracted with the actual time series values. The confidence interval is computed on  $100$ independent random realization of the predictions.
-%	The bottom panel displays the standard deviation of the predictions with both CAT and FPE models. The inset shows a detail of the first $\SI{0.5}{s}$ of plot in the top panel.
-%	}
-%	\label{fig:gw150914_intrinsic}
-%	\includegraphics{Images/gw150914/posterior_order_L1.pdf}
-%\end{figure}
-
 \begin{figure}
-	\caption{Posterior PSDs for the Hanford (orange line) and Livingstone (blue line) as inferred by our analysis.}
-	\label{fig:gw150914_psd}
-	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/noise_curves.pdf}
+	\caption{Posterior distributions for AR process orders in the Hanford(red) and Livingston(blue).}
+	\label{fig:gw150914_orders}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/orders.pdf}
 \end{figure}
 
-In Figs.~\ref{fig:gw150914_intrinsic}, ~\ref{fig:gw150914_extrinsic} and \ref{fig:gw150914_waveforms} we show the posteriors for the set of intrinsic parameters, extrinsic parameters and reconstructed waveform from our analysis. The inferred PSDs are instead shown in Fig.~\ref{fig:gw150914_psds}. %In addition, Fig.~ \ref{fig:gw150914_orders} shows the posterior distribution on the orders $p_{H}$ and $p_{L}$ for the AR processes describing the residuals in the LIGO-Hanford and LIGO-Livingston detectors. 
+\begin{figure}
+	\caption{\emph{Top panel}: Posterior PSDs for the Hanford (orange line) and Livingstone (blue line) as inferred by our analysis. \emph{Bottom panel}: Relative uncertainty around the median for both the Hanford(blue) and the Livingston(orange) PSDs.}
+	\label{fig:gw150914_psds}
+	\includegraphics[width=0.5\textwidth,keepaspectratio]{Images/gw150914/posterior_psds.pdf}
+\end{figure}
+
+In Figs.~\ref{fig:gw150914_masses}, ~\ref{fig:gw150914_sky} and \ref{fig:gw150914_waveforms} we show the posteriors for the set of intrinsic parameters, extrinsic parameters and reconstructed waveform from our analysis. Our results can be summarised as follows: our posterior samples are in general consistent with what has been released by the LVK, however our credible regions tend to be larger. This is expected since our likelihood includes additional uncertainty due to the explicit sampling over the process order, hence the PSD. For the particular 4 seconds of data, sampled at 4096\,Hz, the recovered orders are $k_{H1} = 1107_{-5}^{+9}$ and $k_{L1} = 1146_{-8}^{+8}$, Fig.~\ref{fig:gw150914_orders}. The corresponding PSDs and uncertainties are shown in Fig.~\ref{fig:gw150914_psds}.
+
 
 \section{Final remarks and future prospects} \label{sec:conclusion}
 \todo{The conclusions will need to be rearrenged completely}

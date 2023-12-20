@@ -1,5 +1,6 @@
 from setuptools import setup
 import os
+import sys
 
 try:
 	from sphinx.setup_command import BuildDoc
