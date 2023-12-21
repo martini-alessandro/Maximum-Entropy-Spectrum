@@ -16,7 +16,7 @@ Welcome to ``memspectrum``'s documentation!
    usage/theory.md
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Package reference
    :name: package_reference
    

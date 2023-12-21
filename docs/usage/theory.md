@@ -45,7 +45,7 @@ From the plot you can see that:
 - For low AR orders (i.e. for a timeseries with a short autocorrelation), FPE is more accurate and VM tends to overestimate the true AR order
 - For high AR orders (i.e. for a timeseries with long autocorrelation length), VM provides an accurate estimation while FPE underestimates the true AR
 
-Executive summary:
+## Executive summary
 
 - Use FPE if you want a simple PSD (not many details) or you are analysing a simple timeseries
 - Use VM to capture many details of the PSD (sometimes at the cost of overfitting)

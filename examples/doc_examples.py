@@ -1,6 +1,38 @@
 """
 All the examples in the docs. To run at once...
 """
+
+#Intro plot - temperature timeseries
+import memspectrum
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.ticker
+
+timeseries = np.loadtxt('data/temperature_data_@1h_len5000.dat')
+dt, T = 1, len(timeseries) #Time step, Lenght of the timeseries
+N_tstep = 100
+f = np.arange(1/(10*24), 0.5, 1/T)
+f_values = [1/(7*24), 1/24, 1/12, 1/8, 0.25, 0.5, 1]
+f_names = ['1/week', '1/day', '2/day', '3/day', '1/4hours', '1/2hours','1/hour']
+
+M = memspectrum.MESA()
+M.solve(timeseries) #perform the analysis on the given time series (a real/complex np.array)
+PSD = M.spectrum(dt, f) #evaluate the PSD on the given frequency grid
+future_timeseries = M.forecast(timeseries[:1000], N_tstep) #forecast from the time series
+
+plt.figure(figsize = (3.54*2, 3.54))
+plt.loglog(f,PSD)
+plt.xlabel('Frequency (1/hour)')
+for f_val in f_values:
+	plt.axvline(f_val, ls = '--', c= 'k')
+ax = plt.gca()
+
+ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator((f_values)))
+ax.xaxis.set_major_formatter(matplotlib.ticker.FixedFormatter((f_names)))
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('../docs/img/temperature_plot_intro.png', dpi = 200)
+
 #Getting the data
 from memspectrum.GenerateTimeSeries import generate_data
 import numpy as np
