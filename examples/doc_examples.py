@@ -1,5 +1,5 @@
 """
-All the examples in the docs...
+All the examples in the docs. To run at once...
 """
 #Getting the data
 from memspectrum.GenerateTimeSeries import generate_data

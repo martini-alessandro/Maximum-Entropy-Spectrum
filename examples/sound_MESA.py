@@ -6,14 +6,8 @@ import numpy as np
 import scipy.io.wavfile
 import matplotlib.pyplot as plt
 
-try:
-    import sys
-    sys.path.insert(0,'..')
-    from memspectrum import *
-    import GenerateTimeSeries
-except:
-    from memspectrum import *
-    import memspectrum.GenerateTimeSeries as GenerateTimeSeries
+from memspectrum import MESA
+import memspectrum.GenerateTimeSeries as GenerateTimeSeries
 
 t = 14. #seconds of data
 

@@ -1,9 +1,8 @@
-try:
-	import sys
-	sys.path.insert(0,'..')
-	from memspectrum import *
-except:
-	from memspectrum import *
+"""
+Script to compute the power spectral density of the measured timeseries of the number of sunspots measured.
+"""
+
+from memspectrum import MESA
 
 import numpy as np
 import matplotlib.pyplot as plt

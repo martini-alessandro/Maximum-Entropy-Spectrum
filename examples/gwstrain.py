@@ -1,9 +1,7 @@
-try:
-	import sys
-	sys.path.insert(0,'..')
-	from memspectrum import MESA
-except:
-	from memspectrum import MESA
+"""
+This script will take some data from the Virgo interferometer and will compute the PSD. It will also sample from the distribution of future observations and do some forecast on the future values.
+"""
+from memspectrum import MESA
 
 import numpy as np
 import matplotlib.pyplot as plt

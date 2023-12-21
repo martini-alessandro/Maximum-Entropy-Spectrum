@@ -23,7 +23,7 @@ import warnings
 
 parser = argparse.ArgumentParser(__doc__)
 parser.add_argument(
-	"--p", default = 200, type = int, 
+	"--p", default = 300, type = int, 
 	help="Autoregressive order of the final timeseries")
 parser.add_argument(
 	"--srate", default = 4096, type = float, 
