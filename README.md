@@ -1,10 +1,8 @@
-## memspectrum
-
 **Authors** Alessandro Martini, Stefano Schmidt, Walter del Pozzo
 
 **emails** martini.alessandr@gmail.com, stefanoschmidt1995@gmail.com, walter.delpozzo@ligo.org
 
-**Copyright** Copyright (C) 2022 Alessandro Martini
+**Copyright** Copyright (C) 2024 Alessandro Martini
 
 **Licence** CC BY 4.0
 
@@ -39,17 +37,23 @@ To install the package:
 pip install memspectrum
 ```
 
-It requires `numpy`.
+It requires `numpy` and `scipy`.
 
-You full documentation is available [here](https://maximum-entropy-spectrum.readthedocs.io/en/latest/).
+Useful links:
 
-On the GitHub repository, a number of examples are available to the interested user:
+ - The full [documentation](https://maximum-entropy-spectrum.readthedocs.io/en/latest/).
+ - Github [repository](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum)
+ - Method [paper](https://arxiv.org/abs/2106.09499)
 
-* `gwstrain.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py>`_: computes the PSD on a piece of gravitational waves data and perform some forecasting
-* `sunspots.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py>`_: using data from sunspots, it uses memspectrum to find an autoregressive process which describes them and forecast
-* `sound_MESA.py <https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py>`_: given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
+On this repository, you can find a number of examples:
 
-For more advanced use or for more information, please refer to the code [documentation](https://maximum-entropy-spectrum.readthedocs.io/en/latest/):
+* [gwstrain.py](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/gwstrain.py): computes the PSD on a piece of gravitational waves data and perform some forecasting
+* [sunspots.py](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sunspots.py): using data from sunspots, it uses memspectrum to find an autoregressive process which describes them and forecast
+* [sound_MESA.py](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/sound_MESA.py): given an input audio (wav) file reproducing the sound of a waterfall, it computes the PSD and generate a synthetic noise, resembling the original one.
+* [generate_white_noise.py](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/generate_white_noise.py): it samples white (gaussian) noise from the the power spectral density of advanced [LIGO](https://www.ligo.caltech.edu/)
+* [doc_examples.py](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/examples/doc_examples.py): gather all the piece of code used throughout the documentation, so that you can run all of them at once.
+
+For more advanced use, you can use the code help functionalities:
 
 ```Python
 import memspectrum
@@ -179,12 +183,12 @@ where T represents the time length of the observation and the sampling rate is e
 
 ## References
 
-Original description of Burg's algorithm: [J.P. Burg - Maximum Entropy Spectral Analysis](http://sepwww.stanford.edu/data/media/public/oldreports/sep06/)
+- Original description of Burg's algorithm: [J.P. Burg - Maximum Entropy Spectral Analysis](http://sepwww.stanford.edu/data/media/public/oldreports/sep06/)
 
-Fast implementation of Burg's algorithm:  [V. Fastubrg - A Fast Implementation of Burg Method](
+- Fast implementation of Burg's algorithm:  [V. Fastubrg - A Fast Implementation of Burg Method](
 https://svn.xiph.org/websites/opus-codec.org/docs/vos_fastburg.pdf)
 
-Paper describing this work: [Maximum Entropy Spectral Analysis: a case study](https://arxiv.org/abs/2106.09499)
+- Paper describing this work: [Maximum Entropy Spectral Analysis: a case study](https://arxiv.org/abs/2106.09499)
 
 ## About
 

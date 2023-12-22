@@ -28,13 +28,14 @@ setup(
     license='CC by 4.0',
     description='maximum entropy spectral analysis',
     long_description=readme(),
+    long_description_content_type='text/markdown',
+	#long_description_content_type = 'text/x-md',
     include_package_data = True,
 #    package_data={'memspectrum': get_package_data()},
     install_requires=[
         "numpy",
         "scipy",
     ],
-	long_description_content_type = 'text/x-md',
 	command_options={
         'build_sphinx': {
             'source_dir': ('setup.py', 'docs'),
