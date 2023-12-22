@@ -43,6 +43,7 @@ Useful links:
 
  - The full [documentation](https://maximum-entropy-spectrum.readthedocs.io/en/latest/).
  - Github [repository](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum)
+ - PyPI package - [`memspectrum`](https://pypi.org/project/memspectrum/)
  - Method [paper](https://arxiv.org/abs/2106.09499)
 
 On this repository, you can find a number of examples:
