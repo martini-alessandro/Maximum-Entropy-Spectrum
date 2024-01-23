@@ -11,10 +11,10 @@
 # MAXIMUM ENTROPY SPECTRAL ANALYSIS FOR ACCURATE PSD COMPUTATION
 
 `memspectrum` is a package for the computation of power spectral densitiy (PSD) of time series. 
-It implements a fast numpy verion of the Burg method for Maximum Entropy Spectral Analysis.
+It implements a fast `numpy`/`scipy` based version of the Burg method for Maximum Entropy Spectral Analysis.
 The method is fast and reliable and shows better performance than other standard methods.
 
-The method is based on the maximum entropy principle, and it allows to make minimal
+The maximum entropy spectral estimation is based on the maximum entropy principle, and it allows to make minimal
  assumptions on unavailable information. Furthermore, it provides a beautiful link between spectral 
  analysis and the theory of autoregressive processes.
 
@@ -84,7 +84,7 @@ m.solve(data)
 + At this point you can compute the spectrum and forecast N future observations
 
 ```Python
-spec, frequencies = m.spectrum(dt)
+frequencies, spec = m.spectrum(dt)
 predicted_data = m.forecast(data, N)
 ```
 
@@ -106,7 +106,7 @@ data = np.sin(2 * np.pi * frequency * time) + np.random.normal(.4, size = 1000)
 plt.plot(time, data, color = 'k')
 ```
 	
-![data](docs/img/Data.jpeg)
+![data](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/docs/img/Data.jpeg)
    
    
    
@@ -128,7 +128,7 @@ user_spectrum = M.spectrum(dt, user_frequencies) #Computes on desired frequency 
 	
 The two spectra look like
 
-![spectra](docs/img/Spectrum.jpeg)
+![spectra](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/docs/img/Spectrum.jpeg)
   
 ### Forecasting
    
@@ -151,7 +151,7 @@ plt.plot(time[-100:], median, color = 'r', label = 'median estimate')
 
 The forecast result is: 
 
-![forecast](docs/img/Forecast.jpeg)
+![forecast](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/docs/img/Forecast.jpeg)
 
 ### Whitening
 
@@ -165,7 +165,7 @@ plt.plot(time[M.get_p():-M.get_p()], white_data, color = 'k')
 You can tune how to remove the edge effects by setting the trim option (it you set `None`, you will remove p points from the timeseries).
 Here's how the white data look like:
 
-![white_data](docs/img/WhiteData.png)
+![white_data](https://github.com/martini-alessandro/Maximum-Entropy-Spectrum/blob/main/docs/img/WhiteData.png)
 
 
 ## Generating data from PSD
@@ -174,7 +174,7 @@ The module ``memspectrum.GenerateTimeSeries`` provides a function that construct
 
 ```Python
 from memspectrum.GenerateTimeSeries import generate_data
-f, psd = (whathever psd and frequency array you like)
+f, psd = "whathever psd and frequency array you like"
 time, time_series, frequency, frequency_series,
 psd = generate_data(f, psd, T, sampling_rate)
 ```
