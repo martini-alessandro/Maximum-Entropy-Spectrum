@@ -27,7 +27,6 @@
 \usepackage{graphicx}
 \usepackage{siunitx}
 	\sisetup{output-decimal-marker={.}}
-\newtheorem{theorem}{Theorem}
 \usepackage{float}
 	
 
@@ -52,8 +51,8 @@
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
 	\title{Maximum Entropy Spectral Analysis: an application to gravitational waves data analysis}
-	\author{Alessandro \surname{Martini}\inst{1,2,3}\thanks{alessandro.martini-1@unitn.it} \and 
-	Stefano \surname{Schmidt}\inst{4,5}\thanks{s.schmidt@uu.nl} \and Gregory \surname{Ashton}\inst{6} \and Walter \surname{Del Pozzo}\inst{1}\thanks{walter.delpozzo@unipi.it}}
+	\author{Alessandro~{Martini}\inst{1,2,3}\thanks{alessandro.martini-1@unitn.it} \and 
+	Stefano~{Schmidt}\inst{4,5}\thanks{s.schmidt@uu.nl} \and Gregory~{Ashton}\inst{6} \and Walter~{Del Pozzo}\inst{1}\thanks{walter.delpozzo@unipi.it}}
         
         \institute{Dipartimento di Fisica  Università di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy
         		      \and Università di Trento, Dipartimento di Fisica, I-38123 Povo, Trento, Italy
@@ -190,14 +189,14 @@ For this work, we are especially interested in the multi-dimensional case. Suppo
 
 For a wide-sense stationary process the mean function is independent of time, hence it can be redefined to be equal to zero without loss of generality, and the auto-covariance function is dependent only on the time lag $\tau \equiv t_i - t_j$. One can thus choose a sampling rate $\Delta t$ so that $C_{ij} = C((i-j)\Delta t)$. The autocovariance matrix thus becomes a Toeplitz matrix\footnote{
 We remind the reader that a Toeplitz matrix is a matrix in the form:
-\begin{pmatrix}
+$\begin{pmatrix}
 	a_0 & a_1 & a_2 & \ldots & \ldots& \ldots &a_n\\
 	a_{-1} & a_0 & a_1 & \ldots & \ldots& \ldots &a_{n-1}\\
 	a_{-2} & a_{-1} & a_0 & \ldots & \ldots & \ldots  &a_{n-2}\\
 	\vdots & \vdots & \vdots & \vdots & \vdots & \vdots &\vdots\\
 	a_{-n +1} & \ldots & \ldots & \ldots& a_{-1} & a_0    &a_{1}\\
 	a_{-n} & \ldots & \ldots & \ldots& a_{-2} & a_{-1} & a_0
-\end{pmatrix}
+\end{pmatrix}$
 }.
 Toeplitz matrices are asymptotically equivalent to circulant matrices and thus diagonalized by the discrete Fourier transform base~\citep{Gray}.
 %R. M. Gray, Foundations and Trends⃝R in Communications and Information Theory 2, 155 (2005), URL https://doi.org/10.1561/0100000006.
@@ -432,7 +431,7 @@ On the other hand, FPE is a good option for reconstructing processes without int
 Lastly, it's worth noting that FPE holds the advantage of lower numerical complexity due to its straightforward calculations involving simple arithmetic. In contrast, VM requires more complex computations, dealing with arrays that might be very long depending on the analysed data.
 
 \section{Comparison with Welch method}\label{sec:Welch_comparison}
-\todo{Check again the section}
+
 We perform a {\it qualitative} comparison between the performance of the MESA and of the standard Welch algorithm.
 In this, we cannot avoid to be only qualitative. Indeed, as the results of the comparison are problem dependent, it is very hard to quantify this in a single metric. Although similar studies can be drawn from any other PSD, in this section we focus on a single PSD and we try to generalize some observations that we make.
 We decide to use the analytical PSD computed for LIGO Handford interferometer, released together with the GWCT-1 catalog~\citep{GWTC1, PSD_release}, and computed with BayesLine package \citep{Cornish_2015, Littenberg_2015, Cornish_2020, Chatziioannou_2019}.
@@ -479,25 +478,6 @@ However, we want to stress that this fact does not invalidate our discussion but
 %Since the order of the AR process is not yet determined by the theory, an alternative route to choosing a loss function specific for each situation is to \emph{marginalise} over the order of the AR process whilst exploring the parameter space the signal hypothesis. 
 
 Define the data hypothesis $D$ as the statement that the data $D = S + N$ with $S$ and $N$ some deterministic signal and some noise hypotheses. Typically, in this formulation one is choosing both a functional form for the signal of interest $S\equiv ``h(t;\theta)''$ and some parametric form $f(t)$ for the noise distribution $N\equiv ``n(t) \sim f(t)''$. Some well established math then leads to the usual Bayesian framework for parameter estimation, see \cite{lalinference} for an application to gravitational wave physics. This procedure is very robust as long as the choice of noise distribution is indeed representative of the underlying process. Let us relax the $N$ hypothesis by defining a \emph{residuals} hypothesis $R$ as $R = D - S$. This might seem a very trivial statement, but it has a non trivial application: given  $d(t) = h(t;\theta) + n(t)$ where $h(t;\theta)$ is our signal model, defined by a set of parameters $\theta$,  the residuals $r(t) \equiv d(t) - h(t;\theta)$. Formally, no reference to the noise process is present anymore. Under MAXENT, we can model $r(t) \sim \mathrm{AR}(k)$ with $k$ the \emph{unknown} order of the process to be inferred from the residuals, either via one of the aforementioned loss functions or even by marginalising over it while exploring the signal space. Moreover, we can \emph{always} write $p(r(t)|N\,I)$ as in Eq.~(\ref{eq:Whittle}) once we know $k$, with the PSD given in Eq.~(\ref{eq:ARspectrum}), whatever the noise process actually is. In other words, we care only about maximising the information entropy in the distribution of the residuals.
-
-%Since the order of the AR process is not yet determined by the theory, up to this point, we opted for an in-depth investigation of several proposals in the literature and found that different loss functions are required for different situations, with the FPE loss function being the most indicated to deal with gravitational wave data. Along these lines, we directly compared the PSDs computed with MESA with the canonical Welch's algorithm. As outlined in Sec.~\ref{sec:Welch_comparison}, MESA provides PSD estimates with smaller variance and better accuracy than Welch algorithm.
-%The use of MESA is particularly useful for short time series samples, where Welch's method is outperformed in both precision and confidence.
- 
-%This observation suggests a promising avenue to pursue in future developments of gravitational waves data analysis: for short time series, comparable with the length of binary black hole systems as observed by LIGO, Virgo and KAGRA, the computational cost of MESA is moderate and the inferred PSD is an accurate representation of the true underlying PSD. Hence MESA could be employed for {\it online} PSD estimation during a Bayesian parameter estimation exercise.
-%%a simultaneous inference of the PSD and of the gravitational wave signal during a Bayesian parameter estimation exercise, effectively marginalizing over the detector noise PSD.
-%%\todo{There might be a misunderstanding: I guess the referee is talking about taking into account the PSD errors, while we are talking about dropping the stationariety assumption... The misleading word is `marginalize', I think}
-%This is possible whenever the log-likelihood of the model for a time series takes the form
-%\begin{equation}
-%	\log\mathcal{L}(d_t | \theta) \propto  -\frac{1}{2} \frac{|\tilde{d}(f)- \tilde{x}(f;\theta)|^2}{S(f)} - \frac{1}{2}\log\left[\int  df\,S(f)\right]
-%\end{equation}
-%where $\tilde{\hphantom{a}}$ denotes the Fourier transform and the signal model $x(t;\theta)$, dependent on some parameter $\theta$, is a prediction for a deterministic signal buried in the observed time series $d(t)$.
-%In GW data analysis, a typical approach is to estimate the PSD offline on a large batch of data and off-source: this scheme assumes {\it stationary data} on a long timescale (longer than the data under study) and it might not reflect the structure of the noise in the analyzed time slice.
-%Some alternatives exist for dropping this assumption and modifying the likelihood accordingly \citep{R_ver_2010, R_ver_2011, Edwards_2020, Chatziioannou_2021}.
-%MESA can add to those an elegant way out: at each evaluation of the likelihood, a new spectral analysis is performed by computing the PSD on the residual $d_t-x_t$.
-%In this way, the PSD would depend also on $\theta$ and would effectively model the residuals. For this method, we would only need to assume the stationariety of the residual on the batch to analyse\footnote{
-%Unlike several works in GW data analysis \citep{Biscoveanu_2020, talbot2020gravitationalwave}, this approach does not address the issue of including the PSD uncertainties in the posterior. Instead, it focuses on making minimal assumption about the nature of the data under study.
-%}, making a lighter assumption on the nature of the data. Furthermore, this method would get, as a bonus, a posterior distribution for the PSD of the analyzed data.
-%Preliminary studies suggest that this is possible~\citep{martini_thesis}. Other studies have been done in this direction, mostly using a parametric model for the PSD \citep{Littenberg_2013, Edwards_2015, lalinference}.
 
 Hence, as an application of MESA, and its implementation in \texttt{memspectrum}, we analyse GW150914\cite{} using a Bayesian framework that allows for the marginalisation of the order  $k$ of the AR($k$) process representing the residuals data stream. Although the inference is essentially unchanged compared to the standard case, see \cite{lalinference}, there are some substantial modification to the likelihood construction. Since MESA is applicable to time-domain data, all calculations prior to the Fourier transform must be performed in time domain, thus increasing the computational cost by a non-negligible amount. We shall refer the time-of-arrival parameter $t_c$ of the GW to the geocenter. At each iteration of the inference algorithm, we sample a vector $\theta\equiv\theta_{GW}\cup k$\footnote{We indicate the set of all GW parameters (component masses, spins, luminosity distance, etc.) with $\theta_{GW}$.}. For each inteferometer $j$, therefore, we need to compute a time-delay $\Delta t_j$ to compute the antenna response functions $F_{j,+}(t+\Delta t_j),F_{j,\times}(t+\Delta t_j)$ as well as the correct time-shift for the GW template 
 \begin{align}
