@@ -52,10 +52,15 @@
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
 	\title{Maximum Entropy Spectral Analysis: a case study}
-	\author{Alessandro \surname{Martini}\inst{\ref{inst1}}\thanks{martini.alessandr@gmail.com} \and 
-	Stefano \surname{Schmidt}\inst{\ref{inst2}}\thanks{s.schmidt@uu.nl} \and Gregory \surname{Ashton}\inst{\ref{inst1}}\thanks{walter.delpozzo@unipi.it} \and Walter \surname{Del Pozzo}\inst{\ref{inst1}}\thanks{walter.delpozzo@unipi.it}}
+	\author{Alessandro \surname{Martini}\inst{1,2,3}\thanks{alessandro.martini-1@unitn.it} \and 
+	Stefano \surname{Schmidt}\inst{4,5}\thanks{s.schmidt@uu.nl} \and Gregory \surname{Ashton}\inst{6} \and Walter \surname{Del Pozzo}\inst{1}\thanks{walter.delpozzo@unipi.it}}
         
-        \institute{Dipartimento di Fisica  Università di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy\label{inst1} \and Institute for Gravitational and Subatomic Physics (GRASP),Utrecht University, Princetonplein 1, 3584 CC, Utrecht, The Netherlands\label{inst2}}
+        \institute{Dipartimento di Fisica  Università di Pisa, and INFN Sezione di Pisa, Pisa I-56127,Italy
+        		      \and Università di Trento, Dipartimento di Fisica, I-38123 Povo, Trento, Italy
+		      \and INFN, Trento Institute for Fundamental Physics and Applications, I-38123 Povo, Trento, Italy
+        		      \and Institute for Gravitational and Subatomic Physics (GRASP),Utrecht University, Princetonplein 1, 3584 CC, Utrecht, The Netherlands
+		      \and Nikhef, Science Park 105, 1098 XG, Amsterdam, The Netherlands
+		      \and Royal Holloway University of London, London, United Kingdom}
         
   \abstract{
 The Maximum Entropy Spectral Analysis (MESA) method, developed by Burg, provides a powerful tool to perform spectral estimation of a time-series. The method relies on Jaynes' maximum entropy principle and provides the means of inferring the spectrum of a stochastic process in terms of the coefficients of some autoregressive process AR($p$) of order $p$.
@@ -668,11 +673,11 @@ Burg's method for spectral analysis is solved via Levinson is implemented in the
 Another faster recursion method is available in \citet{Vos} and it is also available in \texttt{memspectrum}.
 
 \section{Full posterior distribution for GW150914} \label{sec:appendix_b}
-\begin{figure}
+\begin{figure*}
 	\caption{Full posterior distribution for GW150914 when marginalising over the AR process orders.}
 	\label{fig:gw150914_full_pe}
 	\includegraphics[width=\textwidth,keepaspectratio]{Images/gw150914/mega_plot.pdf}
-\end{figure}
+\end{figure*}
 \end{appendix}
 
 \end{document}
