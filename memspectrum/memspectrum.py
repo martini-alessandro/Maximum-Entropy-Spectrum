@@ -424,7 +424,7 @@ class MESA(object):
 		den = np.fft.fft(a_k, n=N)
 		spectrum = dt * P / (np.abs(den) ** 2)
 		
-		return spectrum, np.fft.fftfreq(N,dt)
+		return np.fft.fftfreq(N,dt), spectrum
 
 
 
@@ -458,11 +458,11 @@ class MESA(object):
 		if self.a_k is None:
 			raise RuntimeError("Model is not initialized: unable to compute spectrum. Call MESA.solve() or load a model from file to initialize the model")
 		f_ny = .5 / dt 
-		spec, f_spec = self._spectrum(dt, self.N, self.P, self.a_k)
+		f_spec, spec = self._spectrum(dt, self.N, self.P, self.a_k)
 		
 		if frequencies is None:
 			if onesided:
-				return f_spec[:self.N//2], spec[:self.N//2] * np.sqrt(2)
+				return f_spec[:self.N//2], spec[:self.N//2] * 2
 			else:
 				return f_spec, spec
 		
@@ -503,7 +503,7 @@ class MESA(object):
 		autocov: :class:`~numpy:numpy.ndarray`				   
 			Autocovariance of the model
 		"""
-		spec, f = self.spectrum(dt)
+		f, spec = self.spectrum(dt)
 		spec = spec[:int(self.N/2)]
 		f = f[:int(self.N/2)]
 		autocov = np.fft.irfft(spec) #or there is a +1 in there...
@@ -664,7 +664,7 @@ class MESA(object):
 			self.ref_coefficients.append(k)
 			P.append(P[-1] * (1 - k * k.conj()))
 			#Compute loss function value for chosen method
-			if spec is not None: spec = self._spectrum(1.,len(self.data), P[-1], a[-1])[0] #_LL
+			if spec is not None: _, spec = self._spectrum(1.,len(self.data), P[-1], a[-1]) #_LL
 			optimization.append(self._loss_function(P, a[-1], self.N, i + 1, spec, k))
 			
 			is_nan = np.isnan(new_a).any() #checking for nans
@@ -1050,11 +1050,10 @@ class MESA(object):
 		"""
 		if zero_phase is False:  
 			white_data = convolve(data, self.a_k, mode = 'same')/np.sqrt(self.P)
-		else:
-			c = np.correlate(self.a_k, self.a_k, 'full')
-			c /= c.max() 
-			white_data = np.convolve(c, data, 'same')/np.sqrt(self.P)
-            
+		else: 
+ 			c = np.correlate(self.a_k, self.a_k, 'full')
+ 			c /= c.max() 
+ 			white_data = np.convolve(c, data, 'full')/np.sqrt(self.P)
 		if trim is None: trim = self.get_p()
 		if trim: white_data = white_data[trim:-trim]
 		return white_data
