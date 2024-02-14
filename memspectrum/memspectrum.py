@@ -478,7 +478,7 @@ class MESA(object):
 
 		return
 	
-	def compute_autocovariance(self, dt, normalize = False):
+	def compute_autocorrelation(self, dt, normalize = True, scipy_convention = False):
 		"""
 		Compute the autocovariance :math:`C(\\tau)` of the data based on the autoregressive coefficients.
 		The autocovariance is defined as:
@@ -489,6 +489,15 @@ class MESA(object):
 		
 		where :math:`\mu` is the mean value of the timeseries.
 		It amounts to the inverse Fourier transform of the PSD.
+
+		If option ``scipy_convention`` is set, we center the autocorrelation, following :func:`~scipy:scipy.signal.correlate` conventions.
+
+		.. math::
+
+			C(\\tau) = E_t[(x_t - \mu)(x_{t-\\tau+T} -\mu)]
+
+		where :math:`T` is the segment length
+
 		
 		Parameters 
 		----------
@@ -500,18 +509,21 @@ class MESA(object):
 
 		Returns
 		-------
-		autocov: :class:`~numpy:numpy.ndarray`				   
-			Autocovariance of the model
+		autocorr: :class:`~numpy:numpy.ndarray`
+			Autocorrelation of the model
 		"""
 		f, spec = self.spectrum(dt)
 		spec = spec[:int(self.N/2)]
 		f = f[:int(self.N/2)]
-		autocov = np.fft.irfft(spec) #or there is a +1 in there...
+		autocorr = np.fft.irfft(spec) #or there is a +1 in there...
 		#autocov -= np.square(self.mu)
 		#print(self.mu)
 		if normalize:
-			autocov /= autocov[0]
-		return autocov	   
+			#autocorr /= np.max(autocorr)
+			autocorr /= autocorr[0]
+		if scipy_convention:
+			autocorr = np.concatenate([autocorr[len(autocorr)//2+1:], autocorr[:len(autocorr)//2]])
+		return autocorr
 	 
 	def solve(self,
 			  data,

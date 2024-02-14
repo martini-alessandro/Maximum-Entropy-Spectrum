@@ -113,6 +113,21 @@ The generated noise has the same PSD as the original time series data:
 
 ![](../img/psd_comparison_generate_noise.png)
 
+## Computing the data autocorrelation
+
+MESA is constructed to match the empirical autocorrelation coefficients {math}`r_k` of the data up to order m. You can check this by using the function {func}``compute_autocorrelation``. Make sure you set the option ``scipy_convention`` to match the time grid returned by {func}`~scipy:scipy.signal.correlate`.
+
+```Python
+import scipy.signal
+R_t_empirical = scipy.signal.correlate(time_series, time_series, mode = 'same')
+R_t_empirical /= np.max(R_t_empirical)
+R_t_mesa = m.compute_autocorrelation(1/srate, normalize = True, scipy_convention = True)
+```
+
+The two functions agrees well up to order p (as shown by the black lines)
+
+![](../img/autocorrelation.png)
+
 
 ### Forecasting
 
