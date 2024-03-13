@@ -57,6 +57,8 @@ class loss_function:
 	def __call__(self, *args): #Stefano: what are args? We should specify them and call them by name...
 		if self.method == 'FPE':
 			return self._FPE(args[0], args[2], args[3])
+		if self.method == 'MDL':
+			return self._FPE(args[0], args[2], args[3])
 		elif self.method == 'CAT':
 			return self._CAT(args[0], args[2], args[3])
 		elif self.method == 'CAT_OLD':
@@ -110,6 +112,28 @@ class loss_function:
 		"""
 		return P[-1] * (N + m + 1) / (N - m - 1)
 	
+	def _MDL(self, P, N, m):
+		"""
+		Implements Minimum Description Length to estimate the recursive 
+		order 
+		
+		Parameters
+		----------
+		P : float
+			The estimate of the variance for the white noise component.
+		N : 'np.int'
+			The length of the dataset.
+		m : 'np.int'
+			The recursive order.
+
+		Returns
+		-------
+		float
+			The value of MDL loss function.
+
+		"""
+		return N * np.log(P[-1]) + m * np.log(N)
+    
 	def _AIC(self, P, N, m):
 		"""
 		Implements Akaike information criterion to estimate the recursive 
