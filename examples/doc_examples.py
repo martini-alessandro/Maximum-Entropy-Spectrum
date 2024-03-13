@@ -68,7 +68,6 @@ plt.title('Estimated PSD (vs true PSD)')
 
 
 ## Whitening
-
 white_time_series = m.whiten(time_series, trim = 0)
 
 plt.figure()
@@ -106,7 +105,28 @@ plt.legend()
 plt.savefig('../docs/img/psd_comparison_generate_noise.png')
 plt.title('PSD estimated from syntetic noise')
 
+## Computing the autocorrelation
+import scipy.signal
+R_t_empirical = scipy.signal.correlate(time_series, time_series, mode = 'same')
+R_t_empirical /= np.max(R_t_empirical)
+R_t_mesa = m.compute_autocorrelation(1/srate, normalize = True, scipy_convention = True)
 
+fig = plt.figure()
+ax = plt.gca()
+plt.plot(np.arange(-len(R_t_empirical)//2, len(R_t_empirical)//2)*dt, R_t_empirical, label = 'empirical')
+plt.plot(np.arange(-len(R_t_mesa)//2, len(R_t_mesa)//2)*dt, R_t_mesa, label = 'mesa')
+plt.axvline(m.p*dt, ls = '--', c = 'k')
+plt.axvline(-m.p*dt, ls = '--', c = 'k')
+plt.legend()
+plt.xlabel('Time lag (s)')
+left, bottom, width, height = [0.18, 0.5, 0.31, 0.31]
+ax_ins = fig.add_axes([left, bottom, width, height])
+ax_ins.plot(range(-m.p, m.p), R_t_empirical[len(R_t_empirical)//2-m.p:len(R_t_empirical)//2+m.p])
+ax_ins.plot(range(-m.p, m.p), R_t_mesa[len(R_t_mesa)//2-m.p:len(R_t_mesa)//2+m.p])
+ax_ins.set_xticks([-m.p, -m.p/2, 0, m.p/2, m.p])
+ax_ins.set_xticklabels(['-p', '-p/2', '0', 'p/2', 'p'])
+plt.savefig('../docs/img/autocorrelation.png')
+ax.set_title('Autocorrelation')
 
 ## Forecasting
 id_start = 10000
@@ -117,11 +137,12 @@ forecast = m.forecast(forecast_baseline[:-length_forecasting], length = length_f
 median = np.median(forecast, axis = 0) #Ensemble median 
 p5, p95 = np.percentile(forecast, (5, 95), axis = 0) #90% credibility boundaries
 
-plt.figure(figsize = [10.4, 4.8])
+plt.figure()#figsize = [10.4, 4.8])
 plt.plot(times_forecasting[:-length_forecasting], forecast_baseline[:-length_forecasting], color = 'k')
 plt.fill_between(times_forecasting[-length_forecasting:], p5, p95, color = 'b', alpha = .5, label = '90% Cr.') 
 plt.plot(times_forecasting[-length_forecasting:], forecast_baseline[-length_forecasting:], color = 'k', linestyle = '-.', label = 'Observed data') 
-plt.plot(times_forecasting[-length_forecasting:], median, color = 'r', label = 'median estimate') 
+plt.plot(times_forecasting[-length_forecasting:], median, color = 'r', label = 'median estimate')
+plt.xlabel('Time (s)')
 plt.savefig('../docs/img/forecasting.png')
 plt.title('Time series + Forecasting')
 
