@@ -673,18 +673,18 @@ Another faster recursion method is available in \cite{Vos} and it is also availa
 \section{Computational Time for both MESA methods and Welch}\label{sec:computationaltimes}
 In this appendix we shortly introduce the computational times required by the MESA method (considering both the standard and Fast implementation) and the Welch method. They are just inserted to give an idea of what the time differences between the methods are. These are obtained via the python \%timeit special function, run on a personal machine 
 \begin{table}[H]
-\begin{tabular}{ |p{2cm}||p{3cm}|p{3cm}|p{3cm}|  }
+\begin{tabular}{ |p{1.5cm}||p{2cm}|p{2cm}|p{2cm}|  }
  \hline
  \multicolumn{4}{|c|}{Computational times} \\
  \hline
  Batch Length& MESA std &MESA Fast&Welch\\
 
  \hline
- 1s   &  22 ms ± 1.22 ms   &$19.6$ ms ± $620$ µs&  335 µs ± 9.24 µ\\
- 5s &   158 ms ± 21.7 ms   & 42.4 ms ± 353 µs   &839 µs ± 4.61 µs \\
- 10s & 187 ms ± 11.6 ms & 51.5 ms ± 3.67 ms&  1.74 ms ± 64.3 µs \\
- 100s    & 1.96 s ± 338 ms  &205 ms ± 5.09 ms&  18.8 ms ± 140 µs\\
- 1000s&  17.1 s ± 605 ms  &1.33 s ± 17.4 ms&235 ms ± 3.69 ms\\
+ 1s   &  22  ± 1.22 ms   &$19.6$ ± $0.62$ ms &  335 ± 9.24 µs\\
+ 5s &   158  ± 21.7 ms   & 42.4 ± 0.35 ms   &839 ± 4.61 µs \\
+ 10s & 187  ± 11.6 ms & 51.5 ± 3.67 ms&  1.74  ± 0.06 µs \\
+ 100s    & 1.96 ± 0.34 ms  &205  ± 5.09 &  18.8 ± 0.14 ms\\
+ 1000s&  17.1  ± 0.61 ms  &1.33  ± 0.02 ms &235 ± 3.69 ms\\
 
  \hline
 \end{tabular}
