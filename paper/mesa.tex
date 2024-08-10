@@ -108,7 +108,7 @@ In the context of gravitational waves physics, e.g. \cite{Finn_1992}, the PSD is
 \end{equation}
 without highlighting its connection with the time structure of the process itself, thus masking some important properties that will be explored further in what follows. The latter definition in Eq. ~\eqref{eq:psd-f-definition} gives, however, i) a straightforward interpretation of the PSD: it measures how much signal ``power" is located in each frequency; ii) an operative way of estimating it for an unknown process.  
 
-An ubiquitous method for such a computation is due to \cite{Welch1967} and it is based on Eqs. (\ref{eq:psd-autocorrelation}-\ref{eq:psd-f-definition}).
+An ubiquitous method for such a computation is due to Welch \cite{Welch1967} and it is based on Eqs. (\ref{eq:psd-autocorrelation}-\ref{eq:psd-f-definition}).
 The PSD is obtained by slicing the observed realisation $x(t_1),\ldots,x(t_n)$ of the process $x(t)$ into many window-corrected batches and averaging the squared moduli of their Fourier transforms.
 This approach is equivalent~\cite{Lomb}\cite{Scargle} to taking the Fourier Transform of the windowed sample autocorrelation $\rho_W$, written as
 \begin{equation}
@@ -126,7 +126,7 @@ Making assumptions on unobserved data and modifying the ones we have at our disp
 
 A alternative approach providing a smooth PSD estimation, is to adopt a parametric model for the PSD and to fit its parameters to the data with a Reversible Jump Markov Chain Monte Carlo \cite{Cornish_2015,Littenberg_2015}. Despite being effective, this method is problem dependent, since it needs to make definite assumptions on the shape of the PSD. Moreover, it can be computationally expensive and it does not come with a handy implementation available to the public. For all the above reasons, we did not consider such methods in our work.
 
-An appealing alternative, based on the Maximum Entropy principle \cite{JaynesArticle, jaynes2003ptl, Jaynes_MAXENT}, has been derived by~\cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the algorithm parameters, since it provides an iterative closed form expression for the spectrum of a stochastic stationary time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
+An appealing alternative, based on the Maximum Entropy principle \cite{JaynesArticle, jaynes2003ptl, Jaynes_MAXENT}, has been derived by Burg ~\cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the algorithm parameters, since it provides an iterative closed form expression for the spectrum of a stochastic stationary time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
 Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provides a natural and simple machinery to forecast a time series, thus predicting future observations based on previous ones.
 
 In this paper, we discuss the details of the Maximum entropy principle, its application to the problem of PSD estimation with Burg's algorithm and the link between Burg's algorithm and autoregressive process.
@@ -150,7 +150,7 @@ Next, we will discuss the interesting link between Burg's method and autoregress
 
 Before introducing the MAXENT principle, we will define, via some simple examples, the two core concepts of the problem and the roles they play in deductive inference: the `evidence' and the `information'.
 Let us start with the `information' (or information entropy): it is a measure of the degree of uncertainty on the outcomes of some experiment and specifies the length of the message necessary to provide a full description of the system under study. As an example, no information is brought if we are studying a system whose outcome is certain (the outcome is known with probability $p = 1$), as in this case, a communication is not even needed.
-\cite{Shannon} proposed the quantity
+Shannon \cite{Shannon}  proposed the quantity
 \begin{equation}\label{eq:information}
     I = \log_2 \frac{1}{p(x)}
 \end{equation}
@@ -170,7 +170,7 @@ For $N$ events, the system with the highest possible information content is when
     P_1 = \hdots = P_N = \frac{1}{N}:
 \end{equation}
 
-\cite{Shannon} showed that the only functional form satisfying continuity with respect to its parameters, additivity and that has a maximum for equal probability events is:
+Shannon \cite{Shannon} showed that the only functional form satisfying continuity with respect to its parameters, additivity and that has a maximum for equal probability events is:
 \begin{equation}\label{eq:entropy}
     H[p_1, \dots, p_N] = - \sum_{i = 1}^N p_i\log{p_i}\,,
 \end{equation}
@@ -182,7 +182,7 @@ In the continuous case:
 We call the functional $H$ information entropy\footnote{In defining the information entropy as in Eq.~\eqref{eq:entropy_continuos}, we are implicitly assuming a uniform measure over the parameter space. In case of a non-uniform measure $m(x)$, the definition generalises to $ H[p(x)] = - \int p(x)\ln \frac{p(x)}{m(x)} dx$.}.
 
 We now turn to the core of our problem: how can we assign probabilities to a set of events keeping into account our knowledge of the system and, at the same time, ensure it is non-committal towards unavailable knowledge?
-The ``knowledge'' at our disposal about the system under investigation is what we define `evidence' and any probability assignment is given such evidence, in agreement with \cite{Cox} construction of probability. In the case above, our knowledge on the system is only the total number $N$ of different outcomes -- this is a minimal requirement. Of course, more complex evidence constraints can be applied.
+The ``knowledge'' at our disposal about the system under investigation is what we define `evidence' and any probability assignment is given such evidence, in agreement with Cox \cite{Cox} construction of probability. In the case above, our knowledge on the system is only the total number $N$ of different outcomes -- this is a minimal requirement. Of course, more complex evidence constraints can be applied.
 
 It is very common that the constraints provided by the evidence are not enough for setting the probabilities for each event: in this case, it is reasonable to assume that the probability assignment should make the experiment as unpredictable as possible\footnote{
 In~\cite{Jaynes_MAXENT} this statement is made more precise and justified more thoroughly, with arguments based on combinatorial analysis.
@@ -381,13 +381,13 @@ with $P_m$ being the estimated noise variance at order $m$, see Eq.~\eqref{eq:er
 remembering $m_{max} \sim 2N / \log(2N)$, Akaike's loss function is equivalent to the minimization of the variance $P_m$ of the white noise of the underlying $AR(p)$ model. 
 
 \item \textbf{Variance Maximum (VM)}
-This second criterion \cite{kay1988modern} is based on a similar assumptions to FPE. It minimises the actual value of the least squares (instead of relying to asymptotical behaviour). t the normalising factor takes into account the k degrees of freedom necessary to estimate the forward prediction error filter $a_k$.\\ The quantity to be minimised is
+This second criterion \cite{kay1988modern} is based on a similar assumptions to FPE. It minimises the actual value of the least squares (instead of relying to asymptotical behaviour), using a normalising factor that takes into account the m degrees of freedom necessary to estimate the forward prediction error filter $a_k$.\\ The quantity to be minimised is
 \begin{equation}
 VM(m) = \frac{1}{N - 2m}\sum_{t=m}^N\left(x_t - \sum_{i=1}^m a_i x_{t-i} \right)^{2}
 \end{equation}
 The package implementation of VM loss function takes advantage of a recursive re-writing of the above formula, as in Eqs (27) and (28) of \cite{Cuoco_2001}.  \\ \\
 
-Several other criteria are available in the literature \cite{doi:10.1029/WR018i004p01097,bhansali1986} and some are implemented in the memspectrum package. We don't report them in this paper since they didn't show any additional merit with respect to the aforementioned loss functions \\
+Several other criteria are available in the literature \cite{doi:10.1029/WR018i004p01097,bhansali1986} and some are implemented in the \texttt{memspectrum} package. We don't report them in this paper since they didn't show any additional merit with respect to the aforementioned loss functions \\
 \end{itemize}
 
 Once a loss function is selected, the choice of the best recursion order is straightforward: we solve the Levinson recursion~\cite{doi:10.1002/sapm1946251261} until $M_{max}$, as given in Eq.~\eqref{eq:MMAx}, iterations are reached. Then, the order $m$ is selected to be the one that minimizes the specified loss function.
@@ -395,17 +395,17 @@ Once a loss function is selected, the choice of the best recursion order is stra
 In a real implementation of the algorithm, computing all the recursion up to $M_{max}$ can result in a significant waste of computational power: the optimal value is often $m_{opt} << M_{max}$ and, in such cases, computing all the values of $m$ until $M_{max}$ is not useful.
 In practice, we can apply an \textit{early stop} procedure: every few iterations we look for the best order of $m_{opt}$; if this value does not change for a while, we assume that a good (local) minimum of the loss function is found and the computation is stopped.
 
-The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. In the following paragraph, we will discuss three different comparison (one qualitative and two quantitative) of the two proposed loss functions, o 
+The following sections will be devoted to the study of the statistical properties of the loss functions introduced above: we need to understand which choice provides the best quality in the reproduction of some known power spectral densities. In the following paragraph, we will discuss three different comparison (one qualitative and two quantitative) of the two proposed loss functions.
 \subsection{How accurate are the reconstructed PSDs?}\label{sec:psd_validation}
 
 \begin{figure}
 	\centering
 	\includegraphics[width = \linewidth]{Images/Plots/comparison_loss2}
-	\label{fig:psd_comparison}
 	\caption{Comparison of the ensemble average PSD estimate}
+	\label{fig:psd_comparison}
 \end{figure}
 In our initial qualitative comparison, depicted in Figure \ref{fig:psd_comparison}, we juxtapose the reconstruction of a known a-priori Power Spectral Density with those obtained using the two distinct loss functions. The red line in the plot represents our chosen reference PSD, derived from the estimated PSD for the GW150914 event.\\ 
-To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \cite{noiseGen}. The sampling rate and observation time were fixed at $dt = 2048$Hz and $T = 5$s, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
+To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \cite{noiseGen}. The sampling rate and observation time were fixed at $df = 2048$Hz and $T = 5$s, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
 The FPE-derived estimate, represented by the dashed line, effectively identifies and reconstructs peaks across both high and low frequency ranges with commendable accuracy. However, as illustrated in the inset plots, FPE struggles when confronted with structured peaks—those containing subordinate modes. In such cases, FPE accurately captures the primary mode but overlooks the subsidiary peaks. \\ 
 On the other hand, the VM estimate, depicted as a dot-dashed line, excels in reconstructing both dominant and subordinate modes with remarkable precision. VM appears to prioritize comprehensive mode reconstruction, while FPE emphasize an accurate reconstruction of major modes while potentially neglecting more intricate sub-peaks.
 
@@ -421,7 +421,7 @@ On the other hand, the VM estimate, depicted as a dot-dashed line, excels in rec
 \end{figure}
 
 Moving to our second comparison, we now focus on another crucial aspect: how accurately each loss function estimates the Autoregressive (AR) order, which represents the number of employed $a_k$ coefficients. \\ 
-Here, the memspectrum package proves quite useful. It allows us to assign a specific order to the reconstructed autoregressive filter and use the resulting coefficients to forecast time series. With these tools in hand, we generated various time series, each with a different autoregressive order ranging from m = 0 to m = 4000.\\ 
+Here, the \texttt{memspectrum} package proves quite useful. It allows us to assign a specific order to the reconstructed autoregressive filter and use the resulting coefficients to forecast time series. With these tools in hand, we generated various time series, each with a different autoregressive order ranging from m = 0 to m = 4000.\\ 
 To ensure reliability, we created 30 distinct time series for each autoregressive order. This approach lets us compute both the mean and variance, giving us insights into the accuracy of each loss function's order estimation. This analysis provides valuable information about how well each method performs in estimating the Autoregressive order across a broad spectrum of scenarios. \\ 
 The results are reported in Figure \ref{fig:p_vs_ptrue}. The injected autoregressive order's true value is depicted by the red line. The estimations yielded by the two loss functions are illustrated alongside, accompanied by error bars indicating one standard deviation. \\ 
 The plot reveals two distinct regions: one with "short" autoregressive orders (m = 0 to around m = 1600) and another with "long" autoregressive orders (starting from m = 1600).\\ 
@@ -449,7 +449,7 @@ Lastly, it's worth noting that FPE holds the advantage of lower numerical comple
 
 We perform a {\it qualitative} comparison between the performance of the MESA and of the standard Welch algorithm.
 In this, we cannot avoid to be only qualitative. Indeed, as the results of the comparison are problem dependent, it is very hard to quantify this in a single metric. Although similar studies can be drawn from any other PSD, in this section we focus on a single PSD and we try to generalize some observations that we make.
-We decide to use the analytical PSD computed for the LIGO Handford interferometer, released together with the GWCT-1 catalog~\cite{GWTC1,PSD_release}, and computed with the BayesLine package \cite{Cornish_2015,Littenberg_2015,Cornish_2020,Chatziioannou_2019}.
+We decide to use the analytical PSD computed for the LIGO Handford interferometer, released together with the GWTC-1 catalog~\cite{GWTC1,PSD_release}, and computed with the BayesLine package \cite{Cornish_2015,Littenberg_2015,Cornish_2020,Chatziioannou_2019}.
 
 We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD used for the analysis of the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
 We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
