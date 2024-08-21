@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from scipy.signal import tukey, welch
+from scipy.signal import welch
+from scipy.signal.windows import tukey
 
 def psd(strain,
         sampling_rate,

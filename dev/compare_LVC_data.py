@@ -1,5 +1,6 @@
 import sys
 sys.path.insert(0,'..')
+sys.path.insert(0,'../memspectrum')
 from memspectrum import MESA
 from welch import *
 import numpy as np
@@ -9,22 +10,22 @@ from style_sheet import *
 import pandas as pd
 from scipy.interpolate import interp1d
 
-plot = False
+plot = True
 plot_same = True
 compute = False
 generate_fake_data = False
 use_fake_data = True
 
-plot_welch = True #if plot_same is true, this decides whether to plot welch method or MESA
+plot_welch = False #if plot_same is true, this decides whether to plot welch method or MESA
 
 	#folder to save the plot at
 save_folder = '../paper/Images/comparison_LVC_data/'
 true_PSD_file = 'GWTC1_GW150914_PSDs.dat'
 #save_folder = 'comparison_LVC_data' #if on the cluster
-srate = 4096.
+srate = 2048.
 
-T_list = [1, 5, 10,100, 1000] #list of times to make the comparison at
-seglen = [512, 1024, 2048, 8192, 32768]
+T_list = [1, 5, 8, 10, 100, 1000] #list of times to make the comparison at
+seglen = [512, 1024, 2048, 2048, 8192, 32768]
 
 if generate_fake_data:
 	PSD = np.loadtxt(true_PSD_file)
@@ -51,7 +52,8 @@ if compute:
 		data_T = data[-int(srate*T)-4096*5:-4096*5]
 		
 		M = MESA()
-		M.solve(data_T, early_stop = True, method = 'Standard')
+		M.solve(data_T, early_stop = True, optimisation_method = 'VM', method = 'Fast')
+		print(M.get_p())
 		print("\tDone MESA")
 		freqs, PSD_Welch = psd(data_T, srate, seglen[i]/float(srate),
 			window_function  = None,
@@ -72,8 +74,8 @@ if plot_same:
 	fig.set_size_inches(3.4,3.4*2)
 	ax = fig.gca()
 
-	ax.set_xlabel(r"$f(Hz)$")
-	ax.set_ylabel(r"$PSD (a.u.)$") #No ylabel
+	ax.set_xlabel(r"$f(Hz)$", size = 8)
+	ax.set_ylabel(r"$PSD (a.u.)$", size = 8) #No ylabel
 	
 	yticks = []
 	
@@ -96,7 +98,8 @@ if plot_same:
 		else:
 			filename = save_folder+"comparison_LVC_data_MESA.pdf".format(use_fake_data)
 			ax.loglog(freqs, PSD_MESA , c = 'r', zorder = 1, label = "MESA", lw = 1.)
-		
+		ax.tick_params(labelsize = 8)
+        
 		yticks.append(10**(step*i)/1000.)
 		print(yticks)
 		
@@ -114,12 +117,12 @@ if plot_same:
 	ax.set_yticks(yticks)
 	ax.set_yticklabels(tick_list, rotation = 'vertical', fontdict = {'verticalalignment':'center'})
 	ax.yaxis.set_tick_params(width=0)
-
+	plt.tight_layout()
 	plt.savefig(filename, transparent = True)
 	print("Save file @ {}".format(filename))
 
 	plt.show()
-	quit()
+	#quit()
 	
 if plot:
 	if use_fake_data:
@@ -129,6 +132,7 @@ if plot:
 	fig_overall.clf()
 	fig_overall.set_size_inches(3.4,3.4*2)
 	for i, T in enumerate(T_list):
+		print('cycle')
 		PSDs = np.loadtxt("plot_data/plot_{}_{}.txt".format(T, use_fake_data))
 		N = PSDs.shape[0]
 		freqs, PSD_MESA, PSD_Welch = PSDs[:int(N/2),0], PSDs[:int(N/2),1], PSDs[:int(N/2),2]
@@ -142,8 +146,8 @@ if plot:
 			ax.loglog(true_PSD[:,0], true_PSD[:,1], '--', c = 'k', zorder = 2)
 		#ax.set_xlim(10,np.max(true_PSD[:,0]))
 		ax.set_xlim(10,1024)
-		ax.set_xlabel(r"$f(Hz)$")
-		ax.set_ylabel(r"$PSD \left(\frac{1}{Hz} \right)$")
+		ax.set_xlabel(r"$f(Hz)$", size = 15)
+		ax.set_ylabel(r"$PSD \left(\frac{1}{Hz} \right)$", size = 15)
 		#fig.subplots_adjust(left = 0.25, bottom = 0.25)
 		plt.tight_layout(pad = 0.5)
 		filename = save_folder+"comparison_LVC_data_T{}_fake_{}.pdf".format(T, use_fake_data)
@@ -151,9 +155,9 @@ if plot:
 		print("Save file @ {}".format(filename))
 		
 			#overall plot
-		ax = fig_overall.add_subplot(5,1,i+1)#, sharex = True)
+		ax = fig_overall.add_subplot(6,1,i+1)#, sharex = True)
 #		set_ax_style(ax)
-		ax.set_title(r"$T = {}s$".format(T))
+
 		ax.loglog(freqs, PSD_Welch, c = 'b', zorder = 0, label = "Welch")
 		ax.loglog(freqs, PSD_MESA, c = 'r', zorder = 1, label = "MESA")
 		if use_fake_data:
@@ -161,7 +165,7 @@ if plot:
 		#ax.set_ylabel(r"$PSD \left(\frac{1}{Hz} \right)$") #No ylabel
 		ax.set_xlim(20,1024)
 		if i == len(T_list)-1:
-			ax.set_xlabel(r"$f(Hz)$")
+			ax.set_xlabel(r"$f(Hz)$", size = 15)
 		if i == 0:
 			ax.legend(loc = 'upper center', ncol = 2+int(use_fake_data))#, fontsize='x-small')
 	fig_overall.tight_layout()

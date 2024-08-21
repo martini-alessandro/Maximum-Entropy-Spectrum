@@ -124,7 +124,7 @@ Another drawback of this approach is the requirement for the window to be $0$ ou
 We are arbitrarily assuming $\rho_j = 0$ for $j > M$ and modifying the estimate (i.e. the data) if a non-rectangular window is chosen.
 Making assumptions on unobserved data and modifying the ones we have at our disposal introduces ``spurious" information about the process that we, in general, do not really have.
 
-A alternative approach providing a smooth PSD estimation, is to adopt a parametric model for the PSD and to fit its parameters to the data with a Reversible Jump Markov Chain Monte Carlo \cite{Cornish_2015,Littenberg_2015}. Despite being effective, this method is problem dependent, since it needs to make definite assumptions on the shape of the PSD. Moreover, it can be computationally expensive and it does not come with a handy implementation available to the public. For all the above reasons, we did not consider such methods in our work.
+A alternative approach providing a smooth PSD estimation, is to adopt a parametric model for the PSD and to fit its parameters to the data with a Reversible Jump Markov Chain Monte Carlo \cite{Cornish_2015,Littenberg_2015}. Despite being effective, this method is problem dependent, since it needs to make definite assumptions on the shape of the PSD. Moreover, it can be computationally expensive. For all the above reasons, we did not consider such methods in our work.
 
 An appealing alternative, based on the Maximum Entropy principle \cite{JaynesArticle, jaynes2003ptl, Jaynes_MAXENT}, has been derived by Burg ~\cite{burg1975maximum}. Being rooted on solid theoretical foundations, we will see that Burg's method, unlike Welch's, does not require any preprocessing of the data and requires very little tuning of the algorithm parameters, since it provides an iterative closed form expression for the spectrum of a stochastic stationary time series. Furthermore, it embeds the PSD estimation problem into an elegant theoretical framework and makes minimal assumptions on the nature of the data.
 Lastly and most importantly, it provides a robust link between spectral density estimation and the field of autoregressive processes. This provides a natural and simple machinery to forecast a time series, thus predicting future observations based on previous ones.
@@ -270,7 +270,7 @@ where $\Delta t$ is the sampling interval of the time series, $z=\exp{(2\pi i f\
 The vector obtained as $(1, a_1, \dots, a_N)$ is also known as the \textit{prediction error filter}.
 The coefficients $a_s (s > 0)$, together with an overall multiplicative scale factor $P_N$, are to be determined by an iterative process (called Burg's algorithm)
 At least, two implementations of Burg's algorithm are available in the literature, labeled as `Standard' and `Fast' in the \texttt{memspectrum} package. The `Standard' method is slower but more stable, while `Fast' trades stability for speed.
-On simulated stationary data, both versions typically yield similar results, while our tests with real gravitational waves data seems to indicate that the `Fast' implementation introduces noise into the PSD estimate. \footnote{For this reason, it is advisable to use the `Standard' implementation whenever possible. In most case of numerical instability in the `Fast' method, \texttt{memspectrum} will send a warning to user.}. A comparison of the computational times for Standard MESA implementation and Fast implementation (together with Welch's) is porvided in appendix \ref{sec:computationaltimes}.
+On simulated stationary data, both versions typically yield similar results, while our tests with real gravitational waves data seems to indicate that the `Fast' implementation introduces noise into the PSD estimate. \footnote{For this reason, it is advisable to use the `Standard' implementation whenever possible. In most case of numerical instability in the `Fast' method, \texttt{memspectrum} will send a warning to user.}. A comparison of the computational times for Standard MESA implementation and Fast implementation (together with Welch's) is provided in appendix \ref{sec:computationaltimes}.
 
 The number $N$ of such coefficients is a choice that shall be made by the user and indeed it is the only hyperparameter that needs to be tuned. The details of the derivation and the actual form for the coefficients $a_s$ can be found in Appendix \ref{sec:appendix}.
 
@@ -400,20 +400,21 @@ The following sections will be devoted to the study of the statistical propertie
 
 \begin{figure}
 	\centering
-	\includegraphics[width = \linewidth]{Images/Plots/comparison_loss2}
+	\includegraphics[width = \linewidth]{Images/Plots/comparison_loss1}
 	\caption{Comparison of the ensemble average PSD estimate}
 	\label{fig:psd_comparison}
 \end{figure}
-In our initial qualitative comparison, depicted in Figure \ref{fig:psd_comparison}, we juxtapose the reconstruction of a known a-priori Power Spectral Density with those obtained using the two distinct loss functions. The red line in the plot represents our chosen reference PSD, derived from the estimated PSD for the GW150914 event.\\ 
+In our initial qualitative comparison, depicted in Figure \ref{fig:psd_comparison}, we juxtapose the reconstruction of a known a-priori Power Spectral Density with those obtained using the two distinct loss functions. 
+The black, dotted line in the plot represents our chosen reference PSD, released together with the GWTC-1 catalog~\cite{GWTC1,PSD_release}, and computed for the LIGO Handford with the BayesLine package \cite{Cornish_2015,Littenberg_2015,Cornish_2020,Chatziioannou_2019}. The PSD is the median over the reconstructed posterior distribution for the GW150914 event. \\ 
 To conduct this analysis, we generated 1000 noise time-series whose power spectral densities matches the reference PSD by construction \cite{noiseGen}. The sampling rate and observation time were fixed at $df = 2048$Hz and $T = 5$s, respectively. For each noise realization, we employed both the FPE and the VM loss functions to estimate the PSD. Ultimately, we compared the reference PSD against the ensemble average of these two estimation methods.\\
-The FPE-derived estimate, represented by the dashed line, effectively identifies and reconstructs peaks across both high and low frequency ranges with commendable accuracy. However, as illustrated in the inset plots, FPE struggles when confronted with structured peaks—those containing subordinate modes. In such cases, FPE accurately captures the primary mode but overlooks the subsidiary peaks. \\ 
-On the other hand, the VM estimate, depicted as a dot-dashed line, excels in reconstructing both dominant and subordinate modes with remarkable precision. VM appears to prioritize comprehensive mode reconstruction, while FPE emphasize an accurate reconstruction of major modes while potentially neglecting more intricate sub-peaks.
-
+The FPE-derived estimate, represented by the red line line, effectively identifies and reconstructs peaks across both high and low frequency ranges with commendable accuracy. However, as illustrated in the inset plots, FPE struggles when confronted with structured peaks—those containing subordinate modes. In such cases, FPE accurately captures the primary mode but overlooks the subsidiary peaks. \\ 
+On the other hand, the VM estimate, depicted as the continuous green line, excels in reconstructing both dominant and subordinate modes with remarkable precision. VM appears to prioritize comprehensive mode reconstruction, while FPE emphasize an accurate reconstruction of major modes while potentially neglecting more intricate sub-peaks. 
+Additional figures of merit are inserted in appendix \ref{sec:AdditionalPlots} 
 \subsection{How well is the AR order recovered?}\label{sec:arp_validation}
 
 \begin{figure}
 	\centering
-	\includegraphics[width = \linewidth]{Images/Plots/ar_order2}
+	\includegraphics[width = \linewidth]{Images/Plots/ar_order_new}
 	\caption{Reconstructed value for the autoregressive order plotted against the true value of the autoregressive order.
 	The reconstructed autoregressive orders are computed from a time series randomly drawn with an $AR(p)$ model, with the two different loss functions under investigation.
 	}
@@ -431,13 +432,13 @@ To conclude, VM appears to prioritize complexity in its approach. In contrast, F
 
 \subsection{How well can MESA whiten the data?}\label{sec:whitening_validation}
 \begin{figure}
-	\includegraphics[width = \linewidth]{Images/Plots/P_values_comparison}
-	\caption{Histogram of the P-values obtained with a Kolmogorv Smirnov test on the whitened time series, against a univariate, 0 mean normal distirbuition}
+	\includegraphics[width = \linewidth]{Images/Plots/Anderson_pvalues}
+	\caption{Histogram of the P-values obtained with an Anderson Darling test on the whitened time series, against a univariate, 0 mean normal distirbuition}
 	\label{fig:whitening}
 \end{figure}
 In Section \ref{sec:whitening}, we showed how autoregressive coefficients and noise variance estimate $P$ can jointly be used to create a whitening filter, as in Eq. (\ref{eq:whitening_definition}) and . To complete our investigation, we compare how well these whitening filters work when obtained from the two different loss functions we've been studying. \\ 
-For this test, we employed the same set of time-series data as described in Section \ref{sec:psd_validation}. Each time series underwent the whitening process using the autoregressive filter derived from its corresponding loss function. We then evaluated the resulting whitened time series against a zero-mean, univariate normal distribution using the Kolmogorov-Smirnov test. \\
-The results are reported as an histogram for the obtained p-values in Figure \ref{fig:whitening} together with the chosen critical region of $p < 0.1$, representing a $90\%$  confidence level. In this region, there is no statistical difference between the two. Infact, the total number of counts in this bin are respectively $c_{VM} = 47 \pm 7$ and $c_{FPE} = 42 \pm 6$, affirming the absence of a pronounced discrepancy between the two.
+For this test, we employed the same set of time-series data as described in Section \ref{sec:psd_validation}. Each time series underwent the whitening process using the autoregressive filter derived from its corresponding loss function. We then evaluated the resulting whitened time series against a zero-mean, univariate normal distribution using the Anderson-Darling test. \\
+The results are reported as an histogram for the obtained p-values in Figure \ref{fig:whitening} together with the chosen critical region of $p < 0.1$, representing a $90\%$  confidence level. In this region, there is no statistical difference between the two. Infact, the total number of counts $c$ in this bin are respectively $c_{VM} = 100 \pm 10$ and $c_{FPE} = 89 \pm 9$, affirming the absence of a pronounced discrepancy between the two.
 In essence, this final examination underscores a shared proficiency in whitening between the two loss functions, showing that very long filters are not needed to obtain a comparlable result in whitening. Both methods showcase comparable results for whitening scopes.\\
 
 From our previous discussions, it's evident that both FPE and VM have their own strengths, and the choice between them greatly depends on the specific analysis requirements. In our analysis, VM tends to provide more accurate PSD estimates and often results in longer autoregressive filters. However, in cases where the underlying model is simple, there is a risk of VM overestimating complexity and generating patterns that don't truly reflect the data.\\ 
@@ -449,10 +450,10 @@ Lastly, it's worth noting that FPE holds the advantage of lower numerical comple
 
 We perform a {\it qualitative} comparison between the performance of the MESA and of the standard Welch algorithm.
 In this, we cannot avoid to be only qualitative. Indeed, as the results of the comparison are problem dependent, it is very hard to quantify this in a single metric. Although similar studies can be drawn from any other PSD, in this section we focus on a single PSD and we try to generalize some observations that we make.
-We decide to use the analytical PSD computed for the LIGO Handford interferometer, released together with the GWTC-1 catalog~\cite{GWTC1,PSD_release}, and computed with the BayesLine package \cite{Cornish_2015,Littenberg_2015,Cornish_2020,Chatziioannou_2019}.
+We used the same reference PSD used for the comparison of the two losses in the previous section \cite{Cornish_2015,Littenberg_2015,Cornish_2020,Chatziioannou_2019}.
 
 We simulate data\footnote{This is to ensure that we have a baseline PSD to compare the data with} from the PSD used for the analysis of the event GW150914 and we employ both Welch's method and MESA to estimate the spectrum.
-We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 10, 100, 1000 \SI{}{s}$
+We vary the length of the data used for the estimation: this is also useful to assess how the computation depends on the data available. We set the total observation time $T = 1, 5, 8, 10, 100, 1000 \SI{}{s}$. The observation time of $8s$ is inserted since it is the observation time over which the reference PSD is computed. 
 For the MESA algorithm, we choose the VM loss function. For the Welch algorithm, we employ a Tukey window with the shape parameter $\alpha$ 
 equal to 0.4 (see scipy documentation), an overlap fraction of $1/2$ for the segments and a length of 
 segments $L = 512, 1024, 2048, 8192, 32768$ points, depending on the observation time.
@@ -463,7 +464,7 @@ The results from both methods are summarized in  Figures ~\ref{fig:MESA_LIGO_dat
 First of all, we note that using a longer time series results in a better estimation of the PSD, especially at low frequencies. 
 This is somehow obvious: longer data streams probe lower frequencies thanks to Nyquist's theorem as well as providing better estimates for the FFT, in the Welch case, and the sample autocorrelation, for MESA.
 
-We also note that MESA converges (Figures ~\ref{fig:MESA_LIGO_data} and~\ref{fig:welch_LIGO_data}) to the underlying spectrum much faster than Welch's method, providing a better estimate even in the case of short time series. Although observed at every frequency, this behaviour is more evident in the low frequency region. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only, while Welch method requires at least 10 seconds of data to obtain a comparable profile.
+We also note that MESA converges (Figures ~\ref{fig:MESA_LIGO_data} and~\ref{fig:welch_LIGO_data}) to the underlying spectrum much faster than Welch's method, providing a better estimate even in the case of short time series. Although observed at every frequency, this behaviour is more evident in the low frequency region. An accurate profile reconstruction can be obtained with MESA using a 5 seconds-strain only,  while Welch method requires at least 10 seconds of data to obtain a comparable profile". Such a difference persists when the 8 seconds data strain is considered. 
 Furthermore, MESA is able to model all the details of the peak at around $\sim \SI{40}{Hz}$ (even with $T=\SI{100}{s}$), while the Welch's algorithm fails to do so even with an observation time of $T=\SI{1000}{s}$.
 
 Another important element is the noise of the spectral estimation: we find that the PSD estimation provided by the Welch's method is noisier (i.e. has a large number of spurious peaks) compared to the PSD measured with MESA and FPE loss function. This is especially true at high frequencies and for long observation times $T$.
@@ -669,6 +670,23 @@ $\Delta_0$ and $c_0$ are uniquely determined from their definitions and they are
 These expressions allow us to compute $\vec a$ and $P_N$ to any order by simply iterating \eqref{eq:Levinson1} and \eqref{eq:Levinson2}. Substituting them in equation \eqref{eq:MESApsd_appendix} the problem of the estimation for the power spectral density via maximum entropy principle is solved.
 Burg's method for spectral analysis is solved via Levinson is implemented in the released \texttt{memspectrum} package.
 Another faster recursion method is available in \cite{Vos} and it is also available in \texttt{memspectrum}.
+\section{Additional Plots for validation}\label{sec:AdditionalPlots}
+In this section we report additional plots for the Validation. Figure \ref{fig:NormalisedDifference} represents the difference between the estimated PSD and the reference PSD, normalised by the latter. Figures (\ref{fig:allFPE}) and (\ref{fig:allVM}) show the reference PSD (in red) against all the 1000 reconstruction obtained with FPE and VM respectively. 
+\begin{figure}[H]
+	\caption{Normalised difference of reconstructed PSD with respect to the reference PSD}
+	\label{fig:NormalisedDifference}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/Plots/Normalised_residuals}
+\end{figure}
+\begin{figure}[H]
+	\caption{The 1000 reconstruction of the reference PSD obtained with the FPE loss}
+	\label{fig:allFPE}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/Plots/All_FPEs}
+\end{figure}
+\begin{figure}[H]
+	\caption{The 1000 reconstruction of the reference PSD obtained with the VM loss}
+	\label{fig:allVM}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/Plots/ALL_VMs}
+\end{figure}
 
 \section{Computational Time for both MESA methods and Welch}\label{sec:computationaltimes}
 In this appendix we shortly introduce the computational times required by the MESA method (considering both the standard and Fast implementation) and the Welch method. They are just inserted to give an idea of what the time differences between the methods are. These are obtained via the python \%timeit special function, run on a personal machine 
